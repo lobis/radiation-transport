@@ -12,6 +12,10 @@
         "multithreading"
       ],
       "default": "serial"
+    },
+    "seed": {
+      "type": "integer",
+      "default": 0
     }
   }
 }

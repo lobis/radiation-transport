@@ -17,6 +17,8 @@ class SimulationConfig {
 
    public:
     SimulationConfig static LoadFromFile(const std::string& filename);
+
+    std::string Serialize() const;
 };
 
 #endif  // RADIATION_TRANSPORT_SIMULATIONCONFIG_H
