@@ -18,9 +18,10 @@ target_include_directories(
         ../analysis/include
 )
 
+FILE(GLOB SOURCES src/*.cpp)
 target_sources(
         ${APPLICATION} PUBLIC
-        src
+        ${SOURCES}
 )
 
 target_link_libraries(

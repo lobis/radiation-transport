@@ -6,9 +6,10 @@ message("-- Found ROOT version: ${ROOT_VERSION}")
 
 add_library(${LIBRARY} STATIC)
 
+FILE(GLOB SOURCES src/*.cpp)
 target_sources(
         ${LIBRARY} PUBLIC
-        src/SimulationConfig.cpp
+        ${SOURCES}
 )
 
 target_include_directories(
