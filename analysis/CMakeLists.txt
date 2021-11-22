@@ -21,6 +21,7 @@ target_include_directories(
 target_link_libraries(
         ${LIBRARY} PUBLIC
         ${ROOT_LIBRARIES}
+        stdc++fs # <filesystem>
         yaml-cpp
         spdlog
 )
