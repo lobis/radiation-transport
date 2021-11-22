@@ -1,0 +1,17 @@
+{
+  "$schema": "",
+  "title": "JSON Schema for SimulationConfig class",
+  "description": "Geant4 simulation user configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [],
+  "properties": {
+    "runManagerType": {
+      "enum": [
+        "serial",
+        "multithreading"
+      ],
+      "default": "serial"
+    }
+  }
+}
