@@ -24,9 +24,7 @@ void UpdateConfigFromCommandLine(int argc, char** argv, SimulationConfig* config
     string configFilename = argv[argc - 1];
     spdlog::info("Input config file: {}", configFilename);
     if (gSystem->AccessPathName(configFilename.c_str(), kFileExists)) {
-        char cwd[256];
-        getcwd(cwd, 256);
-        spdlog::error("config file '{}' does not exist. cwd: {}", configFilename, cwd);
+        spdlog::error("config file '{}' does not exist. cwd: {}", configFilename, getcwd(nullptr, 256));
         exit(1);
     } else {
         spdlog::debug("config file '{}' found", configFilename);
