@@ -18,3 +18,11 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
         GIT_TAG yaml-cpp-0.7.0)
 FetchContent_MakeAvailable(yaml-cpp)
+
+# Logging library
+message("-->--> spdlog")
+FetchContent_Declare(
+        spdlog
+        GIT_REPOSITORY https://github.com/gabime/spdlog.git
+        GIT_TAG v1.9.2)
+FetchContent_MakeAvailable(spdlog)

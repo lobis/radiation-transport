@@ -4,9 +4,10 @@
 
 // #include <TestClass.h>
 
-#include <iostream>
+#include <spdlog/spdlog.h>
+#include <yaml-cpp/yaml.h>  // TODO: fix this error
 
 int main() {
-    std::cout << "This is the simulation application!" << std::endl;
+    spdlog::info("This is the simulation application!");
     return 0;
 }
