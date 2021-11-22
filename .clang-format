@@ -1,0 +1,8 @@
+BasedOnStyle: Google
+
+# left pointer alignment
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+IndentWidth: 4
+ColumnLimit: 150
