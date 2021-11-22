@@ -1,4 +1,7 @@
+
 message("--> External dependencies:")
+
+set(FETCHCONTENT_QUIET ON)
 
 include(FetchContent)
 

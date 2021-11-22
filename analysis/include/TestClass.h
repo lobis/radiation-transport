@@ -5,6 +5,9 @@
 #ifndef RADIATION_TRANSPORT_TESTCLASS_H
 #define RADIATION_TRANSPORT_TESTCLASS_H
 
+#include <spdlog/spdlog.h>
+#include <yaml-cpp/yaml.h>
+
 class TestClass {
    public:
     int i;

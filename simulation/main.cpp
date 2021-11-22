@@ -5,7 +5,7 @@
 // #include <TestClass.h>
 
 #include <spdlog/spdlog.h>
-#include <yaml-cpp/yaml.h>  // TODO: fix this error
+#include <yaml-cpp/yaml.h>
 
 int main() {
     spdlog::info("This is the simulation application!");
