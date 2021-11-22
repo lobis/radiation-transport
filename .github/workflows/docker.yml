@@ -33,4 +33,4 @@ jobs:
         with:
           context: utils/Docker/ROOT_Geant4_Garfieldpp
           push: true
-          tags: ${{ IMAGE_NAME }}:cxx${{ env.CMAKE_CXX_STANDARD }}_ROOT${{ env.ROOT_VERSION }}_Geant4${{ env.GEANT4_VERSION }}
+          tags: ${{ env.IMAGE_NAME }}:cxx${{ env.CMAKE_CXX_STANDARD }}_ROOT${{ env.ROOT_VERSION }}_Geant4${{ env.GEANT4_VERSION }}
