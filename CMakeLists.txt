@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
 
-enable_testing()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" CACHE STRING "Default CXX options" FORCE)
 
-project(radiation-transport)
+enable_testing()
 
-set(CMAKE_CXX_STANDARD 17)
+project(radiation-transport)
 
 message("--> ${CMAKE_PROJECT_NAME} <--")
 
