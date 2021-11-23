@@ -7,9 +7,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" CACHE STRING "Default CXX options
 
 enable_testing()
 
-project(radiation-transport)
+project(radiation-transport LANGUAGES CXX HOMEPAGE_URL https://github.com/lobis/radiation-transport)
 
-message("--> ${CMAKE_PROJECT_NAME} <--")
+message("--> ${CMAKE_PROJECT_NAME} | ${CMAKE_PROJECT_HOMEPAGE_URL}")
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
