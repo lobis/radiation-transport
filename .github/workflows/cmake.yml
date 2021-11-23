@@ -20,7 +20,7 @@ jobs:
       image: docker.io/lobis/test
       credentials:
         username: ${{ github.actor }}
-        password: ${{ secrets.CONTAINER_REGISTRY_GITHUB_TOKEN_READ}}
+        password: ${{ secrets.DOCKERHUB_TOKEN}}
 
     steps:
       - uses: actions/checkout@v2
