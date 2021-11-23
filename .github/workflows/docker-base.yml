@@ -16,7 +16,6 @@ on:
         required: true
         default: "v10.7.3"
 env:
-  REGISTRY: ghcr.io
   IMAGE_NAME: lobis/root-geant4-garfieldpp
 
 jobs:
@@ -33,9 +32,15 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v1
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.CONTAINER_REGISTRY_GITHUB_TOKEN }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push base Docker image
         uses: docker/build-push-action@v2
@@ -46,7 +51,7 @@ jobs:
             CMAKE_CXX_STANDARD=${{ github.event.inputs.CMAKE_CXX_STANDARD }}
             ROOT_VERSION=${{ github.event.inputs.ROOT_VERSION }}
             GEANT4_VERSION=${{ github.event.inputs.GEANT4_VERSION }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:cxx${{ github.event.inputs.CMAKE_CXX_STANDARD }}_ROOT${{ github.event.inputs.ROOT_VERSION }}_Geant4${{ github.event.inputs.GEANT4_VERSION }}
+          tags: ${{ env.IMAGE_NAME }}:cxx${{ github.event.inputs.CMAKE_CXX_STANDARD }}_ROOT${{ github.event.inputs.ROOT_VERSION }}_Geant4${{ github.event.inputs.GEANT4_VERSION }}
 
       - name: Build and push base clion Docker image
         uses: docker/build-push-action@v2
@@ -57,4 +62,4 @@ jobs:
             CMAKE_CXX_STANDARD=${{ github.event.inputs.CMAKE_CXX_STANDARD }}
             ROOT_VERSION=${{ github.event.inputs.ROOT_VERSION }}
             GEANT4_VERSION=${{ github.event.inputs.GEANT4_VERSION }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-clion:cxx${{ github.event.inputs.CMAKE_CXX_STANDARD }}_ROOT${{ github.event.inputs.ROOT_VERSION }}_Geant4${{ github.event.inputs.GEANT4_VERSION }}
+          tags: ${{ env.IMAGE_NAME }}-clion:cxx${{ github.event.inputs.CMAKE_CXX_STANDARD }}_ROOT${{ github.event.inputs.ROOT_VERSION }}_Geant4${{ github.event.inputs.GEANT4_VERSION }}
