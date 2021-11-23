@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: lobis/root-geant4-garfieldpp:cxx17_ROOTv6-25-01_Geant4v10.7.2
+      image: ghcr.io/lobis/root-geant4-garfieldpp:cxx17_ROOTv6-25-01_Geant4v10.7.3
 
     steps:
       - uses: actions/checkout@v2
