@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: docker.io/lobis/test
+      image: docker.io/lobis/test-env
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.DOCKERHUB_TOKEN}}
