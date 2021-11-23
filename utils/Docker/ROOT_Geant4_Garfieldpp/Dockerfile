@@ -5,7 +5,7 @@ LABEL maintainer.email="luis.antonio.obis@gmail.com"
 
 LABEL org.opencontainers.image.source=https://github.com/lobis/radiation-transport.git
 
-ARG APPS_DIR=/opt
+ARG APPS_DIR=/usr/local
 
 RUN DEBIAN_FRONTEND="noninteractive" && \
     apt-get update && \
@@ -29,18 +29,11 @@ RUN echo CMAKE_CXX_STANDARD: $CMAKE_CXX_STANDARD
 ARG ROOT_VERSION
 RUN echo ROOT_VERSION: $ROOT_VERSION
 
-ENV ROOTSYS=$APPS_DIR/root/install
-
 RUN git clone https://github.com/root-project/root.git --branch=${ROOT_VERSION} --depth 1 $APPS_DIR/root/source && \
     mkdir -p $APPS_DIR/root/build &&  cd $APPS_DIR/root/build && \
-    cmake $APPS_DIR/root/source -DCMAKE_INSTALL_PREFIX=$ROOTSYS -DGDML=ON -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
+    cmake $APPS_DIR/root/source -DCMAKE_INSTALL_PREFIX=$APPS_DIR/root/install -DGDML=ON -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
     make -j$(nproc) install && \
-    rm -rf $APPS_DIR/root/build $APPS_DIR/root/source && \
-    echo "source $ROOTSYS/bin/thisroot.sh" >> ~/.bashrc
-
-ENV PATH $ROOTSYS/bin:$PATH
-ENV LD_LIBRARY_PATH $ROOTSYS/lib:$LD_LIBRARY_PATH
-ENV PYTHONPATH $ROOTSYS/lib:$PYTHONPATH
+    rm -rf $APPS_DIR/root/build $APPS_DIR/root/source
 
 # GEANT4
 ARG GEANT4_VERSION
@@ -52,11 +45,7 @@ RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --
     -DGEANT4_BUILD_MULTITHREADED=ON -DGEANT4_USE_QT=ON -DGEANT4_USE_OPENGL_X11=ON -DGEANT4_USE_RAYTRACER_X11=ON \
     -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_GDML=ON && \
     make -j$(nproc) install && \
-    rm -rf $APPS_DIR/geant4/build $APPS_DIR/geant4/source && \
-    echo "source $APPS_DIR/geant4/install/bin/geant4.sh" >> ~/.bashrc
-
-ENV PATH $APPS_DIR/geant4/install/bin:$PATH
-ENV LD_LIBRARY_PATH $APPS_DIR/geant4/install/lib:$LD_LIBRARY_PATH
+    rm -rf $APPS_DIR/geant4/build $APPS_DIR/geant4/source
 
 # GARFIELDPP
 ARG GARFIELDPP_VERSION=4.0
@@ -67,11 +56,19 @@ RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELD
     cmake ../source/ -DCMAKE_INSTALL_PREFIX=$APPS_DIR/garfieldpp/install \
     -DWITH_EXAMPLES=OFF -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
     make -j$(nproc) install && \
-    rm -rf $APPS_DIR/garfieldpp/build $APPS_DIR/garfieldpp/source && \
-    echo "source $APPS_DIR/garfieldpp/install/share/Garfield/setupGarfield.sh" >> ~/.bashrc
+    rm -rf $APPS_DIR/garfieldpp/build $APPS_DIR/garfieldpp/source
 
-ENV LD_LIBRARY_PATH $APPS_DIR/garfieldpp/install/lib:$LD_LIBRARY_PATH
+RUN echo "#!/bin/bash" >> /entry-point.sh
+RUN echo "source $APPS_DIR/root/install/bin/thisroot.sh" >> /entry-point.sh
+RUN echo "source $APPS_DIR/geant4/install/bin/geant4.sh" >> /entry-point.sh
+RUN echo "source $APPS_DIR/garfieldpp/install/share/Garfield/setupGarfield.sh" >> /entry-point.sh
+RUN echo "exec \"\$@\"" >> /entry-point.sh
+RUN chmod +x /entry-point.sh
+
+RUN echo "source /entry-point.sh" >> ~/.bashrc
 
 WORKDIR /
+
+ENTRYPOINT ["/entry-point.sh"]
 
 CMD ["/bin/bash"]
