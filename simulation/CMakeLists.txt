@@ -14,7 +14,7 @@ endif ()
 add_executable(${APPLICATION} main.cpp)
 
 target_include_directories(
-        ${APPLICATION} PUBLIC
+        ${APPLICATION} SYSTEM PUBLIC
         ${ROOT_INCLUDE_DIRS}
         ${Geant4_INCLUDE_DIR}
         include

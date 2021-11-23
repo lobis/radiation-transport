@@ -13,7 +13,7 @@ target_sources(
 )
 
 target_include_directories(
-        ${LIBRARY} PUBLIC
+        ${LIBRARY} SYSTEM PUBLIC
         include
         ${ROOT_INCLUDE_DIRS}
 )
