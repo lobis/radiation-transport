@@ -25,8 +25,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Load .bashrc
-        run: source /root/.bashrc
+      - name: Debug
+        run: |
+          source /opt/root/install/bin/thisroot.sh
+          source /opt/geant4/install/bin/geant4.sh
+          source /opt/garfieldpp/install/share/Garfield/setupGarfield.sh
+          printenv
+        shell: bash -leo pipefail {0}
 
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
