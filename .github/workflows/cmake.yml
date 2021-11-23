@@ -34,12 +34,23 @@ jobs:
         shell: bash -leo pipefail {0}
 
       - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        run: |
+          source /opt/root/install/bin/thisroot.sh
+          source /opt/geant4/install/bin/geant4.sh
+          source /opt/garfieldpp/install/share/Garfield/setupGarfield.sh
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        run: |
+          source /opt/root/install/bin/thisroot.sh
+          source /opt/geant4/install/bin/geant4.sh
+          source /opt/garfieldpp/install/share/Garfield/setupGarfield.sh
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Test
         run: |
+          source /opt/root/install/bin/thisroot.sh
+          source /opt/geant4/install/bin/geant4.sh
+          source /opt/garfieldpp/install/share/Garfield/setupGarfield.sh
           cd ${{github.workspace}}/build
           ctest -C ${{env.BUILD_TYPE}} --output-on-failure
