@@ -27,4 +27,4 @@ jobs:
       - name: Test
         run: |
           cd ${{github.workspace}}/build
-          ctest -C ${{env.BUILD_TYPE}}
+          ctest -C ${{env.BUILD_TYPE}} --output-on-failure
