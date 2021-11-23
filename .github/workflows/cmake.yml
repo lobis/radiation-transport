@@ -11,7 +11,7 @@ env:
 
 defaults:
   run:
-    shell: bash
+    shell: bash -eo pipefail {0} # Removed " --noprofile --norc " options from default bash
 
 jobs:
   build:
@@ -25,11 +25,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Load ~/.bashrc
-        run: |
-          printenv
-          source /root/.bashrc
-          printenv
+      - name: Load .bashrc
+        run: source /root/.bashrc
 
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
