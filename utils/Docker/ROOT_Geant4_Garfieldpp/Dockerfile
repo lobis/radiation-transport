@@ -7,8 +7,8 @@ LABEL org.opencontainers.image.source=https://github.com/lobis/radiation-transpo
 
 ARG APPS_DIR=/usr/local
 
-RUN DEBIAN_FRONTEND="noninteractive" && \
-    apt-get update && \
+ENV DEBIAN_FRONTEND="noninteractive"
+RUN apt-get update && \
     apt-get install -y \
     apt-utils binutils build-essential ca-certificates cmake curl davix-dev dcap-dev dpkg-dev fonts-freefont-ttf g++ gcc gfortran \
     git libafterimage-dev libcfitsio-dev libexpat-dev libfcgi-dev libfftw3-dev libfreetype6-dev libftgl-dev libgfal2-dev libgif-dev \
@@ -64,7 +64,7 @@ RUN echo "source $APPS_DIR/geant4/install/bin/geant4.sh" >> /entry-point.sh
 RUN echo "source $APPS_DIR/garfieldpp/install/share/Garfield/setupGarfield.sh" >> /entry-point.sh
 RUN echo "exec \"\$@\"" >> /entry-point.sh
 RUN chmod +x /entry-point.sh
-RUN mv ./entry-point.sh /usr/local/bin/entry-point.sh
+RUN mv /entry-point.sh /usr/local/bin/entry-point.sh
 RUN echo "source entry-point.sh" >> ~/.bashrc
 
 ENV G4ENSDFSTATEDATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/G4ENSDFSTATE2.3
