@@ -1,5 +1,6 @@
 {
-  "$schema": "",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lobis/radiation-transport/main/analysis/schemas/simulationConfig.schema.json",
   "title": "JSON Schema for SimulationConfig class",
   "description": "Geant4 simulation user configuration",
   "type": "object",
@@ -12,6 +13,11 @@
         "multithreading"
       ],
       "default": "serial"
+    },
+    "threads": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2
     },
     "seed": {
       "type": "integer",
