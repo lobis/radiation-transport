@@ -6,13 +6,22 @@
 
 #include <TSystem.h>
 #include <spdlog/spdlog.h>
-#include <yaml-cpp/yaml.h>
 
 #include <iostream>
 
 using namespace std;
 
-SimulationConfig::SimulationConfig() {}
+YAML::Node SimulationConfig::Serialize() const {
+    YAML::Node configNode;
+
+    configNode["verboseLevel"] = fVerboseLevel;
+    configNode["runManagerType"] = fRunManagerType;
+    configNode["threads"] = fThreads;
+    configNode["seed"] = fSeed;
+    configNode["commands"] = fCommands;
+
+    return configNode;
+}
 
 SimulationConfig SimulationConfig::LoadFromFile(const string& filename) {
     if (gSystem->AccessPathName(filename.c_str(), kFileExists)) {
@@ -46,9 +55,6 @@ SimulationConfig SimulationConfig::LoadFromFile(const string& filename) {
         config.fCommands = configNode["commands"].as<vector<string>>();
     }
 
-    spdlog::info("Reading configuration '{}' contents:", filename);
-    cout << configNode << endl;
-
     return config;
 }
 
@@ -66,4 +72,9 @@ void SimulationConfig::SetVerboseLevel(const string& newVerboseLevel) {
         exit(1);
     }
     fVerboseLevel = newVerboseLevel;
+}
+
+void SimulationConfig::Print() const {
+    spdlog::info("Reading configuration '{}' contents:", fConfigFilename);
+    cout << Serialize() << endl;
 }

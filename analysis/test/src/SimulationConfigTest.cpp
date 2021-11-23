@@ -17,3 +17,13 @@ TEST(SimulationConfig, LoadFromFile) {
 
     EXPECT_EQ(config.fRunManagerType, "serial");
 }
+
+TEST(SimulationConfig, DefaultConfig) {
+    const SimulationConfig config;
+
+    EXPECT_EQ(config.GetVerboseLevel(), "info");
+    EXPECT_EQ(config.fRunManagerType, "serial");
+    EXPECT_EQ(config.fThreads, 2);
+    EXPECT_EQ(config.fSeed, 0);
+    EXPECT_EQ(config.fCommands.empty(), true);
+}

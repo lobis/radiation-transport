@@ -5,6 +5,8 @@
 #ifndef RADIATION_TRANSPORT_SIMULATIONCONFIG_H
 #define RADIATION_TRANSPORT_SIMULATIONCONFIG_H
 
+#include <yaml-cpp/yaml.h>
+
 #include <string>
 #include <vector>
 
@@ -24,12 +26,12 @@ class SimulationConfig {
    private:
     std::string fVerboseLevel = "info";
 
-    SimulationConfig();
-
    public:
+    inline SimulationConfig() = default;
     SimulationConfig static LoadFromFile(const std::string& filename);
 
-    std::string Serialize() const;
+    YAML::Node Serialize() const;
+    void Print() const;
 };
 
 #endif  // RADIATION_TRANSPORT_SIMULATIONCONFIG_H
