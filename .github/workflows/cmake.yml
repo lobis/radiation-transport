@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/lobis/root-geant4-garfieldpp:cxx17_ROOTv6-25-01_Geant4v10.7.3
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.CONTAINER_REGISTRY_GITHUB_TOKEN_READ}}
 
     steps:
       - uses: actions/checkout@v2
