@@ -5,10 +5,10 @@ LABEL maintainer.email="luis.antonio.obis@gmail.com"
 
 LABEL org.opencontainers.image.source=https://github.com/lobis/radiation-transport.git
 
-ENV APPS_DIR=/opt
+ARG APPS_DIR=/opt
 
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && \
+RUN DEBIAN_FRONTEND="noninteractive" && \
+    apt-get update && \
     apt-get install -y \
     apt-utils binutils build-essential ca-certificates cmake curl davix-dev dcap-dev dpkg-dev fonts-freefont-ttf g++ gcc gfortran \
     git libafterimage-dev libcfitsio-dev libexpat-dev libfcgi-dev libfftw3-dev libfreetype6-dev libftgl-dev libgfal2-dev libgif-dev \
@@ -28,48 +28,49 @@ RUN echo CMAKE_CXX_STANDARD: $CMAKE_CXX_STANDARD
 # ROOT
 ARG ROOT_VERSION
 RUN echo ROOT_VERSION: $ROOT_VERSION
-ENV ROOT_DIR=$APPS_DIR/root
 
-ENV ROOTSYS=$ROOT_DIR/install
+ENV ROOTSYS=$APPS_DIR/root/install
 
-RUN git clone https://github.com/root-project/root.git --branch=${ROOT_VERSION} --depth 1 $ROOT_DIR/source && \
-    mkdir -p $ROOT_DIR/build &&  cd $ROOT_DIR/build && \
-    cmake $ROOT_DIR/source -DCMAKE_INSTALL_PREFIX=$ROOTSYS -DGDML=ON -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
+RUN git clone https://github.com/root-project/root.git --branch=${ROOT_VERSION} --depth 1 $APPS_DIR/root/source && \
+    mkdir -p $APPS_DIR/root/build &&  cd $APPS_DIR/root/build && \
+    cmake $APPS_DIR/root/source -DCMAKE_INSTALL_PREFIX=$ROOTSYS -DGDML=ON -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
     make -j$(nproc) install && \
-    rm -rf $ROOT_DIR/build $ROOT_DIR/source && \
+    rm -rf $APPS_DIR/root/build $APPS_DIR/root/source && \
     echo "source $ROOTSYS/bin/thisroot.sh" >> ~/.bashrc
 
 ENV PATH $ROOTSYS/bin:$PATH
+ENV LD_LIBRARY_PATH $ROOTSYS/lib:$LD_LIBRARY_PATH
 ENV PYTHONPATH $ROOTSYS/lib:$PYTHONPATH
-ENV CLING_STANDARD_PCH none
 
 # GEANT4
 ARG GEANT4_VERSION
 RUN echo GEANT4_VERSION: $GEANT4_VERSION
-ENV GEANT4_DIR=$APPS_DIR/geant4
 
-RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --depth 1 $GEANT4_DIR/source && \
-    mkdir -p $GEANT4_DIR/build &&  cd $GEANT4_DIR/build && \
-    cmake ../source/ -DCMAKE_INSTALL_PREFIX=$GEANT4_DIR/install -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD -DGEANT4_BUILD_CXXSTD=$CMAKE_CXX_STANDARD \
+RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --depth 1 $APPS_DIR/geant4/source && \
+    mkdir -p $APPS_DIR/geant4/build &&  cd $APPS_DIR/geant4/build && \
+    cmake ../source/ -DCMAKE_INSTALL_PREFIX=$APPS_DIR/geant4/install -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD -DGEANT4_BUILD_CXXSTD=$CMAKE_CXX_STANDARD \
     -DGEANT4_BUILD_MULTITHREADED=ON -DGEANT4_USE_QT=ON -DGEANT4_USE_OPENGL_X11=ON -DGEANT4_USE_RAYTRACER_X11=ON \
     -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_GDML=ON && \
     make -j$(nproc) install && \
-    rm -rf $GEANT4_DIR/build $GEANT4_DIR/source && \
-    echo "source $GEANT4_DIR/install/bin/geant4.sh" >> ~/.bashrc
+    rm -rf $APPS_DIR/geant4/build $APPS_DIR/geant4/source && \
+    echo "source $APPS_DIR/geant4/install/bin/geant4.sh" >> ~/.bashrc
 
-ENV PATH $GEANT4_DIR/install/bin:$PATH
+ENV PATH $APPS_DIR/geant4/install/bin:$PATH
+ENV LD_LIBRARY_PATH $APPS_DIR/geant4/install/lib:$LD_LIBRARY_PATH
 
 # GARFIELDPP
 ARG GARFIELDPP_VERSION=4.0
-ENV GARFIELDPP_DIR=$APPS_DIR/garfieldpp
+RUN echo GARFIELDPP_VERSION: GARFIELDPP_VERSION
 
-RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELDPP_VERSION} --depth 1 $GARFIELDPP_DIR/source && \
-    mkdir -p $GARFIELDPP_DIR/build &&  cd $GARFIELDPP_DIR/build && \
-    cmake ../source/ -DCMAKE_INSTALL_PREFIX=$GARFIELDPP_DIR/install \
+RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELDPP_VERSION} --depth 1 $APPS_DIR/garfieldpp/source && \
+    mkdir -p $APPS_DIR/garfieldpp/build &&  cd $APPS_DIR/garfieldpp/build && \
+    cmake ../source/ -DCMAKE_INSTALL_PREFIX=$APPS_DIR/garfieldpp/install \
     -DWITH_EXAMPLES=OFF -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
     make -j$(nproc) install && \
-    rm -rf $GARFIELDPP_DIR/build $GARFIELDPP_DIR/source && \
-    echo "source $GARFIELDPP_DIR/install/share/Garfield/setupGarfield.sh" >> ~/.bashrc
+    rm -rf $APPS_DIR/garfieldpp/build $APPS_DIR/garfieldpp/source && \
+    echo "source $APPS_DIR/garfieldpp/install/share/Garfield/setupGarfield.sh" >> ~/.bashrc
+
+ENV LD_LIBRARY_PATH $APPS_DIR/garfieldpp/install/lib:$LD_LIBRARY_PATH
 
 WORKDIR /
 
