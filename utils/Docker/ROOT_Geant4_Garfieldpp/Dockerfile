@@ -5,6 +5,15 @@ LABEL maintainer.email="luis.antonio.obis@gmail.com"
 
 LABEL org.opencontainers.image.source=https://github.com/lobis/radiation-transport.git
 
+ARG CMAKE_CXX_STANDARD
+RUN echo CMAKE_CXX_STANDARD: $CMAKE_CXX_STANDARD
+ARG ROOT_VERSION
+RUN echo ROOT_VERSION: $ROOT_VERSION
+ARG GEANT4_VERSION
+RUN echo GEANT4_VERSION: $GEANT4_VERSION
+ARG GARFIELDPP_VERSION=4.0
+RUN echo GARFIELDPP_VERSION: $GARFIELDPP_VERSION
+
 ARG APPS_DIR=/usr/local
 
 ENV DEBIAN_FRONTEND="noninteractive"
@@ -22,13 +31,7 @@ RUN apt-get update && \
     rm -rf /var/cache/apt/archives/* && \
     rm -rf /var/lib/apt/lists/*
 
-ARG CMAKE_CXX_STANDARD
-RUN echo CMAKE_CXX_STANDARD: $CMAKE_CXX_STANDARD
-
 # ROOT
-ARG ROOT_VERSION
-RUN echo ROOT_VERSION: $ROOT_VERSION
-
 RUN git clone https://github.com/root-project/root.git --branch=${ROOT_VERSION} --depth 1 $APPS_DIR/root/source && \
     mkdir -p $APPS_DIR/root/build &&  cd $APPS_DIR/root/build && \
     cmake $APPS_DIR/root/source -DCMAKE_INSTALL_PREFIX=$APPS_DIR/root/install -DGDML=ON -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
@@ -36,9 +39,6 @@ RUN git clone https://github.com/root-project/root.git --branch=${ROOT_VERSION} 
     rm -rf $APPS_DIR/root/build $APPS_DIR/root/source
 
 # GEANT4
-ARG GEANT4_VERSION
-RUN echo GEANT4_VERSION: $GEANT4_VERSION
-
 RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --depth 1 $APPS_DIR/geant4/source && \
     mkdir -p $APPS_DIR/geant4/build &&  cd $APPS_DIR/geant4/build && \
     cmake ../source/ -DCMAKE_INSTALL_PREFIX=$APPS_DIR/geant4/install -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD -DGEANT4_BUILD_CXXSTD=$CMAKE_CXX_STANDARD \
@@ -48,9 +48,6 @@ RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --
     rm -rf $APPS_DIR/geant4/build $APPS_DIR/geant4/source
 
 # GARFIELDPP
-ARG GARFIELDPP_VERSION=4.0
-RUN echo GARFIELDPP_VERSION: GARFIELDPP_VERSION
-
 RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELDPP_VERSION} --depth 1 $APPS_DIR/garfieldpp/source && \
     mkdir -p $APPS_DIR/garfieldpp/build &&  cd $APPS_DIR/garfieldpp/build && \
     cmake ../source/ -DCMAKE_INSTALL_PREFIX=$APPS_DIR/garfieldpp/install \
