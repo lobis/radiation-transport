@@ -11,13 +11,13 @@ env:
 
 defaults:
   run:
-    shell: bash -leo pipefail {0} # Removed " --noprofile --norc " options from default bash
+    shell: bash
 
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/lobis/root-geant4-garfieldpp:cxx17_ROOTv6-25-01_Geant4v10.7.3
+      image: docker.io/lobis/test
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.CONTAINER_REGISTRY_GITHUB_TOKEN_READ}}
@@ -25,32 +25,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Debug
-        run: |
-          source /opt/root/install/bin/thisroot.sh
-          source /opt/geant4/install/bin/geant4.sh
-          source /opt/garfieldpp/install/share/Garfield/setupGarfield.sh
-          printenv
-        shell: bash -leo pipefail {0}
-
       - name: Configure CMake
-        run: |
-          source /opt/root/install/bin/thisroot.sh
-          source /opt/geant4/install/bin/geant4.sh
-          source /opt/garfieldpp/install/share/Garfield/setupGarfield.sh
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
-        run: |
-          source /opt/root/install/bin/thisroot.sh
-          source /opt/geant4/install/bin/geant4.sh
-          source /opt/garfieldpp/install/share/Garfield/setupGarfield.sh
-          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Test
         run: |
-          source /opt/root/install/bin/thisroot.sh
-          source /opt/geant4/install/bin/geant4.sh
-          source /opt/garfieldpp/install/share/Garfield/setupGarfield.sh
           cd ${{github.workspace}}/build
           ctest -C ${{env.BUILD_TYPE}} --output-on-failure
