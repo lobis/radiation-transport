@@ -20,12 +20,12 @@ RUN apt-get update && \
     rm -rf /var/cache/apt/archives/* && \
     rm -rf /var/lib/apt/lists/*
 
-ARG CXX_STANDARD=14
-RUN echo $CXX_STANDARD
+ARG CXX_STANDARD
+RUN echo CXX_STANDARD: $CXX_STANDARD
 
 # ROOT
-ARG ROOT_VERSION=v6-25-01
-RUN echo $ROOT_VERSION
+ARG ROOT_VERSION
+RUN echo ROOT_VERSION: $ROOT_VERSION
 ENV ROOT_DIR=$APPS_DIR/root
 
 ENV ROOTSYS=$ROOT_DIR/install
@@ -42,8 +42,8 @@ ENV PYTHONPATH $ROOTSYS/lib:$PYTHONPATH
 ENV CLING_STANDARD_PCH none
 
 # GEANT4
-ARG GEANT4_VERSION=v10.7.3
-RUN echo $GEANT4_VERSION
+ARG GEANT4_VERSION
+RUN echo GEANT4_VERSION: $GEANT4_VERSION
 ENV GEANT4_DIR=$APPS_DIR/geant4
 
 RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --depth 1 $GEANT4_DIR/source && \
