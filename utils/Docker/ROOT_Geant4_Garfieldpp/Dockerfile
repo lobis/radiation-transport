@@ -3,6 +3,8 @@ FROM ubuntu:latest
 LABEL maintainer.name="Luis Obis"
 LABEL maintainer.email="luis.antonio.obis@gmail.com"
 
+LABEL org.opencontainers.image.source=https://github.com/lobis/radiation-transport.git
+
 ENV APPS_DIR=/opt
 
 ENV DEBIAN_FRONTEND=noninteractive
