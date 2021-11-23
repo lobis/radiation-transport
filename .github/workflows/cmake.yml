@@ -11,7 +11,7 @@ env:
 
 defaults:
   run:
-    shell: bash -eo pipefail {0} # Removed " --noprofile --norc " options from default bash
+    shell: bash -leo pipefail {0} # Removed " --noprofile --norc " options from default bash
 
 jobs:
   build:
