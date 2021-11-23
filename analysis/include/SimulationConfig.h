@@ -6,13 +6,24 @@
 #define RADIATION_TRANSPORT_SIMULATIONCONFIG_H
 
 #include <string>
+#include <vector>
 
 class SimulationConfig {
    public:
-    std::string fSerialMode;
     std::string fConfigFilename;
 
+    std::string fRunManagerType = "serial";
+    int fThreads = 2;
+    int fSeed = 0;
+
+    std::vector<std::string> fCommands;
+
+    inline std::string GetVerboseLevel() const { return fVerboseLevel; }
+    void SetVerboseLevel(const std::string&);
+
    private:
+    std::string fVerboseLevel = "info";
+
     SimulationConfig();
 
    public:

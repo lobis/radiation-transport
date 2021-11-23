@@ -17,14 +17,14 @@ target_include_directories(
         ${APPLICATION} SYSTEM PUBLIC
         ${ROOT_INCLUDE_DIRS}
         ${Geant4_INCLUDE_DIR}
-        include
+        #include
         ../analysis/include
 )
 
 FILE(GLOB SOURCES src/*.cpp)
 target_sources(
         ${APPLICATION} PUBLIC
-        ${SOURCES}
+        #${SOURCES}
 )
 
 target_link_libraries(

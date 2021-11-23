@@ -7,6 +7,15 @@
   "additionalProperties": false,
   "required": [],
   "properties": {
+    "verboseLevel": {
+      "enum": [
+        "debug",
+        "info",
+        "warning",
+        "error"
+      ],
+      "default": "info"
+    },
     "runManagerType": {
       "enum": [
         "serial",
@@ -22,6 +31,15 @@
     "seed": {
       "type": "integer",
       "default": 0
+    },
+    "commands": {
+      "description": "Geant4 UI Manager compatible command, executed in order of appearance",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^/"
+      },
+      "default": []
     }
   }
 }

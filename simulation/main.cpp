@@ -31,16 +31,23 @@ void UpdateConfigFromCommandLine(int argc, char** argv, SimulationConfig* config
     }
 
     while (true) {
-        const int option = getopt(argc - 1, argv, "st:");
+        const int option = getopt(argc - 1, argv, "st:v:");
         if (option == -1) break;
         switch (option) {
             case 's':
-                config->fSerialMode = "serial";
+                config->fRunManagerType = "serial";
                 spdlog::info("Command line option (-s): 'serial' mode");
                 break;
 
             case 't':
                 spdlog::info("Command line option (-t): 'threads' with value: {}", optarg);
+                spdlog::debug("Command line option 'threads' as int: {}", std::stoi(optarg));
+                config->fThreads = std::stoi(optarg);
+                break;
+
+            case 'v':
+                spdlog::info("Command line option (-v): 'verboseLevel' with value: {}", optarg);
+                config->SetVerboseLevel(optarg);
                 break;
 
             default:
@@ -60,6 +67,28 @@ int main(int argc, char** argv) {
     auto config = SimulationConfig::LoadFromFile("../analysis/test/files/simulation.yaml");
 
     UpdateConfigFromCommandLine(argc, argv, &config);
+
+    auto runManagerType = G4RunManagerType::Default;
+    if (config.fRunManagerType == "serial") {
+        runManagerType = G4RunManagerType::SerialOnly;
+        spdlog::info("Initializing Serial Run Manager");
+    } else if (config.fRunManagerType == "multithreading") {
+        runManagerType = G4RunManagerType::MTOnly;
+        spdlog::info("Initializing Multithreaded Run Manager");
+    }
+    auto runManager = G4RunManagerFactory::CreateRunManager(runManagerType);
+
+    runManager->SetNumberOfThreads(config.fThreads);
+
+    auto UImanager = G4UImanager::GetUIpointer();
+
+    size_t numberOfCommands = config.fCommands.size();
+    spdlog::debug("Number of commands defined in config file: {}", numberOfCommands);
+    for (size_t i = 0; i < numberOfCommands; i++) {
+        string command = config.fCommands[i];
+        spdlog::info("--> Command {} of {}: {}", i + 1, numberOfCommands, command);
+        UImanager->ApplyCommand(command);
+    }
 
     return 0;
 }

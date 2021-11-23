@@ -15,5 +15,5 @@ auto testsBasePath = string(std::filesystem::path(__FILE__).parent_path().parent
 TEST(SimulationConfig, LoadFromFile) {
     const auto config = SimulationConfig::LoadFromFile(testsBasePath + "files/simulation.yaml");
 
-    EXPECT_EQ(config.fSerialMode, "serial");
+    EXPECT_EQ(config.fRunManagerType, "serial");
 }
