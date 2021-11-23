@@ -28,7 +28,7 @@ jobs:
       - name: Load ~/.bashrc
         run: |
           printenv
-          source ~/.bashrc
+          source /root/.bashrc
           printenv
 
       - name: Configure CMake
