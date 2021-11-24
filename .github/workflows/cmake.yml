@@ -11,7 +11,7 @@ env:
 
 defaults:
   run:
-    shell: bash -leo pipefail {0}
+    shell: bash
 
 jobs:
   build:
