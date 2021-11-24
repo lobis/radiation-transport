@@ -5,6 +5,8 @@ LABEL maintainer.email="luis.antonio.obis@gmail.com"
 
 LABEL org.opencontainers.image.source=https://github.com/lobis/radiation-transport.git
 
+SHELL ["/bin/bash", "-c"]
+
 ARG CMAKE_CXX_STANDARD
 RUN echo CMAKE_CXX_STANDARD: $CMAKE_CXX_STANDARD
 ARG ROOT_VERSION
@@ -38,6 +40,17 @@ RUN git clone https://github.com/root-project/root.git --branch=${ROOT_VERSION} 
     make -j$(nproc) install && \
     rm -rf $APPS_DIR/root/build $APPS_DIR/root/source
 
+RUN source $APPS_DIR/root/install/bin/thisroot.sh
+RUN root-config --version
+
+# GARFIELDPP
+RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELDPP_VERSION} --depth 1 $APPS_DIR/garfieldpp/source && \
+    mkdir -p $APPS_DIR/garfieldpp/build &&  cd $APPS_DIR/garfieldpp/build && \
+    cmake ../source/ -DCMAKE_INSTALL_PREFIX=$APPS_DIR/garfieldpp/install \
+    -DWITH_EXAMPLES=OFF -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
+    make -j$(nproc) install && \
+    rm -rf $APPS_DIR/garfieldpp/build $APPS_DIR/garfieldpp/source \
+
 # GEANT4
 RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --depth 1 $APPS_DIR/geant4/source && \
     mkdir -p $APPS_DIR/geant4/build &&  cd $APPS_DIR/geant4/build && \
@@ -47,39 +60,14 @@ RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --
     make -j$(nproc) install && \
     rm -rf $APPS_DIR/geant4/build $APPS_DIR/geant4/source
 
-# GARFIELDPP
-RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELDPP_VERSION} --depth 1 $APPS_DIR/garfieldpp/source && \
-    mkdir -p $APPS_DIR/garfieldpp/build &&  cd $APPS_DIR/garfieldpp/build && \
-    cmake ../source/ -DCMAKE_INSTALL_PREFIX=$APPS_DIR/garfieldpp/install \
-    -DWITH_EXAMPLES=OFF -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
-    make -j$(nproc) install && \
-    rm -rf $APPS_DIR/garfieldpp/build $APPS_DIR/garfieldpp/source
-
 RUN echo "#!/bin/bash" >> /entry-point.sh
 RUN echo "source $APPS_DIR/root/install/bin/thisroot.sh" >> /entry-point.sh
-RUN echo "source $APPS_DIR/geant4/install/bin/geant4.sh" >> /entry-point.sh
 RUN echo "source $APPS_DIR/garfieldpp/install/share/Garfield/setupGarfield.sh" >> /entry-point.sh
+RUN echo "source $APPS_DIR/geant4/install/bin/geant4.sh" >> /entry-point.sh
 RUN echo "exec \"\$@\"" >> /entry-point.sh
 RUN chmod +x /entry-point.sh
 RUN mv /entry-point.sh /usr/local/bin/entry-point.sh
 RUN echo "source entry-point.sh" >> ~/.bashrc
-
-ENV G4ENSDFSTATEDATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/G4ENSDFSTATE2.3
-ENV G4PIIDATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/G4PII1.3
-ENV G4INCLDATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/G4INCL1.0
-ENV G4LEDATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/G4EMLOW7.13
-ENV G4PARTICLEXSDATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/G4PARTICLEXS3.1.1
-ENV G4NEUTRONHPDATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/G4NDL4.6
-ENV G4SAIDXSDATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/G4SAIDDATA2.0
-ENV G4REALSURFACEDATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/RealSurface2.2
-ENV G4ABLADATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/G4ABLA3.1
-ENV G4LEVELGAMMADATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/PhotonEvaporation5.7
-ENV G4RADIOACTIVEDATA=$APPS_DIR/geant4/install/share/Geant4-10.7.3/data/RadioactiveDecay5.6
-ENV SHLIB_PATH=$APPS_DIR/root/install/lib
-ENV DYLD_LIBRARY_PATH=$APPS_DIR/root/install/lib
-ENV PYTHONPATH=$APPS_DIR/root/install/lib
-ENV LIBPATH=$APPS_DIR/root/install/lib
-ENV LD_LIBRARY_PATH=$APPS_DIR/geant4/install/lib:$APPS_DIR/root/install/lib:$APPS_DIR/geant4/install/lib:/usr/lib/x86_64-linux-gnu:$APPS_DIR/garfieldpp/install/lib:/usr/lib/x86_64-linux-gnu:$APPS_DIR/garfieldpp/install/lib
 
 WORKDIR /
 
