@@ -40,5 +40,7 @@ jobs:
 
       - name: Test
         run: |
+          source entry-point.sh
+          printenv
           cd ${{github.workspace}}/build
           ctest -C ${{env.BUILD_TYPE}} --output-on-failure
