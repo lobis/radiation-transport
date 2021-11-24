@@ -75,6 +75,8 @@ RUN echo "source entry-point.sh" >> ~/.bashrc
 
 WORKDIR /
 
-ENTRYPOINT ["entry-point.sh"]
+ENV BASH_ENV "source entry-point.sh"
+
+ENTRYPOINT ["source entry-point.sh"]
 
 CMD ["/bin/bash"]
