@@ -35,6 +35,7 @@ jobs:
           root-config --version
           which geant4-config
           geant4-config --version
+          printenv | grep G4
 
       - name: Configure CMake
         run:
