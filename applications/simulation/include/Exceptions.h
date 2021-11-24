@@ -10,12 +10,11 @@
 // Exceptions
 namespace exceptions {
 
-class NoGeometryFileException : public std::exception {
+inline class NoGeometryFileException : public std::exception {
     virtual const char* what() const throw() { return "No geometry file defined"; }
 } NoGeometryFile;
 
-class GeometryFileNotFoundException : public std::exception {
-   public:
+inline class GeometryFileNotFoundException : public std::exception {
     virtual const char* what() const throw() { return "Geometry file not found"; }
 } GeometryFileNotFound;
 

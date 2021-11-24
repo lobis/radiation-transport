@@ -8,7 +8,7 @@
 #include <filesystem>
 
 #include "Application.h"
-// #include "Exceptions.h"
+#include "Exceptions.h"
 
 using namespace std;
 
@@ -45,7 +45,26 @@ TEST(ApplicationTest, NoGeometryFile) {
     try {
         app.Run();
     } catch (exception& ex) {
-        // const auto testException = (exception*)&exceptions::NoGeometryFile;
-        // EXPECT_STREQ(ex.what(), testException->what());
+        const auto targetException = (exception*)&exceptions::NoGeometryFile;
+        EXPECT_STREQ(ex.what(), targetException->what());
+    }
+}
+
+TEST(ApplicationTest, GeometryFileNotFound) {
+    SimulationConfig config(examplesPath + "basic/simulation.yaml");
+
+    config.fGeometryFilename = "/tmp/geometry-does-not-exist.gdml";
+
+    Application app;
+
+    app.LoadConfigFromFile(config);
+
+    app.PrintConfig();
+
+    try {
+        app.Run();
+    } catch (exception& ex) {
+        const auto targetException = (exception*)&exceptions::GeometryFileNotFound;
+        EXPECT_STREQ(ex.what(), targetException->what());
     }
 }
