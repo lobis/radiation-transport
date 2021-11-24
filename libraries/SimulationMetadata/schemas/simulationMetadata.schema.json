@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/lobis/radiation-transport/main/analysis/schemas/simulationConfig.schema.json",
+  "title": "JSON Schema for SimulationConfig class",
+  "description": "Geant4 simulation user configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [],
+  "properties": {
+    "verboseLevel": {
+      "enum": [
+        "debug",
+        "info",
+        "warning",
+        "error"
+      ],
+      "default": "info"
+    },
+    "runManagerType": {
+      "enum": [
+        "serial",
+        "multithreading"
+      ],
+      "default": "serial"
+    },
+    "threads": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2
+    },
+    "seed": {
+      "type": "integer",
+      "default": 0
+    },
+    "commands": {
+      "description": "Geant4 UI Manager compatible command, executed in order of appearance",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^/"
+      },
+      "default": []
+    }
+  }
+}

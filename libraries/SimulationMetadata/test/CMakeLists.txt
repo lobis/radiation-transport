@@ -1,4 +1,4 @@
-set(TESTING_EXECUTABLE AnalysisTest)
+set(TESTING_EXECUTABLE testSimulationMetadata)
 
 enable_testing()
 
@@ -13,12 +13,12 @@ target_sources(
 target_link_libraries(
         ${TESTING_EXECUTABLE} PUBLIC
         gtest_main
-        Analysis
+        SimulationMetadata
 )
 
 include(GoogleTest)
 
 gtest_discover_tests(${TESTING_EXECUTABLE})
 
-file(COPY files
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/files
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

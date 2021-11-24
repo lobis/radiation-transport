@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=../../schemas/simulationConfig.schema.json
-
 verboseLevel: debug
 
 runManagerType: serial

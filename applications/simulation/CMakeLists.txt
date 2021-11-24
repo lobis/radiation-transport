@@ -20,7 +20,6 @@ target_include_directories(
         ${ROOT_INCLUDE_DIRS}
         ${Geant4_INCLUDE_DIR}
         include
-        ../analysis/include
 )
 
 FILE(GLOB SOURCES src/*.cpp)
@@ -32,7 +31,7 @@ target_sources(
 
 target_link_libraries(
         ${LIBRARY} PUBLIC
-        Analysis
+        SimulationMetadata
         ${ROOT_LIBRARIES}
         ${Geant4_LIBRARIES}
         yaml-cpp
@@ -50,8 +49,5 @@ set_target_properties(
         ${APPLICATION}
         PROPERTIES OUTPUT_NAME ${APPLICATION_EXECUTABLE}
 )
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(test)

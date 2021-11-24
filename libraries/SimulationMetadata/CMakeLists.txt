@@ -1,8 +1,4 @@
-set(LIBRARY Analysis)
-
-find_package(ROOT REQUIRED COMPONENTS RIO Geom)
-
-message("-- Found ROOT version: ${ROOT_VERSION}")
+set(LIBRARY SimulationMetadata)
 
 add_library(${LIBRARY} SHARED)
 
@@ -25,8 +21,5 @@ target_link_libraries(
         yaml-cpp
         spdlog
 )
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/files
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/test/files)
 
 add_subdirectory(test)
