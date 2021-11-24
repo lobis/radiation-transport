@@ -8,6 +8,7 @@ on:
 
 env:
   BUILD_TYPE: Release
+  BASH_ENV: source entry-point.sh
 
 defaults:
   run:
@@ -30,17 +31,14 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Configure CMake
-        run: |
-          entry-point.sh
+        run:
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
-        run: |
-          entry-point.sh
+        run:
           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Test
         run: |
-          entry-point.sh
           cd ${{github.workspace}}/build
           ctest -C ${{env.BUILD_TYPE}} --output-on-failure
