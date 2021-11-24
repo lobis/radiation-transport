@@ -73,8 +73,6 @@ RUN chmod +x /entry-point.sh
 RUN mv /entry-point.sh /usr/local/bin/entry-point.sh
 RUN echo "source entry-point.sh" >> ~/.bashrc
 
-ENV BASH_ENV=/usr/local/bin/entry-point.sh
-
 WORKDIR /
 
 ENTRYPOINT ["entry-point.sh"]
