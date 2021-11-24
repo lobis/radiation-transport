@@ -20,11 +20,11 @@ jobs:
       matrix:
         runs-on: [ ubuntu-latest, self-hosted ]
     container:
-      image: docker.io/lobis/root-geant4-garfieldpp:cxx17_ROOTv6-25-01_Geant4v10.7.3
+      image: ghcr.io/lobis/root-geant4-garfieldpp:cxx17_ROOTv6-25-01_Geant4v10.7.3
 
       credentials:
         username: ${{ github.actor }}
-        password: ${{ secrets.DOCKERHUB_TOKEN}}
+        password: ${{ secrets.CONTAINER_REGISTRY_GITHUB_TOKEN}}
 
     steps:
       - uses: actions/checkout@v2
