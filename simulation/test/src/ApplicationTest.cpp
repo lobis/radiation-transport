@@ -17,6 +17,11 @@ TEST(ApplicationTest, ShowUsage) {
     app.ShowUsage();
 }
 
+TEST(ApplicationTest, DefaultRun) {
+    Application app;
+    app.Run();
+}
+
 TEST(ApplicationTest, LoadConfigFromFile) {
     const string exampleConfig = examplesPath + "basic/simulation.yaml";
 
