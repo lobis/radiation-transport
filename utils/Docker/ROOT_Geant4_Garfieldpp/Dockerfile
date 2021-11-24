@@ -5,8 +5,6 @@ LABEL maintainer.email="luis.antonio.obis@gmail.com"
 
 LABEL org.opencontainers.image.source=https://github.com/lobis/radiation-transport.git
 
-SHELL ["/bin/bash", "-c"]
-
 ARG CMAKE_CXX_STANDARD
 RUN echo CMAKE_CXX_STANDARD: $CMAKE_CXX_STANDARD
 ARG ROOT_VERSION
@@ -40,8 +38,9 @@ RUN git clone https://github.com/root-project/root.git --branch=${ROOT_VERSION} 
     make -j$(nproc) install && \
     rm -rf $APPS_DIR/root/build $APPS_DIR/root/source
 
-RUN source $APPS_DIR/root/install/bin/thisroot.sh
-RUN root-config --version
+ENV PATH $APPS_DIR/root/install/bin:$PATH
+ENV LD_LIBRARY_PATH $APPS_DIR/root/install/lib:$LD_LIBRARY_PATH
+ENV PYTHONPATH $APPS_DIR/root/install/lib:$PYTHONPATH
 
 # GARFIELDPP
 RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELDPP_VERSION} --depth 1 $APPS_DIR/garfieldpp/source && \
@@ -51,6 +50,8 @@ RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELD
     make -j$(nproc) install && \
     rm -rf $APPS_DIR/garfieldpp/build $APPS_DIR/garfieldpp/source \
 
+ENV LD_LIBRARY_PATH $APPS_DIR/garfieldpp/install/lib:$LD_LIBRARY_PATH
+
 # GEANT4
 RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --depth 1 $APPS_DIR/geant4/source && \
     mkdir -p $APPS_DIR/geant4/build &&  cd $APPS_DIR/geant4/build && \
@@ -59,6 +60,9 @@ RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --
     -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_GDML=ON && \
     make -j$(nproc) install && \
     rm -rf $APPS_DIR/geant4/build $APPS_DIR/geant4/source
+
+ENV PATH $APPS_DIR/geant4/install/bin:$PATH
+ENV LD_LIBRARY_PATH $APPS_DIR/geant4/install/lib:$LD_LIBRARY_PATH
 
 RUN echo "#!/bin/bash" >> /entry-point.sh
 RUN echo "source $APPS_DIR/root/install/bin/thisroot.sh" >> /entry-point.sh
