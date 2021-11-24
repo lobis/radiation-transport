@@ -3,7 +3,7 @@ FROM ubuntu:latest
 LABEL maintainer.name="Luis Obis"
 LABEL maintainer.email="luis.antonio.obis@gmail.com"
 
-LABEL org.opencontainers.image.source=https://github.com/lobis/radiation-transport.git
+LABEL org.opencontainers.image.source="https://github.com/lobis/radiation-transport"
 
 ARG CMAKE_CXX_STANDARD
 RUN echo CMAKE_CXX_STANDARD: $CMAKE_CXX_STANDARD
