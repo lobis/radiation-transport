@@ -8,7 +8,6 @@ on:
 
 env:
   BUILD_TYPE: Release
-  BASH_ENV: source entry-point.sh
 
 defaults:
   run:
@@ -30,6 +29,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Debug Environment
+        run: |
+          which root-config
+          root-config --version
+          which geant4-config
+          geant4-config --version
+
       - name: Configure CMake
         run:
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
@@ -41,6 +47,5 @@ jobs:
       - name: Test
         run: |
           source entry-point.sh
-          printenv
           cd ${{github.workspace}}/build
           ctest -C ${{env.BUILD_TYPE}} --output-on-failure
