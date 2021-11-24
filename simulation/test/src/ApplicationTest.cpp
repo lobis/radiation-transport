@@ -12,12 +12,19 @@ using namespace std;
 
 auto examplesPath = string(std::filesystem::path(__FILE__).parent_path().parent_path().parent_path()) + "/examples/";
 
-TEST(ApplicationTest, LoadFromFile) {
+TEST(ApplicationTest, ShowUsage) {
+    Application app;
+    app.ShowUsage();
+}
+
+TEST(ApplicationTest, LoadConfigFromFile) {
     const string exampleConfig = examplesPath + "basic/simulation.yaml";
 
     Application app;
 
     app.LoadConfigFromFile(exampleConfig);
+
+    app.PrintConfig();
 
     app.Run();
 }
