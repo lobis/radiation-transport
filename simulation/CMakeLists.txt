@@ -1,5 +1,6 @@
 set(LIBRARY Simulation)
-string(TOLOWER ${LIBRARY} APPLICATION) # application is CamelCase, library is PascalCase
+string(TOLOWER ${LIBRARY} APPLICATION_EXECUTABLE) # application is CamelCase, library is PascalCase
+set(APPLICATION ${APPLICATION_EXECUTABLE}-executable)
 
 find_package(ROOT REQUIRED COMPONENTS RIO Geom)
 
@@ -43,6 +44,11 @@ add_executable(${APPLICATION} main.cpp)
 target_link_libraries(
         ${APPLICATION} PUBLIC
         ${LIBRARY}
+)
+
+set_target_properties(
+        ${APPLICATION}
+        PROPERTIES OUTPUT_NAME ${APPLICATION_EXECUTABLE}
 )
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples
