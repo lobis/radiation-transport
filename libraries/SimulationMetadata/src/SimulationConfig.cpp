@@ -4,12 +4,14 @@
 
 #include "SimulationConfig.h"
 
-#include <TSystem.h>
 #include <spdlog/spdlog.h>
 
+#include <filesystem>
 #include <iostream>
 
 using namespace std;
+
+namespace fs = std::filesystem;
 
 YAML::Node SimulationConfig::Serialize() const {
     YAML::Node configNode;
@@ -18,20 +20,21 @@ YAML::Node SimulationConfig::Serialize() const {
     configNode["runManagerType"] = fRunManagerType;
     configNode["threads"] = fThreads;
     configNode["seed"] = fSeed;
+    configNode["geometry"] = fGeometryFilename;
     configNode["commands"] = fCommands;
 
     return configNode;
 }
 
 SimulationConfig SimulationConfig::LoadFromFile(const string& filename) {
-    if (gSystem->AccessPathName(filename.c_str(), kFileExists)) {
+    if (!fs::exists(filename)) {
         spdlog::error("config file '{}' does not exist", filename);
         exit(1);
     }
 
     auto config = SimulationConfig();
 
-    config.fConfigFilename = filename;
+    config.fConfigAbsolutePath = fs::absolute(filename);
 
     YAML::Node configNode = YAML::LoadFile(filename);
 
@@ -49,6 +52,10 @@ SimulationConfig SimulationConfig::LoadFromFile(const string& filename) {
 
     if (configNode["seed"]) {
         config.fSeed = configNode["seed"].as<int>();
+    }
+
+    if (configNode["geometry"]) {
+        config.fGeometryFilename = configNode["geometry"].as<string>();
     }
 
     if (configNode["commands"]) {
@@ -75,6 +82,16 @@ void SimulationConfig::SetVerboseLevel(const string& newVerboseLevel) {
 }
 
 void SimulationConfig::Print() const {
-    spdlog::info("Reading configuration '{}' contents:", fConfigFilename);
+    spdlog::info("Reading configuration '{}' contents:", fConfigAbsolutePath);
     cout << Serialize() << endl;
+}
+
+string SimulationConfig::GetGeometryAbsolutePath() const {
+    if (fGeometryFilename.empty()) {
+        return "";
+    }
+    if (fs::path(fGeometryFilename).is_absolute()) {
+        return fGeometryFilename;
+    }
+    return fs::path(fConfigAbsolutePath).parent_path() / fGeometryFilename;
 }

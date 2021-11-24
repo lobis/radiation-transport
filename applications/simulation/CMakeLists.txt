@@ -25,17 +25,18 @@ target_include_directories(
 FILE(GLOB SOURCES src/*.cpp)
 target_sources(
         ${LIBRARY} PUBLIC
-        src/Application.cpp
-        #${SOURCES}
+        ${SOURCES}
 )
 
 target_link_libraries(
         ${LIBRARY} PUBLIC
+        SimulationData
         SimulationMetadata
         ${ROOT_LIBRARIES}
         ${Geant4_LIBRARIES}
         yaml-cpp
         spdlog
+        stdc++fs # <filesystem>
 )
 
 add_executable(${APPLICATION} main.cpp)
@@ -51,3 +52,6 @@ set_target_properties(
 )
 
 add_subdirectory(test)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

@@ -13,12 +13,9 @@
 #include <G4UImanager.hh>
 #include <G4VisExecutive.hh>
 
-using namespace std;
+#include "DetectorConstruction.h"
 
-void Application::ShowUsage() const {
-    // TODO
-    spdlog::info("Application::ShowUsage:");
-}
+using namespace std;
 
 void Application::Run() {
     spdlog::info("Application::Run");
@@ -35,6 +32,8 @@ void Application::Run() {
 
     runManager->SetNumberOfThreads(fConfig.fThreads);
 
+    runManager->SetUserInitialization(new DetectorConstruction(fConfig.GetGeometryAbsolutePath()));
+
     auto UImanager = G4UImanager::GetUIpointer();
 
     size_t numberOfCommands = fConfig.fCommands.size();
@@ -46,6 +45,11 @@ void Application::Run() {
     }
 }
 
+void Application::ShowUsage() const {
+    // TODO
+    spdlog::info("Application::ShowUsage:");
+}
+
 Application::Application(const string& configFilename) { LoadConfigFromFile(configFilename); }
 
 Application::Application(int argc, char** argv) { InitializeFromCommandLine(argc, argv); }
@@ -53,6 +57,11 @@ Application::Application(int argc, char** argv) { InitializeFromCommandLine(argc
 void Application::LoadConfigFromFile(const string& configFilename) {
     spdlog::debug("Application::LoadConfigFromFile");
     fConfig = SimulationConfig::LoadFromFile(configFilename);
+
+    // Set the seed
+    if (fConfig.fSeed != 0) {
+        CLHEP::HepRandom::setTheSeed(fConfig.fSeed);
+    }
 }
 
 void Application::InitializeFromCommandLine(int argc, char** argv) {

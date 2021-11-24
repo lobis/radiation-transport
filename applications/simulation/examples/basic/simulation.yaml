@@ -1,3 +1,12 @@
-# yaml-language-server: $schema=../../schemas/simulationConfig.schema.json
+verboseLevel: debug
 
 runManagerType: serial
+
+threads: 4
+
+seed: 137
+
+geometry: geometry/box.tg
+
+commands:
+  - /run/beamOn 100

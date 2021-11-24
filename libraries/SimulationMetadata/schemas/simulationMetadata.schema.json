@@ -40,6 +40,11 @@
         "pattern": "^/"
       },
       "default": []
+    },
+    "geometry": {
+      "description": "Geometry (GDML or text geometry) filepath. Absolute path or relative path to the config file",
+      "type": "string",
+      "default": "geometry.gdml"
     }
   }
 }

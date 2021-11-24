@@ -3,6 +3,7 @@
 //
 
 #include <gtest/gtest.h>
+#include <spdlog/spdlog.h>
 
 #include <filesystem>
 
@@ -15,11 +16,6 @@ auto examplesPath = string(std::filesystem::path(__FILE__).parent_path().parent_
 TEST(ApplicationTest, ShowUsage) {
     Application app;
     app.ShowUsage();
-}
-
-TEST(ApplicationTest, DefaultRun) {
-    Application app;
-    app.Run();
 }
 
 TEST(ApplicationTest, LoadConfigFromFile) {

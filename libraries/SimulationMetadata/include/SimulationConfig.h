@@ -12,13 +12,16 @@
 
 class SimulationConfig {
    public:
-    std::string fConfigFilename;
+    std::string fConfigAbsolutePath;
 
     std::string fRunManagerType = "serial";
     int fThreads = 2;
     int fSeed = 0;
 
     std::vector<std::string> fCommands;
+
+    std::string fGeometryFilename;
+    std::string GetGeometryAbsolutePath() const;
 
     inline std::string GetVerboseLevel() const { return fVerboseLevel; }
     void SetVerboseLevel(const std::string&);

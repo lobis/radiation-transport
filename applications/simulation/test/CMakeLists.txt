@@ -19,6 +19,3 @@ target_link_libraries(
 include(GoogleTest)
 
 gtest_discover_tests(${TESTING_EXECUTABLE})
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../examples
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
