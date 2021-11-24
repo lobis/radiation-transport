@@ -13,7 +13,7 @@ target_sources(
 target_link_libraries(
         ${TESTING_EXECUTABLE} PUBLIC
         gtest_main
-        Analysis
+        Simulation
 )
 
 include(GoogleTest)

@@ -4,7 +4,7 @@ find_package(ROOT REQUIRED COMPONENTS RIO Geom)
 
 message("-- Found ROOT version: ${ROOT_VERSION}")
 
-add_library(${LIBRARY} STATIC)
+add_library(${LIBRARY} SHARED)
 
 FILE(GLOB SOURCES src/*.cpp)
 target_sources(
