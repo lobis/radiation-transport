@@ -25,6 +25,7 @@
 #include <cstdio>
 #include <fstream>
 
+#include "Exceptions.h"
 #include "spdlog/spdlog.h"
 
 using namespace std;
@@ -37,11 +38,11 @@ DetectorConstruction::DetectorConstruction(const fs::path& geometryFilename) : f
     spdlog::info("DetectorConstruction::DetectorConstruction - filename: '{}'", geometryFilename.c_str());
     if (string(fGeometryFilename).empty()) {
         spdlog::error("Geometry file not defined in DetectorConstruction");
-        exit(1);
+        throw exceptions::NoGeometryFile;
     }
     if (!fs::exists(fGeometryFilename)) {
         spdlog::error("Geometry file '{}' not found", fGeometryFilename.c_str());
-        exit(1);
+        throw exceptions::GeometryFileNotFound;
     }
 }
 

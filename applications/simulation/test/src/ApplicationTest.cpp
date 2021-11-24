@@ -8,6 +8,7 @@
 #include <filesystem>
 
 #include "Application.h"
+// #include "Exceptions.h"
 
 using namespace std;
 
@@ -19,13 +20,32 @@ TEST(ApplicationTest, ShowUsage) {
 }
 
 TEST(ApplicationTest, LoadConfigFromFile) {
-    const string exampleConfig = examplesPath + "basic/simulation.yaml";
+    const string configFile = examplesPath + "basic/simulation.yaml";
 
     Application app;
 
-    app.LoadConfigFromFile(exampleConfig);
+    app.LoadConfigFromFile(configFile);
 
     app.PrintConfig();
 
     app.Run();
+}
+
+TEST(ApplicationTest, NoGeometryFile) {
+    SimulationConfig config(examplesPath + "basic/simulation.yaml");
+
+    config.fGeometryFilename = "";
+
+    Application app;
+
+    app.LoadConfigFromFile(config);
+
+    app.PrintConfig();
+
+    try {
+        app.Run();
+    } catch (exception& ex) {
+        // const auto testException = (exception*)&exceptions::NoGeometryFile;
+        // EXPECT_STREQ(ex.what(), testException->what());
+    }
 }

@@ -50,13 +50,13 @@ void Application::ShowUsage() const {
     spdlog::info("Application::ShowUsage:");
 }
 
-Application::Application(const string& configFilename) { LoadConfigFromFile(configFilename); }
+Application::Application(const SimulationConfig& config) { LoadConfigFromFile(config); }
 
 Application::Application(int argc, char** argv) { InitializeFromCommandLine(argc, argv); }
 
-void Application::LoadConfigFromFile(const string& configFilename) {
+void Application::LoadConfigFromFile(const SimulationConfig& config) {
     spdlog::debug("Application::LoadConfigFromFile");
-    fConfig = SimulationConfig::LoadFromFile(configFilename);
+    fConfig = config;
 
     // Set the seed
     if (fConfig.fSeed != 0) {

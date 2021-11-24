@@ -95,3 +95,5 @@ string SimulationConfig::GetGeometryAbsolutePath() const {
     }
     return fs::path(fConfigAbsolutePath).parent_path() / fGeometryFilename;
 }
+
+SimulationConfig::SimulationConfig(const std::string& filename) : SimulationConfig() { *this = LoadFromFile(filename); }

@@ -1,0 +1,24 @@
+//
+// Created by lobis on 11/24/2021.
+//
+
+#ifndef RADIATION_TRANSPORT_EXCEPTIONS_H
+#define RADIATION_TRANSPORT_EXCEPTIONS_H
+
+#include <exception>
+
+// Exceptions
+namespace exceptions {
+
+class NoGeometryFileException : public std::exception {
+    virtual const char* what() const throw() { return "No geometry file defined"; }
+} NoGeometryFile;
+
+class GeometryFileNotFoundException : public std::exception {
+   public:
+    virtual const char* what() const throw() { return "Geometry file not found"; }
+} GeometryFileNotFound;
+
+}  // namespace exceptions
+
+#endif  // RADIATION_TRANSPORT_EXCEPTIONS_H

@@ -31,6 +31,8 @@ class SimulationConfig {
 
    public:
     inline SimulationConfig() = default;
+    SimulationConfig(const std::string&);
+
     SimulationConfig static LoadFromFile(const std::string& filename);
 
     YAML::Node Serialize() const;

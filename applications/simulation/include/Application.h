@@ -13,14 +13,14 @@ class Application {
 
    public:
     inline Application() = default;
-    explicit Application(const std::string&);
+    explicit Application(const SimulationConfig&);
     Application(int argc, char** argv);
 
     void ShowUsage() const;
 
-    inline void PrintConfig() const{fConfig.Print();}
+    inline void PrintConfig() const { fConfig.Print(); }
 
-    void LoadConfigFromFile(const std::string&);
+    void LoadConfigFromFile(const SimulationConfig&);
     void InitializeFromCommandLine(int argc, char** argv);
 
     void Run();
