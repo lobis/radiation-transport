@@ -8,12 +8,16 @@
 #include "GlobalManager.h"
 #include "SimulationConfig.h"
 
+class G4VisManager;
+class G4UIExecutive;
 class G4RunManager;
 
 class Application {
    private:
     SimulationConfig fConfig;
     G4RunManager* fRunManager;
+    G4VisManager* fG4VisManager = nullptr;
+    G4UIExecutive* fG4UIExecutive = nullptr;
 
     void SetLoggingLevelFromConfig();
 

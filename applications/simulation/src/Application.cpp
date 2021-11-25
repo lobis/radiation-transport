@@ -54,6 +54,12 @@ void Application::UserInitialization() {
     fRunManager->SetUserInitialization(new DetectorConstruction(fConfig.fDetectorConfig));
     fRunManager->SetUserInitialization(new PhysicsList(fConfig.fPhysicsListConfig));
     fRunManager->SetUserInitialization(new ActionInitialization);
+
+    if (fG4VisManager && fG4UIExecutive) {
+        spdlog::info("Running visualization macros");
+        fG4UIExecutive->SessionStart();
+        delete fG4UIExecutive;
+    }
 }
 
 void Application::Initialize() {
@@ -106,7 +112,7 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
     LoadConfigFromFile(configFilename);
 
     while (true) {
-        const int option = getopt(argc - 1, argv, "st:v:");
+        const int option = getopt(argc - 1, argv, "st:v:i");
         if (option == -1) break;
         switch (option) {
             case 's':
@@ -125,11 +131,23 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
                 fConfig.fVerboseLevel = optarg;
                 break;
 
+            case 'i':
+                spdlog::info("Command line option (-i): 'interactive'");
+                fConfig.fInteractive = true;
+                break;
+
             default:
                 // invalid option
                 spdlog::error("Error processing command line arguments");
                 exit(1);
         }
+    }
+
+    if (fConfig.fInteractive) {
+        spdlog::info("Initializing G4VisExecutive");
+        fG4VisManager = new G4VisExecutive();
+        fG4VisManager->Initialize();
+        fG4UIExecutive = new G4UIExecutive(argc, argv);
     }
 }
 
