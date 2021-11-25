@@ -14,6 +14,7 @@
 #include <G4VisExecutive.hh>
 
 #include "DetectorConstruction.h"
+#include "PhysicsList.h"
 
 using namespace std;
 
@@ -36,6 +37,7 @@ void Application::UserInitialization() {
     runManager->SetNumberOfThreads(fConfig.fThreads);
 
     runManager->SetUserInitialization(new DetectorConstruction(fConfig.fDetectorConfig));
+    runManager->SetUserInitialization(new PhysicsList);
 
     auto UImanager = G4UImanager::GetUIpointer();
 
