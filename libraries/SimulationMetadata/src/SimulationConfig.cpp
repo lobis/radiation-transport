@@ -49,6 +49,7 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
 
     if (node["detector"]) {
         fDetectorConfig.Deserialize(node["detector"]);
+        fDetectorConfig.fConfigAbsolutePath = fConfigAbsolutePath;
     }
 }
 
@@ -79,14 +80,4 @@ SimulationConfig::SimulationConfig(const string& filename) {
 void SimulationConfig::Print() const {
     spdlog::info("Reading configuration '{}' contents:", fConfigAbsolutePath);
     cout << Serialize() << endl;
-}
-
-string SimulationConfig::GetGeometryAbsolutePath() const {
-    if (fDetectorConfig.fGeometryFilename.empty()) {
-        return "";
-    }
-    if (fs::path(fDetectorConfig.fGeometryFilename).is_absolute()) {
-        return fDetectorConfig.fGeometryFilename;
-    }
-    return fs::path(fConfigAbsolutePath).parent_path() / fDetectorConfig.fGeometryFilename;
 }

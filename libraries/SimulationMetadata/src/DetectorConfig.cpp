@@ -4,9 +4,12 @@
 
 #include "DetectorConfig.h"
 
+#include <filesystem>
 #include <iostream>
 
 using namespace std;
+
+namespace fs = std::filesystem;
 
 namespace YAML {
 template <>
@@ -55,4 +58,14 @@ YAML::Node DetectorConfig::Serialize() const {
     node["volumes"] = fVolumes;
 
     return node;
+}
+
+string DetectorConfig::GetGeometryAbsolutePath() const {
+    if (fGeometryFilename.empty()) {
+        return "";
+    }
+    if (fs::path(fGeometryFilename).is_absolute()) {
+        return fGeometryFilename;
+    }
+    return fs::path(fConfigAbsolutePath).parent_path() / fGeometryFilename;
 }

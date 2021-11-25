@@ -29,9 +29,6 @@ class SimulationConfig : public SerializableConfig {
     DetectorConfig fDetectorConfig;
 
    public:
-    std::string GetGeometryAbsolutePath() const;
-
-   public:
     inline SimulationConfig() = default;
     SimulationConfig(const std::string&);
 

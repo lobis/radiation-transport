@@ -35,7 +35,7 @@ void Application::UserInitialization() {
 
     runManager->SetNumberOfThreads(fConfig.fThreads);
 
-    runManager->SetUserInitialization(new DetectorConstruction(fConfig.GetGeometryAbsolutePath()));
+    runManager->SetUserInitialization(new DetectorConstruction(fConfig.fDetectorConfig));
 
     auto UImanager = G4UImanager::GetUIpointer();
 

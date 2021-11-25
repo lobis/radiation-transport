@@ -21,8 +21,13 @@ class DetectorConfig : public SerializableConfig {
 
    public:  // Attributes must follow schema
     std::string fGeometryFilename;
+
     bool fCheckOverlaps = false;
     std::vector<DetectorVolume> fVolumes;
+
+   public:
+    std::string fConfigAbsolutePath;
+    std::string GetGeometryAbsolutePath() const;
 };
 
 #endif  // RADIATION_TRANSPORT_DETECTORCONFIG_H

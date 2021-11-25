@@ -14,12 +14,12 @@ using namespace std;
 
 auto examplesPath = string(std::filesystem::path(__FILE__).parent_path().parent_path().parent_path()) + "/examples/";
 
-TEST(ApplicationTest, ShowUsage) {
+TEST(Application, ShowUsage) {
     Application app;
     app.ShowUsage();
 }
 
-TEST(ApplicationTest, LoadConfigFromFile) {
+TEST(Application, LoadConfigFromFile) {
     const string configFile = examplesPath + "basic/simulation.yaml";
 
     Application app;
@@ -29,7 +29,7 @@ TEST(ApplicationTest, LoadConfigFromFile) {
     app.PrintConfig();
 }
 
-TEST(ApplicationTest, NoGeometryFile) {
+TEST(Application, NoGeometryFile) {
     SimulationConfig config(examplesPath + "basic/simulation.yaml");
 
     config.fDetectorConfig.fGeometryFilename = "";
@@ -48,7 +48,7 @@ TEST(ApplicationTest, NoGeometryFile) {
     }
 }
 
-TEST(ApplicationTest, GeometryFileNotFound) {
+TEST(Application, GeometryFileNotFound) {
     SimulationConfig config(examplesPath + "basic/simulation.yaml");
 
     config.fDetectorConfig.fGeometryFilename = "/tmp/geometry-does-not-exist.gdml";
