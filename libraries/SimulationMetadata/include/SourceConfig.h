@@ -20,7 +20,8 @@ class SourceConfig : public SerializableConfig {
     double fParticleExcitedLevel = 0;
 
     std::string fGeneratorType = "point";
-    TVector3 fGeneratorPosition;
-    TVector3 fGeneratorDirection;
+    TVector3 fGeneratorPosition = {0, 0, 0};
+    TVector3 fGeneratorDirection = {1, 0, 0};
+    TVector3 fGeneratorSize = {0, 0, 0};
 };
 #endif  // RADIATION_TRANSPORT_SOURCECONFIG_H

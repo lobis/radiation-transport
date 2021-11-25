@@ -109,4 +109,6 @@ TEST(Application, FullRun) {
     app.PrintConfig();
 
     app.UserInitialization();
+
+    app.Initialize();
 }

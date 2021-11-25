@@ -13,9 +13,7 @@ detector:
       sensitive: true
 
 commands:
-  - /gps/particle geantino
-  - /gps/energy 1000 MeV
-  - /run/beamOn 1
+  - /run/beamOn 100
 
 output: test.root
 
@@ -27,7 +25,7 @@ source:
 
   particle:
     name: mu-
-    energy: 500
+    energy: 1E6
 
 physics:
   physicsLists:

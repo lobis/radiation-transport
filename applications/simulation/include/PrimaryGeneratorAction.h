@@ -5,6 +5,8 @@
 #ifndef RADIATION_TRANSPORT_PRIMARYGENERATORACTION_H
 #define RADIATION_TRANSPORT_PRIMARYGENERATORACTION_H
 
+#include <SourceConfig.h>
+
 #include <G4GeneralParticleSource.hh>
 #include <G4ParticleGun.hh>
 #include <G4ThreeVector.hh>
@@ -21,8 +23,9 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
     virtual void GeneratePrimaries(G4Event* event);
 
    private:
-    OutputManager* output{};
+    OutputManager* fOutput;
     G4ParticleGun fGun;
+    const SourceConfig fSourceConfig;
 };
 
 #endif  // RADIATION_TRANSPORT_PRIMARYGENERATORACTION_H

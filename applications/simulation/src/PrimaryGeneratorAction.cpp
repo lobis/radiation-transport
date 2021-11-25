@@ -21,9 +21,11 @@
 #include "GlobalManager.h"
 #include "OutputManager.h"
 
-PrimaryGeneratorAction::PrimaryGeneratorAction() : G4VUserPrimaryGeneratorAction() {
+PrimaryGeneratorAction::PrimaryGeneratorAction()
+    : G4VUserPrimaryGeneratorAction(),
+      fOutput(OutputManager::Instance()),
+      fSourceConfig(GlobalManager::Instance()->GetSimulationConfig().fSourceConfig) {
     spdlog::info("PrimaryGeneratorAction::PrimaryGeneratorAction");
-    output = OutputManager::Instance();
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() = default;
@@ -31,15 +33,28 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction() = default;
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     spdlog::debug("PrimaryGeneratorAction::GeneratePrimaries");
 
-    auto particle = G4ParticleTable::GetParticleTable()->FindParticle("mu-");
+    auto particleName = fSourceConfig.fParticleName;
+    auto particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
     if (!particle) {
-        spdlog::error("could not find particle");
+        spdlog::error("PrimaryGeneratorAction::GeneratePrimaries - Could not find particle ''", particleName);
         exit(1);
     }
 
     fGun.SetParticleDefinition(particle);
-    fGun.SetParticleEnergy(123 * MeV);
-    fGun.SetParticleMomentumDirection({0, 1, 0});
+
+    auto particleEnergy = fSourceConfig.fParticleEnergy;
+    if (particleEnergy < 0) {
+        spdlog::error("PrimaryGeneratorAction::GeneratePrimaries - Particle energy cannot be negative");
+    }
+
+    fGun.SetParticleEnergy(particleEnergy * keV);
+
+    if (fSourceConfig.fGeneratorType == "point" || fSourceConfig.fGeneratorType == "plane") {
+        fGun.SetParticlePosition({fSourceConfig.fGeneratorPosition.x(), fSourceConfig.fGeneratorPosition.y(), fSourceConfig.fGeneratorPosition.z()});
+    }
+
+    fGun.SetParticleMomentumDirection(
+        {fSourceConfig.fGeneratorDirection.x(), fSourceConfig.fGeneratorDirection.y(), fSourceConfig.fGeneratorDirection.z()});
 
     fGun.GeneratePrimaryVertex(event);
 
