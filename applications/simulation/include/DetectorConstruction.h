@@ -33,7 +33,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
 
     const std::filesystem::path fGeometryFilename;
 
-    G4VPhysicalVolume* fWorld;
+    G4VPhysicalVolume* fWorld = nullptr;
 };
 
 #endif  // RADIATION_TRANSPORT_DETECTORCONSTRUCTION_H

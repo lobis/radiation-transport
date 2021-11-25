@@ -6,7 +6,10 @@ threads: 4
 
 seed: 137
 
-geometry: geometry/box.tg
+detector:
+  geometry: geometry/box.gdml
+  volumes:
+    - name: target
 
 commands:
   - /run/beamOn 100

@@ -10,9 +10,9 @@
 #include "Application.h"
 #include "Exceptions.h"
 
-using namespace std;
+#define EXAMPLES_PATH string(std::filesystem::path(__FILE__).parent_path().parent_path().parent_path()) + "/examples/"
 
-auto examplesPath = string(std::filesystem::path(__FILE__).parent_path().parent_path().parent_path()) + "/examples/";
+using namespace std;
 
 TEST(Application, ShowUsage) {
     Application app;
@@ -20,7 +20,7 @@ TEST(Application, ShowUsage) {
 }
 
 TEST(Application, LoadConfigFromFile) {
-    const string configFile = examplesPath + "basic/simulation.yaml";
+    const string configFile = EXAMPLES_PATH + "basic/simulation.yaml";
 
     Application app;
 
@@ -30,7 +30,7 @@ TEST(Application, LoadConfigFromFile) {
 }
 
 TEST(Application, NoGeometryFile) {
-    SimulationConfig config(examplesPath + "basic/simulation.yaml");
+    SimulationConfig config(EXAMPLES_PATH + "basic/simulation.yaml");
 
     config.fDetectorConfig.fGeometryFilename = "";
 
@@ -49,7 +49,7 @@ TEST(Application, NoGeometryFile) {
 }
 
 TEST(Application, GeometryFileNotFound) {
-    SimulationConfig config(examplesPath + "basic/simulation.yaml");
+    SimulationConfig config(EXAMPLES_PATH + "basic/simulation.yaml");
 
     config.fDetectorConfig.fGeometryFilename = "/tmp/geometry-does-not-exist.gdml";
 
@@ -65,4 +65,16 @@ TEST(Application, GeometryFileNotFound) {
         const auto targetException = (exception*)&exceptions::GeometryFileNotFound;
         EXPECT_STREQ(ex.what(), targetException->what());
     }
+}
+
+TEST(Application, LoadTextGeometry) {
+    const string configFile = EXAMPLES_PATH + "basic/simulation.yaml";
+
+    Application app;
+
+    app.LoadConfigFromFile(configFile);
+
+    app.PrintConfig();
+
+    app.UserInitialization();
 }
