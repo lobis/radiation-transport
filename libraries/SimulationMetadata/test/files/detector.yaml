@@ -1,0 +1,11 @@
+verboseLevel: debug
+
+runManagerType: serial
+
+detector:
+  geometry: test.gdml
+  volumes:
+    - name: sensitiveVolume
+      sensitive: true
+
+    - name: notSensitiveVolume

@@ -27,14 +27,12 @@ TEST(ApplicationTest, LoadConfigFromFile) {
     app.LoadConfigFromFile(configFile);
 
     app.PrintConfig();
-
-    app.Run();
 }
 
 TEST(ApplicationTest, NoGeometryFile) {
     SimulationConfig config(examplesPath + "basic/simulation.yaml");
 
-    config.fGeometryFilename = "";
+    config.fDetectorConfig.fGeometryFilename = "";
 
     Application app;
 
@@ -43,7 +41,7 @@ TEST(ApplicationTest, NoGeometryFile) {
     app.PrintConfig();
 
     try {
-        app.Run();
+        app.UserInitialization();
     } catch (exception& ex) {
         const auto targetException = (exception*)&exceptions::NoGeometryFile;
         EXPECT_STREQ(ex.what(), targetException->what());
@@ -53,7 +51,7 @@ TEST(ApplicationTest, NoGeometryFile) {
 TEST(ApplicationTest, GeometryFileNotFound) {
     SimulationConfig config(examplesPath + "basic/simulation.yaml");
 
-    config.fGeometryFilename = "/tmp/geometry-does-not-exist.gdml";
+    config.fDetectorConfig.fGeometryFilename = "/tmp/geometry-does-not-exist.gdml";
 
     Application app;
 
@@ -62,7 +60,7 @@ TEST(ApplicationTest, GeometryFileNotFound) {
     app.PrintConfig();
 
     try {
-        app.Run();
+        app.UserInitialization();
     } catch (exception& ex) {
         const auto targetException = (exception*)&exceptions::GeometryFileNotFound;
         EXPECT_STREQ(ex.what(), targetException->what());

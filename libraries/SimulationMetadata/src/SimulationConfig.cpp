@@ -13,6 +13,45 @@ using namespace std;
 
 namespace fs = std::filesystem;
 
+void SimulationConfig::Deserialize(const YAML::Node& node) {
+    if (node["verboseLevel"]) {
+        auto newVerboseLevel = node["verboseLevel"].as<string>();
+        if (newVerboseLevel == "debug") {
+            spdlog::set_level(spdlog::level::debug);
+        } else if (newVerboseLevel == "info") {
+            spdlog::set_level(spdlog::level::info);
+        } else if (newVerboseLevel == "warning") {
+            spdlog::set_level(spdlog::level::warn);
+        } else if (newVerboseLevel == "error") {
+            spdlog::set_level(spdlog::level::err);
+        } else {
+            spdlog::error("Invalid 'verboseLevel' '{}'. Valid values are: 'debug', 'info', 'warning', 'error'", newVerboseLevel);
+            exit(1);
+        }
+        fVerboseLevel = newVerboseLevel;
+    }
+
+    if (node["runManagerType"]) {
+        fRunManagerType = node["runManagerType"].as<string>();
+    }
+
+    if (node["threads"]) {
+        fThreads = node["threads"].as<int>();
+    }
+
+    if (node["seed"]) {
+        fSeed = node["seed"].as<int>();
+    }
+
+    if (node["commands"]) {
+        fCommands = node["commands"].as<vector<string>>();
+    }
+
+    if (node["detector"]) {
+        fDetectorConfig.Deserialize(node["detector"]);
+    }
+}
+
 YAML::Node SimulationConfig::Serialize() const {
     YAML::Node configNode;
 
@@ -20,65 +59,21 @@ YAML::Node SimulationConfig::Serialize() const {
     configNode["runManagerType"] = fRunManagerType;
     configNode["threads"] = fThreads;
     configNode["seed"] = fSeed;
-    configNode["geometry"] = fGeometryFilename;
     configNode["commands"] = fCommands;
+    configNode["detector"] = fDetectorConfig.Serialize();
 
     return configNode;
 }
 
-SimulationConfig SimulationConfig::LoadFromFile(const string& filename) {
+SimulationConfig::SimulationConfig(const string& filename) {
     if (!fs::exists(filename)) {
         spdlog::error("config file '{}' does not exist", filename);
         exit(1);
     }
 
-    auto config = SimulationConfig();
+    fConfigAbsolutePath = fs::absolute(filename);
 
-    config.fConfigAbsolutePath = fs::absolute(filename);
-
-    YAML::Node configNode = YAML::LoadFile(filename);
-
-    if (configNode["verboseLevel"]) {
-        config.SetVerboseLevel(configNode["verboseLevel"].as<string>());
-    }
-
-    if (configNode["runManagerType"]) {
-        config.fRunManagerType = configNode["runManagerType"].as<string>();
-    }
-
-    if (configNode["threads"]) {
-        config.fThreads = configNode["threads"].as<int>();
-    }
-
-    if (configNode["seed"]) {
-        config.fSeed = configNode["seed"].as<int>();
-    }
-
-    if (configNode["geometry"]) {
-        config.fGeometryFilename = configNode["geometry"].as<string>();
-    }
-
-    if (configNode["commands"]) {
-        config.fCommands = configNode["commands"].as<vector<string>>();
-    }
-
-    return config;
-}
-
-void SimulationConfig::SetVerboseLevel(const string& newVerboseLevel) {
-    if (newVerboseLevel == "debug") {
-        spdlog::set_level(spdlog::level::debug);
-    } else if (newVerboseLevel == "info") {
-        spdlog::set_level(spdlog::level::info);
-    } else if (newVerboseLevel == "warning") {
-        spdlog::set_level(spdlog::level::warn);
-    } else if (newVerboseLevel == "error") {
-        spdlog::set_level(spdlog::level::err);
-    } else {
-        spdlog::error("Invalid 'verboseLevel' '{}'. Valid values are: 'debug', 'info', 'warning', 'error'", newVerboseLevel);
-        exit(1);
-    }
-    fVerboseLevel = newVerboseLevel;
+    Deserialize(YAML::LoadFile(filename));
 }
 
 void SimulationConfig::Print() const {
@@ -87,13 +82,11 @@ void SimulationConfig::Print() const {
 }
 
 string SimulationConfig::GetGeometryAbsolutePath() const {
-    if (fGeometryFilename.empty()) {
+    if (fDetectorConfig.fGeometryFilename.empty()) {
         return "";
     }
-    if (fs::path(fGeometryFilename).is_absolute()) {
-        return fGeometryFilename;
+    if (fs::path(fDetectorConfig.fGeometryFilename).is_absolute()) {
+        return fDetectorConfig.fGeometryFilename;
     }
-    return fs::path(fConfigAbsolutePath).parent_path() / fGeometryFilename;
+    return fs::path(fConfigAbsolutePath).parent_path() / fDetectorConfig.fGeometryFilename;
 }
-
-SimulationConfig::SimulationConfig(const std::string& filename) : SimulationConfig() { *this = LoadFromFile(filename); }

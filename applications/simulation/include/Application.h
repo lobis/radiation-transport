@@ -23,7 +23,7 @@ class Application {
     void LoadConfigFromFile(const SimulationConfig&);
     void InitializeFromCommandLine(int argc, char** argv);
 
-    void Run();
+    void UserInitialization();
 };
 
 #endif  // RADIATION_TRANSPORT_APPLICATION_H

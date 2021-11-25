@@ -41,10 +41,57 @@
       },
       "default": []
     },
-    "geometry": {
-      "description": "Geometry (GDML or text geometry) filepath. Absolute path or relative path to the config file",
-      "type": "string",
-      "default": "geometry.gdml"
+    "detector": {
+      "$ref": "#/$defs/detector"
+    }
+  },
+  "$defs": {
+    "volume": {
+      "type": "object",
+      "description": "Volume",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "sensitive": {
+          "type": "bool",
+          "description": "Select as sensitive volume",
+          "default": false
+        }
+      }
+    },
+    "detector": {
+      "type": "object",
+      "description": "Detector definition (geometry, volumes...)",
+      "required": [
+        "geometry",
+        "volumes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "geometry": {
+          "type": "string",
+          "description": "Geometry filename (GDML or Text Geometry only)"
+        },
+        "volumes": {
+          "type": "array",
+          "description": "List of sensitive volumes",
+          "items": {
+            "$ref": "#/$defs/volume",
+            "title": "Volume"
+          },
+          "default": [
+            {
+              "name": "volume",
+              "sensitive": false
+            }
+          ]
+        }
+      }
     }
   }
 }

@@ -7,36 +7,35 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include <string>
-#include <vector>
+#include <filesystem>
 
-class SimulationConfig {
+#include "DetectorConfig.h"
+#include "SerializableConfig.h"
+
+class SimulationConfig : public SerializableConfig {
+   public:
+    void Deserialize(const YAML::Node&) override;
+    YAML::Node Serialize() const override;
+
    public:
     std::string fConfigAbsolutePath;
 
+    std::string fVerboseLevel = "info";
     std::string fRunManagerType = "serial";
     int fThreads = 2;
     int fSeed = 0;
-
     std::vector<std::string> fCommands;
 
-    std::string fGeometryFilename;
+    DetectorConfig fDetectorConfig;
+
+   public:
     std::string GetGeometryAbsolutePath() const;
-
-    inline std::string GetVerboseLevel() const { return fVerboseLevel; }
-    void SetVerboseLevel(const std::string&);
-
-   private:
-    std::string fVerboseLevel = "info";
 
    public:
     inline SimulationConfig() = default;
     SimulationConfig(const std::string&);
 
-    SimulationConfig static LoadFromFile(const std::string& filename);
-
-    YAML::Node Serialize() const;
-    void Print() const;
+    void Print() const override;
 };
 
 #endif  // RADIATION_TRANSPORT_SIMULATIONCONFIG_H

@@ -17,8 +17,11 @@
 
 using namespace std;
 
-void Application::Run() {
-    spdlog::info("Application::Run");
+void Application::UserInitialization() {
+    spdlog::info("Application::UserInitialization");
+
+    spdlog::set_level(spdlog::level::info);
+    spdlog::set_pattern("[%T][%^%l%$][thread %t]: %v");
 
     auto runManagerType = G4RunManagerType::Default;
     if (fConfig.fRunManagerType == "serial") {
@@ -77,7 +80,7 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
         exit(1);
     } else {
         spdlog::debug("config file '{}' found", configFilename);
-        LoadConfigFromFile(configFilename);
+        fConfig = SimulationConfig(configFilename);
     }
 
     while (true) {
@@ -97,7 +100,7 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
 
             case 'v':
                 spdlog::info("Command line option (-v): 'verboseLevel' with value: {}", optarg);
-                fConfig.SetVerboseLevel(optarg);
+                fConfig.fVerboseLevel = optarg;
                 break;
 
             default:
