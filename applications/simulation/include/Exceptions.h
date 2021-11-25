@@ -18,6 +18,10 @@ inline class GeometryFileNotFoundException : public std::exception {
     virtual const char* what() const throw() { return "Geometry file not found"; }
 } GeometryFileNotFound;
 
+inline class BadPhysicsListException : public std::exception {
+    virtual const char* what() const throw() { return "Bad Physics List"; }
+} BadPhysicsList;
+
 }  // namespace exceptions
 
 #endif  // RADIATION_TRANSPORT_EXCEPTIONS_H

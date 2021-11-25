@@ -67,7 +67,7 @@ TEST(Application, GeometryFileNotFound) {
     }
 }
 
-TEST(Application, LoadTextGeometry) {
+TEST(Application, LoadGeometryGdml) {
     const string configFile = EXAMPLES_PATH + "basic/simulation.yaml";
 
     Application app;
@@ -77,4 +77,24 @@ TEST(Application, LoadTextGeometry) {
     app.PrintConfig();
 
     app.UserInitialization();
+}
+
+TEST(Application, BadPhysicsList) {
+    SimulationConfig config(EXAMPLES_PATH + "basic/simulation.yaml");
+
+    config.fPhysicsListConfig.fPhysicsLists.clear();
+    config.fPhysicsListConfig.fPhysicsLists.emplace_back("ThisPhysicsListNameDoesNotExist");
+
+    Application app;
+
+    app.LoadConfigFromFile(config);
+
+    app.PrintConfig();
+
+    try {
+        app.UserInitialization();
+    } catch (exception& ex) {
+        const auto targetException = (exception*)&exceptions::BadPhysicsList;
+        EXPECT_STREQ(ex.what(), targetException->what());
+    }
 }

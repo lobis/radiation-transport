@@ -28,6 +28,12 @@ TEST(DetectorConstruction, LoadGdmlGeometry) {
     EXPECT_EQ(detectorConstruction.GetWorld(), world);
 }
 
+TEST(DetectorConstruction, LoadFromConfig) {
+    SimulationConfig config(EXAMPLES_PATH + "basic/simulation.yaml");
+
+    DetectorConstruction detectorConstruction(config.fDetectorConfig);
+}
+
 TEST(DetectorConstruction, CheckGdmlGeometry) {
     SimulationConfig config(EXAMPLES_PATH + "basic/simulation.yaml");
 

@@ -42,6 +42,7 @@
 #include <G4ios.hh>
 #include <globals.hh>
 
+#include "Exceptions.h"
 #include "spdlog/spdlog.h"
 
 PhysicsList::PhysicsList(const PhysicsListConfig& config) : G4VModularPhysicsList(), fConfig(config) {
@@ -68,6 +69,9 @@ PhysicsList::PhysicsList(const PhysicsListConfig& config) : G4VModularPhysicsLis
             fHadronPhys.push_back(new G4NeutronTrackingCut(fConfig.fVerbosity));
         } else if (physicsListName == "G4EmExtraPhysics") {
             fHadronPhys.push_back(new G4EmExtraPhysics(fConfig.fVerbosity));
+        } else {
+            spdlog::error("PhysicsList::PhysicsList: Bad physics list: '{}'", physicsListName);
+            throw exceptions::BadPhysicsList;
         }
     }
 
