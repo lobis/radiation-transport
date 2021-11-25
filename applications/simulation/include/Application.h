@@ -5,6 +5,7 @@
 #ifndef RADIATION_TRANSPORT_APPLICATION_H
 #define RADIATION_TRANSPORT_APPLICATION_H
 
+#include "GlobalManager.h"
 #include "SimulationConfig.h"
 
 class Application {
@@ -12,7 +13,7 @@ class Application {
     SimulationConfig fConfig;
 
    public:
-    inline Application() = default;
+    inline Application() : fGlobalManager(GlobalManager::Instance()){};
     explicit Application(const SimulationConfig&);
     Application(int argc, char** argv);
 
@@ -24,6 +25,8 @@ class Application {
     void InitializeFromCommandLine(int argc, char** argv);
 
     void UserInitialization();
+
+    GlobalManager* fGlobalManager;
 };
 
 #endif  // RADIATION_TRANSPORT_APPLICATION_H

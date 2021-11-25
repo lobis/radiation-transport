@@ -47,6 +47,10 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
         fCommands = node["commands"].as<vector<string>>();
     }
 
+    if (node["output"]) {
+        fOutputFilename = node["runManagerType"].as<string>();
+    }
+
     if (node["detector"]) {
         fDetectorConfig.Deserialize(node["detector"]);
         fDetectorConfig.fConfigAbsolutePath = fConfigAbsolutePath;
@@ -65,6 +69,7 @@ YAML::Node SimulationConfig::Serialize() const {
     configNode["threads"] = fThreads;
     configNode["seed"] = fSeed;
     configNode["commands"] = fCommands;
+    configNode["output"] = fOutputFilename;
 
     configNode["detector"] = fDetectorConfig.Serialize();
     configNode["physics"] = fPhysicsListConfig.Serialize();
@@ -86,4 +91,14 @@ SimulationConfig::SimulationConfig(const string& filename) {
 void SimulationConfig::Print() const {
     spdlog::info("Reading configuration '{}' contents:", fConfigAbsolutePath);
     cout << Serialize() << endl;
+}
+
+std::string SimulationConfig::GetOutputFileAbsolutePath() const {
+    if (fOutputFilename.empty()) {
+        return "";
+    }
+    if (fs::path(fOutputFilename).is_absolute()) {
+        return fOutputFilename;
+    }
+    return fs::path(fConfigAbsolutePath).parent_path() / fOutputFilename;
 }

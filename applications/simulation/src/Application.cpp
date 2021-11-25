@@ -24,6 +24,8 @@ void Application::UserInitialization() {
     spdlog::set_level(spdlog::level::info);
     spdlog::set_pattern("[%T][%^%l%$][thread %t]: %v");
 
+    fGlobalManager->SetSimulationConfig(fConfig);
+
     auto runManagerType = G4RunManagerType::Default;
     if (fConfig.fRunManagerType == "serial") {
         runManagerType = G4RunManagerType::SerialOnly;
@@ -55,7 +57,7 @@ void Application::ShowUsage() const {
     spdlog::info("Application::ShowUsage:");
 }
 
-Application::Application(const SimulationConfig& config) { LoadConfigFromFile(config); }
+Application::Application(const SimulationConfig& config) : Application() { LoadConfigFromFile(config); }
 
 Application::Application(int argc, char** argv) { InitializeFromCommandLine(argc, argv); }
 

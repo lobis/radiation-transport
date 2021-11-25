@@ -27,14 +27,23 @@ class SimulationConfig : public SerializableConfig {
     int fSeed = 0;
     std::vector<std::string> fCommands;
 
+    std::string fOutputFilename;
+
     DetectorConstructionConfig fDetectorConfig;
     PhysicsListConfig fPhysicsListConfig;
+
+    //
+    bool fSaveAllEvents = false;
+    bool fSave = true;
+    bool fInteractive = false;
 
    public:
     inline SimulationConfig() = default;
     SimulationConfig(const std::string&);
 
     void Print() const override;
+
+    std::string GetOutputFileAbsolutePath() const;
 };
 
 #endif  // RADIATION_TRANSPORT_SIMULATIONCONFIG_H

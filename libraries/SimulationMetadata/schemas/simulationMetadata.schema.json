@@ -16,6 +16,11 @@
       ],
       "default": "info"
     },
+    "output": {
+      "type": "string",
+      "description": "Output file name (root file). Relative path respect to the config file",
+      "default": "default.root"
+    },
     "runManagerType": {
       "enum": [
         "serial",
