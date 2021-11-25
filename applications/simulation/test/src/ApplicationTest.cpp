@@ -98,3 +98,15 @@ TEST(Application, BadPhysicsList) {
         EXPECT_STREQ(ex.what(), targetException->what());
     }
 }
+
+TEST(Application, FullRun) {
+    const string configFile = EXAMPLES_PATH + "basic/simulation.yaml";
+
+    Application app;
+
+    app.LoadConfigFromFile(configFile);
+
+    app.PrintConfig();
+
+    app.UserInitialization();
+}

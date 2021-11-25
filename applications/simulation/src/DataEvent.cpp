@@ -49,7 +49,7 @@ void DataEvent::InsertTrack(const G4Track* track) {
     }
     fTracks.emplace_back(track);
     if (fInitialStep.fN != 1) {
-        spdlog::error("fInitialStep does not have exactly one step!");
+        spdlog::error("fInitialStep does not have exactly one step! Problem with stepping verbose");
         exit(1);
     }
     fTracks.back().fSteps = fInitialStep;

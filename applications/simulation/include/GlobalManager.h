@@ -37,7 +37,7 @@ class GlobalManager {
 
     inline TString GetEventTreeName() const { return fEventTreeName; }
 
-    void SetSimulationConfig(const SimulationConfig& simulationConfig) { fSimulationConfig = simulationConfig; }
+    inline void SetSimulationConfig(const SimulationConfig& simulationConfig) { fSimulationConfig = simulationConfig; }
     inline SimulationConfig GetSimulationConfig() const { return fSimulationConfig; }
 
    private:

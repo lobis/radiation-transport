@@ -37,4 +37,4 @@ void ActionInitialization::Build() const {
     G4EventManager::GetEventManager()->SetNumberOfAdditionalWaitingStacks(1);  // optical stack
 }
 
-G4VSteppingVerbose* ActionInitialization::InitializeSteppingVerbose() const { return new SteppingVerbose(); }
+G4VSteppingVerbose* ActionInitialization::InitializeSteppingVerbose() const { return new SteppingVerbose; }

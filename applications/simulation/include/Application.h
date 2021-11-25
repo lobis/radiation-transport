@@ -8,9 +8,12 @@
 #include "GlobalManager.h"
 #include "SimulationConfig.h"
 
+class G4RunManager;
+
 class Application {
    private:
     SimulationConfig fConfig;
+    G4RunManager* fRunManager;
 
    public:
     inline Application() : fGlobalManager(GlobalManager::Instance()){};
@@ -25,6 +28,7 @@ class Application {
     void InitializeFromCommandLine(int argc, char** argv);
 
     void UserInitialization();
+    void Initialize();
 
     GlobalManager* fGlobalManager;
 };

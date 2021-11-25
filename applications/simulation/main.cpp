@@ -15,5 +15,7 @@ int main(int argc, char** argv) {
 
     app.UserInitialization();
 
+    app.Initialize();
+
     return 0;
 }

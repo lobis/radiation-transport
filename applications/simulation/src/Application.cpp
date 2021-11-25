@@ -4,15 +4,19 @@
 
 #include "Application.h"
 
+#include <SteppingVerbose.h>
 #include <TSystem.h>
 #include <spdlog/spdlog.h>
 #include <unistd.h>
 
+#include <G4RunManager.hh>
 #include <G4RunManagerFactory.hh>
 #include <G4UIExecutive.hh>
 #include <G4UImanager.hh>
+#include <G4VSteppingVerbose.hh>
 #include <G4VisExecutive.hh>
 
+#include "ActionInitialization.h"
 #include "DetectorConstruction.h"
 #include "PhysicsList.h"
 
@@ -21,10 +25,11 @@ using namespace std;
 void Application::UserInitialization() {
     spdlog::info("Application::UserInitialization");
 
-    spdlog::set_level(spdlog::level::info);
+    spdlog::set_level(spdlog::level::debug);
     spdlog::set_pattern("[%T][%^%l%$][thread %t]: %v");
 
-    fGlobalManager->SetSimulationConfig(fConfig);
+    // fGlobalManager->SetSimulationConfig(fConfig);
+    G4VSteppingVerbose::SetInstance(new SteppingVerbose);
 
     auto runManagerType = G4RunManagerType::Default;
     if (fConfig.fRunManagerType == "serial") {
@@ -34,12 +39,18 @@ void Application::UserInitialization() {
         runManagerType = G4RunManagerType::MTOnly;
         spdlog::info("Initializing Multithreaded Run Manager");
     }
-    auto runManager = G4RunManagerFactory::CreateRunManager(runManagerType);
 
-    runManager->SetNumberOfThreads(fConfig.fThreads);
+    fRunManager = G4RunManagerFactory::CreateRunManager(runManagerType);
 
-    runManager->SetUserInitialization(new DetectorConstruction(fConfig.fDetectorConfig));
-    runManager->SetUserInitialization(new PhysicsList(fConfig.fPhysicsListConfig));
+    fRunManager->SetNumberOfThreads(fConfig.fThreads);
+
+    fRunManager->SetUserInitialization(new DetectorConstruction(fConfig.fDetectorConfig));
+    fRunManager->SetUserInitialization(new PhysicsList(fConfig.fPhysicsListConfig));
+    fRunManager->SetUserInitialization(new ActionInitialization);
+}
+
+void Application::Initialize() {
+    fRunManager->Initialize();
 
     auto UImanager = G4UImanager::GetUIpointer();
 
@@ -82,10 +93,9 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
     if (gSystem->AccessPathName(configFilename.c_str(), kFileExists)) {
         spdlog::error("config file '{}' does not exist. cwd: {}", configFilename, get_current_dir_name());
         exit(1);
-    } else {
-        spdlog::debug("config file '{}' found", configFilename);
-        fConfig = SimulationConfig(configFilename);
     }
+    spdlog::debug("config file '{}' found", configFilename);
+    fConfig = SimulationConfig(configFilename);
 
     while (true) {
         const int option = getopt(argc - 1, argv, "st:v:");
