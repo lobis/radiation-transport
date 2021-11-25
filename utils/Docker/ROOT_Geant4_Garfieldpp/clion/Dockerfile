@@ -33,6 +33,6 @@ RUN useradd -m user \
 
 RUN usermod -s /bin/bash user
 
-ENTRYPOINT ["/entry-point.sh"]
+ENTRYPOINT ["source entry-point.sh"]
 
 CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_test_clion"]
