@@ -7,3 +7,5 @@
 #include <spdlog/spdlog.h>
 
 using namespace std;
+
+void DataSteps::Print() const { spdlog::info("Not implemented yet!"); }

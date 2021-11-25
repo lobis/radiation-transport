@@ -36,7 +36,9 @@ class DataSteps {
    public:
     inline DataSteps() = default;
 
-    ClassDefInline(DataSteps, 1);
+    void Print() const;
+
+    ClassDef(DataSteps, 1);
 
     /* Geant4 */
    public:

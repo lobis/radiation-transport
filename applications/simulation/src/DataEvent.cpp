@@ -87,5 +87,3 @@ bool DataEvent::IsValid(const G4Track* track) {
 }
 
 bool DataEvent::IsValid(const G4Step* step) { return IsValid(step->GetTrack()); }
-
-void DataEvent::Print() const {}

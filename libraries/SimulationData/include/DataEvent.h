@@ -41,7 +41,7 @@ class DataEvent {
 
     void Print() const;
 
-    ClassDefInline(DataEvent, 1);
+    ClassDef(DataEvent, 1);
 
    private:
     DataSteps fInitialStep;  //!

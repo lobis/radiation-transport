@@ -32,7 +32,9 @@ class DataTrack {
    public:
     inline DataTrack() = default;
 
-    ClassDefInline(DataTrack, 1);
+    void Print() const;
+
+    ClassDef(DataTrack, 1);
 
     /* Geant4 */
    public:
