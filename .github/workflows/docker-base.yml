@@ -23,7 +23,7 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
-        runs-on: [ ubuntu-latest, self-hosted ]
+        runs-on: [ self-hosted ]
     permissions:
       contents: read
       packages: write
