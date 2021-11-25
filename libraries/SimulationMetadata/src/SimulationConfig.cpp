@@ -59,6 +59,10 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
     if (node["physics"]) {
         fPhysicsListConfig.Deserialize(node["physics"]);
     }
+
+    if (node["source"]) {
+        fSourceConfig.Deserialize(node["source"]);
+    }
 }
 
 YAML::Node SimulationConfig::Serialize() const {
@@ -73,6 +77,7 @@ YAML::Node SimulationConfig::Serialize() const {
 
     configNode["detector"] = fDetectorConfig.Serialize();
     configNode["physics"] = fPhysicsListConfig.Serialize();
+    configNode["source"] = fSourceConfig.Serialize();
 
     return configNode;
 }

@@ -12,6 +12,7 @@
 #include "DetectorConstructionConfig.h"
 #include "PhysicsListConfig.h"
 #include "SerializableConfig.h"
+#include "SourceConfig.h"
 
 class SimulationConfig : public SerializableConfig {
    public:
@@ -31,6 +32,7 @@ class SimulationConfig : public SerializableConfig {
 
     DetectorConstructionConfig fDetectorConfig;
     PhysicsListConfig fPhysicsListConfig;
+    SourceConfig fSourceConfig;
 
     //
     bool fSaveAllEvents = false;

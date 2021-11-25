@@ -15,8 +15,10 @@ class Application {
     SimulationConfig fConfig;
     G4RunManager* fRunManager;
 
+    void SetLoggingLevelFromConfig();
+
    public:
-    inline Application() : fGlobalManager(GlobalManager::Instance()){};
+    inline Application() : fGlobalManager(GlobalManager::Instance()) { spdlog::set_pattern("[%T][%^%l%$]: %v"); };
     explicit Application(const SimulationConfig&);
     Application(int argc, char** argv);
 

@@ -11,6 +11,7 @@
 
 #include <G4RunManager.hh>
 #include <G4RunManagerFactory.hh>
+#include <G4Threading.hh>
 #include <G4UIExecutive.hh>
 #include <G4UImanager.hh>
 #include <G4VSteppingVerbose.hh>
@@ -25,10 +26,8 @@ using namespace std;
 void Application::UserInitialization() {
     spdlog::info("Application::UserInitialization");
 
-    spdlog::set_level(spdlog::level::debug);
-    spdlog::set_pattern("[%T][%^%l%$][thread %t]: %v");
+    SetLoggingLevelFromConfig();
 
-    // fGlobalManager->SetSimulationConfig(fConfig);
     G4VSteppingVerbose::SetInstance(new SteppingVerbose);
 
     auto runManagerType = G4RunManagerType::Default;
@@ -41,6 +40,14 @@ void Application::UserInitialization() {
     }
 
     fRunManager = G4RunManagerFactory::CreateRunManager(runManagerType);
+
+    if (G4Threading::IsMultithreadedApplication()) {
+        spdlog::debug("Multithreaded Application");
+        spdlog::set_pattern("[%T][%^%l%$][thread %t]: %v");
+    } else {
+        spdlog::debug("Serial Application");
+        spdlog::set_pattern("[%T][%^%l%$]: %v");
+    }
 
     fRunManager->SetNumberOfThreads(fConfig.fThreads);
 
@@ -65,7 +72,7 @@ void Application::Initialize() {
 
 void Application::ShowUsage() const {
     // TODO
-    spdlog::info("Application::ShowUsage:");
+    spdlog::info("Application::ShowUsage");
 }
 
 Application::Application(const SimulationConfig& config) : Application() { LoadConfigFromFile(config); }
@@ -123,5 +130,18 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
                 spdlog::error("Error processing command line arguments");
                 exit(1);
         }
+    }
+}
+
+void Application::SetLoggingLevelFromConfig() {
+    auto verboseLevel = fConfig.fVerboseLevel;
+    if (verboseLevel == "debug") {
+        spdlog::set_level(spdlog::level::debug);
+    } else if (verboseLevel == "info") {
+        spdlog::set_level(spdlog::level::info);
+    } else if (verboseLevel == "warning") {
+        spdlog::set_level(spdlog::level::warn);
+    } else if (verboseLevel == "error") {
+        spdlog::set_level(spdlog::level::err);
     }
 }

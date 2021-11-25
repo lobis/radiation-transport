@@ -108,7 +108,8 @@
       "type": "object",
       "description": "Primary generator",
       "required": [
-        "particle"
+        "particle",
+        "generator"
       ],
       "additionalProperties": false,
       "properties": {
@@ -123,17 +124,85 @@
           "properties": {
             "name": {
               "type": "string",
-              "description": "Particle name in Geant4 format such as mu-, neutron ..."
+              "description": "Particle name in Geant4 format such as mu-, neutron ...",
+              "default": "gamma"
             },
             "energy": {
               "type": "number",
               "description": "Particle kinetic energy (keV)",
-              "exclusiveMinimum": 0
+              "exclusiveMinimum": 0,
+              "default": 661.7
+            },
+            "excitedLevel": {
+              "type": "number",
+              "description": "Current excited level (for decays). In keV",
+              "minimum": 0,
+              "default": 0
             }
-          },
-          "default": {
-            "name": "geantino",
-            "energy": 100
+          }
+        },
+        "generator": {
+          "additionalProperties": false,
+          "properties": {
+            "point": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "default": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "direction": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "default": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "plane": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "default": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "direction": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "default": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "size": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "default": [
+                    10,
+                    5
+                  ]
+                }
+              }
+            }
           }
         }
       }
