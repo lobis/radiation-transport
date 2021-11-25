@@ -65,7 +65,7 @@ void GlobalManager::WriteEvents() {
                   fFile->GetName(), fEventTree->GetEntries());
 }
 
-TString GlobalManager::GetFilename() const { return fSimulationConfig.GetOutputFileAbsolutePath(); }
+TString GlobalManager::GetOutputFilename() const { return fSimulationConfig.GetOutputFileAbsolutePath(); }
 
 void GlobalManager::SetupFile() {
     spdlog::info("GlobalManager::SetupFile");
@@ -79,12 +79,16 @@ void GlobalManager::SetupFile() {
         spdlog::info("GlobalManager::SetupFile - Saving events is disabled");
         return;
     }
-
+    if (fSimulationConfig.fOutputFilename.empty()) {
+        spdlog::error("GlobalManager::SetupFile - Output file is empty");
+        exit(1);
+        return;
+    }
     // the master thread does not run the monte carlo calculations, it will wait for the worker threads to finish.
     spdlog::info("GlobalManager::SetupFile - Initializing GlobalManager for {} thread {}", (G4Threading::IsMasterThread() ? "master" : "worker"),
                  G4Threading::G4GetThreadId());
 
-    TString filename = GetFilename();  // Same as TRestRun filename
+    TString filename = GetOutputFilename();
 
     if (!fInitialized) {
         spdlog::info("GlobalManager::SetupFile - Not initialized yet, saving geometry...");
@@ -136,10 +140,13 @@ void GlobalManager::SetupFile() {
 
 void GlobalManager::WriteEventsAndCloseFile() {
     spdlog::info("GlobalManager::WriteEventsAndCloseFile");
+    if (!fFile) {
+        return;
+    }
     // Save remaining events
     WriteEvents();
     // Write event tree into file
-    if (fEventTree && fEventTree->GetEntries() > 0) {
+    if (fFile && fEventTree && fEventTree->GetEntries() > 0) {
         auto backupCycleTree = fFile->Get<TTree>(fEventTreeName);
         if (backupCycleTree) {
             auto list = new TList();
@@ -157,6 +164,8 @@ void GlobalManager::WriteEventsAndCloseFile() {
                          fFile->GetName());
         }
     }
+
+    spdlog::info("Output file: '{}'", fFile->GetName());
 
     if (fFile) {
         fFile->Close();

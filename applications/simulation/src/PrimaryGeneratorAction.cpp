@@ -5,8 +5,11 @@
 
 #include <G4Event.hh>
 #include <G4GeneralParticleSource.hh>
+#include <G4IonTable.hh>
 #include <G4LogicalVolumeStore.hh>
+#include <G4ParticleDefinition.hh>
 #include <G4ParticleGun.hh>
+#include <G4ParticleTable.hh>
 #include <G4PhysicalVolumeStore.hh>
 #include <G4RunManager.hh>
 #include <G4SDManager.hh>
@@ -20,16 +23,25 @@
 
 PrimaryGeneratorAction::PrimaryGeneratorAction() : G4VUserPrimaryGeneratorAction() {
     spdlog::info("PrimaryGeneratorAction::PrimaryGeneratorAction");
-    fGPS = std::make_unique<G4GeneralParticleSource>();
     output = OutputManager::Instance();
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() = default;
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
-    spdlog::debug("PrimaryGeneratorAction::GeneratePrimaries ---> Launching primaries using 'G4GeneralParticleSource'");
+    spdlog::debug("PrimaryGeneratorAction::GeneratePrimaries");
 
-    fGPS->GeneratePrimaryVertex(event);
+    auto particle = G4ParticleTable::GetParticleTable()->FindParticle("mu-");
+    if (!particle) {
+        spdlog::error("could not find particle");
+        exit(1);
+    }
+
+    fGun.SetParticleDefinition(particle);
+    fGun.SetParticleEnergy(123 * MeV);
+    fGun.SetParticleMomentumDirection({0, 1, 0});
+
+    fGun.GeneratePrimaryVertex(event);
 
     const auto& primaryPosition = event->GetPrimaryVertex()->GetPosition();
 

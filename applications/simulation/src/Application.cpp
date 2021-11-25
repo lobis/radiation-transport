@@ -70,15 +70,16 @@ void Application::ShowUsage() const {
 
 Application::Application(const SimulationConfig& config) : Application() { LoadConfigFromFile(config); }
 
-Application::Application(int argc, char** argv) { InitializeFromCommandLine(argc, argv); }
+Application::Application(int argc, char** argv) : Application() { InitializeFromCommandLine(argc, argv); }
 
 void Application::LoadConfigFromFile(const SimulationConfig& config) {
     spdlog::debug("Application::LoadConfigFromFile");
     fConfig = config;
-
-    // Set the seed
+    fGlobalManager->SetSimulationConfig(config);
+    //  Set the seed
     if (fConfig.fSeed != 0) {
         CLHEP::HepRandom::setTheSeed(fConfig.fSeed);
+        spdlog::info("Setting random seed to: '{}'", fConfig.fSeed);
     }
 }
 
@@ -95,7 +96,7 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
         exit(1);
     }
     spdlog::debug("config file '{}' found", configFilename);
-    fConfig = SimulationConfig(configFilename);
+    LoadConfigFromFile(configFilename);
 
     while (true) {
         const int option = getopt(argc - 1, argv, "st:v:");

@@ -3,9 +3,8 @@
 #define RADIATION_TRANSPORT_SENSITIVEDETECTOR_H
 
 #include <G4VSensitiveDetector.hh>
-#include <string>
 
-class OutputManager;
+#include "OutputManager.h"
 
 class G4TouchableHistory;
 

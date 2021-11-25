@@ -51,6 +51,9 @@
     },
     "physics": {
       "$ref": "#/$defs/physics"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
     }
   },
   "$defs": {
@@ -101,11 +104,45 @@
         }
       }
     },
+    "source": {
+      "type": "object",
+      "description": "Primary generator",
+      "required": [
+        "particle"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "particle": {
+          "type": "object",
+          "description": "Particle definition and energy",
+          "required": [
+            "name",
+            "energy"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Particle name in Geant4 format such as mu-, neutron ..."
+            },
+            "energy": {
+              "type": "number",
+              "description": "Particle kinetic energy (keV)",
+              "exclusiveMinimum": 0
+            }
+          },
+          "default": {
+            "name": "geantino",
+            "energy": 100
+          }
+        }
+      }
+    },
     "physics": {
       "type": "object",
       "description": "PhysicsList definition",
       "required": [
-        "physicsList"
+        "physicsLists"
       ],
       "additionalProperties": false,
       "properties": {
@@ -128,7 +165,7 @@
           "description": "Maximum energy production cut",
           "exclusiveMinimum": 0
         },
-        "physicsList": {
+        "physicsLists": {
           "type": "array",
           "description": "List of Geant4 physics lists to register",
           "items": {

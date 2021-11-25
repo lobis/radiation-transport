@@ -28,8 +28,8 @@ void PhysicsListConfig::Deserialize(const YAML::Node& node) {
         fEnergyProductionCutsMax = node["productionCutsEnergyMax"].as<double>();
     }
 
-    if (node["physicsList"]) {
-        auto physicsLists = node["physicsList"].as<vector<string>>();
+    if (node["physicsLists"]) {
+        auto physicsLists = node["physicsLists"].as<vector<string>>();
         for (auto& physicsList : physicsLists) {
             for (auto& existingPhysicsLists : fPhysicsLists) {
                 if (physicsList == existingPhysicsLists) {

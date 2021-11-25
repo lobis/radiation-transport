@@ -48,7 +48,7 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
     }
 
     if (node["output"]) {
-        fOutputFilename = node["runManagerType"].as<string>();
+        fOutputFilename = node["output"].as<string>();
     }
 
     if (node["detector"]) {
@@ -57,7 +57,7 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
     }
 
     if (node["physics"]) {
-        fDetectorConfig.Deserialize(node["physics"]);
+        fPhysicsListConfig.Deserialize(node["physics"]);
     }
 }
 

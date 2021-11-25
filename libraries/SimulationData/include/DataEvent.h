@@ -39,6 +39,8 @@ class DataEvent {
     inline Int_t GetSubEventID() const { return fSubEventID; }
     inline void SetSubEventID(Int_t subEventID) { fSubEventID = subEventID; }
 
+    void Print() const;
+
     ClassDefInline(DataEvent, 1);
 
    private:

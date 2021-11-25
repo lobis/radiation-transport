@@ -1,4 +1,4 @@
-verboseLevel: debug
+verboseLevel: info
 
 runManagerType: serial
 
@@ -9,7 +9,28 @@ seed: 137
 detector:
   geometry: geometry/box.gdml
   volumes:
-    - name: target
+    - name: box
+      sensitive: true
 
 commands:
+  - /gps/particle geantino
+  - /gps/energy 1000 MeV
   - /run/beamOn 1
+
+output: test.root
+
+source:
+  particle:
+    name: e-
+    energy: 100
+
+physics:
+  physicsLists:
+    - G4EmLivermorePhysics
+    - G4DecayPhysics
+    - G4RadioactiveDecayPhysics
+    - G4HadronElasticPhysicsHP
+    - G4IonBinaryCascadePhysics
+    - G4HadronPhysicsQGSP_BIC_HP
+    - G4NeutronTrackingCut
+    - G4EmExtraPhysics

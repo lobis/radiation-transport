@@ -29,7 +29,7 @@ class GlobalManager {
     void WriteEvents();
     void WriteEventsAndCloseFile();
 
-    TString GetFilename() const;
+    TString GetOutputFilename() const;
 
     void SetupFile();
 
@@ -50,8 +50,8 @@ class GlobalManager {
 
     std::mutex fEventContainerMutex;
 
-    TFile* fFile;
-    TTree* fEventTree;
+    TFile* fFile = nullptr;
+    TTree* fEventTree = nullptr;
 
     const TString fEventTreeName = "EventTree";
 

@@ -4,6 +4,9 @@
 
 #include "DetectorConstruction.h"
 
+#include <DetectorConstructionConfig.h>
+#include <GlobalManager.h>
+#include <SensitiveDetector.h>
 #include <TString.h>
 
 #include <G4GDMLParser.hh>
@@ -34,7 +37,8 @@ namespace fs = std::filesystem;
 
 DetectorConstruction::DetectorConstruction() = default;
 
-DetectorConstruction::DetectorConstruction(const DetectorConstructionConfig& detectorConfig) : fGeometryFilename(detectorConfig.GetGeometryAbsolutePath()) {
+DetectorConstruction::DetectorConstruction(const DetectorConstructionConfig& detectorConfig)
+    : fGeometryFilename(detectorConfig.GetGeometryAbsolutePath()) {
     spdlog::info("DetectorConstruction::DetectorConstruction - filename: '{}'", fGeometryFilename.c_str());
     if (string(fGeometryFilename).empty()) {
         spdlog::error("Geometry file not defined in DetectorConstruction");
@@ -84,7 +88,41 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     return fWorld;
 }
 
-void DetectorConstruction::ConstructSDandField() {}
+void DetectorConstruction::ConstructSDandField() {
+    spdlog::debug("DetectorConstruction::ConstructSDandField");
+
+    DetectorConstructionConfig config = GlobalManager::Instance()->GetSimulationConfig().fDetectorConfig;
+
+    vector<string> sensitiveVolumes;
+    for (const auto& volume : config.fVolumes) {
+        if (volume.fIsSensitive) {
+            sensitiveVolumes.emplace_back(volume.fName);
+        }
+    }
+
+    if (sensitiveVolumes.empty()) {
+        return;
+    }
+
+    G4SDManager* SDManager = G4SDManager::GetSDMpointer();
+
+    for (const auto& sensitivePhysicalVolume : sensitiveVolumes) {
+        spdlog::info("DetectorConstruction::ConstructSDandField: Attaching sensitive detector to {}", sensitivePhysicalVolume);
+        G4VPhysicalVolume* physicalVolume = G4PhysicalVolumeStore::GetInstance()->GetVolume(sensitivePhysicalVolume);
+        if (!physicalVolume) {
+            PrintGeometryInfo();
+            spdlog::error(
+                "Trying to attach a sensitive detector to the logical volume of physical volume '{}'"
+                ", but this physical volume is not found in store.",
+                sensitivePhysicalVolume);
+            exit(1);
+        }
+        G4LogicalVolume* logicalVolume = physicalVolume->GetLogicalVolume();
+        G4VSensitiveDetector* sensitiveDetector = new SensitiveDetector(logicalVolume->GetName());
+        SDManager->AddNewDetector(sensitiveDetector);
+        logicalVolume->SetSensitiveDetector(sensitiveDetector);
+    }
+}
 
 void DetectorConstruction::PrintGeometryInfo() {
     spdlog::info("DetectorConstruction::PrintGeometryInfo - Begin");
