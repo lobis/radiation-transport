@@ -5,11 +5,13 @@
 #ifndef RADIATION_TRANSPORT_PHYSICSLIST_H
 #define RADIATION_TRANSPORT_PHYSICSLIST_H
 
+#include <PhysicsListConfig.h>
+
 #include <G4VModularPhysicsList.hh>
 
 class PhysicsList : public G4VModularPhysicsList {
    public:
-    explicit PhysicsList(G4int verbosity = 0);
+    explicit PhysicsList(const PhysicsListConfig&);
     ~PhysicsList() override = default;
 
     virtual void SetCuts() override;
@@ -17,6 +19,8 @@ class PhysicsList : public G4VModularPhysicsList {
     virtual void ConstructProcess() override;
 
    private:
+    const PhysicsListConfig fConfig;
+
     PhysicsList& operator=(const PhysicsList& right);
     PhysicsList(const PhysicsList&);
 

@@ -37,7 +37,7 @@ void Application::UserInitialization() {
     runManager->SetNumberOfThreads(fConfig.fThreads);
 
     runManager->SetUserInitialization(new DetectorConstruction(fConfig.fDetectorConfig));
-    runManager->SetUserInitialization(new PhysicsList);
+    runManager->SetUserInitialization(new PhysicsList(fConfig.fPhysicsListConfig));
 
     auto UImanager = G4UImanager::GetUIpointer();
 

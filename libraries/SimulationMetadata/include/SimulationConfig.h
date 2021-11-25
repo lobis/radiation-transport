@@ -9,7 +9,8 @@
 
 #include <filesystem>
 
-#include "DetectorConfig.h"
+#include "DetectorConstructionConfig.h"
+#include "PhysicsListConfig.h"
 #include "SerializableConfig.h"
 
 class SimulationConfig : public SerializableConfig {
@@ -26,7 +27,8 @@ class SimulationConfig : public SerializableConfig {
     int fSeed = 0;
     std::vector<std::string> fCommands;
 
-    DetectorConfig fDetectorConfig;
+    DetectorConstructionConfig fDetectorConfig;
+    PhysicsListConfig fPhysicsListConfig;
 
    public:
     inline SimulationConfig() = default;

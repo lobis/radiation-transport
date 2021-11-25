@@ -5,7 +5,7 @@
 #ifndef RADIATION_TRANSPORT_DETECTORCONSTRUCTION_H
 #define RADIATION_TRANSPORT_DETECTORCONSTRUCTION_H
 
-#include <DetectorConfig.h>
+#include <DetectorConstructionConfig.h>
 
 #include <G4VUserDetectorConstruction.hh>
 #include <filesystem>
@@ -16,7 +16,7 @@ class G4GDMLParser;
 
 class DetectorConstruction : public G4VUserDetectorConstruction {
    public:
-    DetectorConstruction(const DetectorConfig&);
+    DetectorConstruction(const DetectorConstructionConfig&);
     ~DetectorConstruction();
 
     void PrintGeometryInfo();

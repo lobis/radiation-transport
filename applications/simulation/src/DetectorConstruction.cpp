@@ -34,7 +34,7 @@ namespace fs = std::filesystem;
 
 DetectorConstruction::DetectorConstruction() = default;
 
-DetectorConstruction::DetectorConstruction(const DetectorConfig& detectorConfig) : fGeometryFilename(detectorConfig.GetGeometryAbsolutePath()) {
+DetectorConstruction::DetectorConstruction(const DetectorConstructionConfig& detectorConfig) : fGeometryFilename(detectorConfig.GetGeometryAbsolutePath()) {
     spdlog::info("DetectorConstruction::DetectorConstruction - filename: '{}'", fGeometryFilename.c_str());
     if (string(fGeometryFilename).empty()) {
         spdlog::error("Geometry file not defined in DetectorConstruction");

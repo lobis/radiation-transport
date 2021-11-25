@@ -2,7 +2,7 @@
 // Created by lobis on 25/11/2021.
 //
 
-#include "DetectorConfig.h"
+#include "DetectorConstructionConfig.h"
 
 #include <filesystem>
 #include <iostream>
@@ -36,7 +36,7 @@ struct convert<DetectorVolume> {
 };
 }  // namespace YAML
 
-void DetectorConfig::Deserialize(const YAML::Node& node) {
+void DetectorConstructionConfig::Deserialize(const YAML::Node& node) {
     if (node["geometry"]) {
         fGeometryFilename = node["geometry"].as<string>();
     }
@@ -46,11 +46,19 @@ void DetectorConfig::Deserialize(const YAML::Node& node) {
     }
 
     if (node["volumes"]) {
-        fVolumes = node["volumes"].as<vector<DetectorVolume>>();
+        auto volumes = node["volumes"].as<vector<DetectorVolume>>();
+        for (auto& volume : volumes) {
+            for (auto& existingVolume : fVolumes) {
+                if (volume == existingVolume) {
+                    continue;
+                }
+            }
+            fVolumes.push_back(volume);
+        }
     }
 }
 
-YAML::Node DetectorConfig::Serialize() const {
+YAML::Node DetectorConstructionConfig::Serialize() const {
     YAML::Node node;
 
     node["geometry"] = fGeometryFilename;
@@ -60,7 +68,7 @@ YAML::Node DetectorConfig::Serialize() const {
     return node;
 }
 
-string DetectorConfig::GetGeometryAbsolutePath() const {
+string DetectorConstructionConfig::GetGeometryAbsolutePath() const {
     if (fGeometryFilename.empty()) {
         return "";
     }

@@ -51,6 +51,10 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
         fDetectorConfig.Deserialize(node["detector"]);
         fDetectorConfig.fConfigAbsolutePath = fConfigAbsolutePath;
     }
+
+    if (node["physics"]) {
+        fDetectorConfig.Deserialize(node["physics"]);
+    }
 }
 
 YAML::Node SimulationConfig::Serialize() const {
@@ -61,7 +65,9 @@ YAML::Node SimulationConfig::Serialize() const {
     configNode["threads"] = fThreads;
     configNode["seed"] = fSeed;
     configNode["commands"] = fCommands;
+
     configNode["detector"] = fDetectorConfig.Serialize();
+    configNode["physics"] = fPhysicsListConfig.Serialize();
 
     return configNode;
 }

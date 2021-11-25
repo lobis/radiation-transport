@@ -6,7 +6,7 @@
 
 #include <filesystem>
 
-#include "DetectorConfig.h"
+#include "DetectorConstructionConfig.h"
 
 using namespace std;
 
@@ -21,7 +21,7 @@ TEST(DetectorConfig, Deserialize) {
 
     EXPECT_TRUE(config["detector"]);
 
-    DetectorConfig detectorConfig;
+    DetectorConstructionConfig detectorConfig;
 
     detectorConfig.Deserialize(config["detector"]);
 
