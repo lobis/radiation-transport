@@ -6,6 +6,8 @@
 
 #include <spdlog/spdlog.h>
 
+ClassImp(DataSteps);
+
 using namespace std;
 
 void DataSteps::Print() const { spdlog::info("Not implemented yet!"); }

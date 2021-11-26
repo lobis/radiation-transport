@@ -6,6 +6,8 @@
 
 #include <spdlog/spdlog.h>
 
+ClassImp(DataEvent);
+
 using namespace std;
 
 void DataEvent::Print() const { spdlog::info("Not implemented yet!"); }

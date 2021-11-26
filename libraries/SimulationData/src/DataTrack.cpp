@@ -6,6 +6,8 @@
 
 #include <spdlog/spdlog.h>
 
+ClassImp(DataTrack);
+
 using namespace std;
 
 void DataTrack::Print() const { spdlog::info("Not implemented yet!"); }

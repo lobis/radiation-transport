@@ -38,7 +38,7 @@ class DataSteps {
 
     void Print() const;
 
-    ClassDef(DataSteps, 1);
+    ClassDef(DataSteps, 0);
 
     /* Geant4 */
    public:
