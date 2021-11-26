@@ -20,6 +20,7 @@ RUN apt-get update \
     rsync \
     tar \
     python \
+    nano
     && apt-get clean
 
 RUN ( \
@@ -33,8 +34,13 @@ RUN ( \
 RUN ( \
     echo 'ForwardAgent yes'; \
     echo 'ForwardX11 yes'; \
+    echo 'X11Forwarding yes'; \
     echo 'ForwardX11Trusted yes'; \
     echo 'PasswordAuthentication yes'; \
+    echo 'Port 22'; \
+    echo 'Protocol 2'; \
+    echo 'GSSAPIDelegateCredentials no'; \
+    echo 'XauthLocation /usr/bin/xauth'; \
     ) >> /etc/ssh/ssh_config
 
 RUN useradd -m user \
