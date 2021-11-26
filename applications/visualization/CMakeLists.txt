@@ -2,7 +2,7 @@ set(LIBRARY Visualization)
 string(TOLOWER ${LIBRARY} APPLICATION_EXECUTABLE) # application is CamelCase, library is PascalCase
 set(APPLICATION ${APPLICATION_EXECUTABLE}-executable)
 
-find_package(ROOT REQUIRED COMPONENTS RIO Geom Eve)
+find_package(ROOT REQUIRED COMPONENTS RIO Geom Eve Gui)
 
 add_library(${LIBRARY} SHARED)
 
@@ -39,3 +39,6 @@ set_target_properties(
         ${APPLICATION}
         PROPERTIES OUTPUT_NAME ${APPLICATION_EXECUTABLE}
 )
+
+FILE(GLOB HEADERS include/*.h)
+ROOT_GENERATE_DICTIONARY(${LIBRARY}_dict ${HEADERS} MODULE ${LIBRARY})
