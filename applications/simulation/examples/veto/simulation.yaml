@@ -7,7 +7,7 @@ seed: 137
 detector:
   geometry: geometry/veto.gdml
   volumes:
-    - name: box
+    - name: av_1_impr_1_scintillatorVolume-800.0mm_pv_0
       sensitive: true
 
 commands:

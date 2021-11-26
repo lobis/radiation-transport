@@ -34,7 +34,7 @@ class DataTrack {
 
     void Print() const;
 
-    ClassDef(DataTrack, 0);
+    ClassDef(DataTrack, 1);
 
     /* Geant4 */
    public:

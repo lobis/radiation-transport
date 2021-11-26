@@ -102,13 +102,32 @@ TEST(Application, BadPhysicsList) {
 TEST(Application, FullRun) {
     const string configFile = EXAMPLES_PATH + "basic/simulation.yaml";
 
+    const auto config = SimulationConfig(configFile);
+
     Application app;
 
-    app.LoadConfigFromFile(configFile);
+    app.LoadConfigFromFile(config);
 
     app.PrintConfig();
 
     app.UserInitialization();
 
     app.Initialize();
+
+    TFile file(config.GetOutputFileAbsolutePath().c_str());
+
+    TTree* tree = file.Get<TTree>("EventTree");
+
+    tree->Print();
+
+    tree->Show();
+
+    spdlog::info("Tree entries: {}", tree->GetEntries());
+
+    DataEvent* event = nullptr;
+    tree->SetBranchAddress("fEvent", &event);
+    for (int i = 0; i < tree->GetEntries(); i++) {
+        tree->GetEntry(i);
+        spdlog::info("\t-{} - EventID {}", i, event->fEventID);
+    }
 }
