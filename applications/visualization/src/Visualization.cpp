@@ -114,4 +114,6 @@ Visualization::~Visualization() {
     Cleanup();
 
     spdlog::info("Clean Exit");
+
+    exit(0);
 }
