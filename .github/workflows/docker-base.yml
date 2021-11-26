@@ -68,3 +68,5 @@ jobs:
             ROOT_VERSION=${{ github.event.inputs.ROOT_VERSION }}
             GEANT4_VERSION=${{ github.event.inputs.GEANT4_VERSION }}
           tags: ${{ env.IMAGE_NAME }}-clion:cxx${{ github.event.inputs.CMAKE_CXX_STANDARD }}_ROOT${{ github.event.inputs.ROOT_VERSION }}_Geant4${{ github.event.inputs.GEANT4_VERSION }}
+          pull: true
+
