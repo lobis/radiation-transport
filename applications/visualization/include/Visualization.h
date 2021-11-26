@@ -2,8 +2,8 @@
 // Created by lobis on 26/11/2021.
 //
 
-#ifndef RADIATION_TRANSPORT_GUI_H
-#define RADIATION_TRANSPORT_GUI_H
+#ifndef RADIATION_TRANSPORT_VISUALIZATION_H
+#define RADIATION_TRANSPORT_VISUALIZATION_H
 
 #include <TFile.h>
 #include <TGButton.h>
@@ -39,7 +39,7 @@ class Visualization : public TGMainFrame {
 
     void Initialize();
 
-    ClassDef(Visualization, 0)
+    ClassDef(Visualization, 0);
 };
 
-#endif  // RADIATION_TRANSPORT_GUI_H
+#endif  // RADIATION_TRANSPORT_VISUALIZATION_H

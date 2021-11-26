@@ -22,6 +22,10 @@ ClassImp(Visualization);
 void Visualization::Initialize() { fEventTree->Branch("fEvent", &fEvent); }
 
 void Visualization::LoadGeometry() {
+    if (!fFile) {
+        spdlog::warn("file is not populated yet, please select a valid ROOT file");
+        return;
+    }
     spdlog::info("Printing contents of file: '{}'", fFile->GetName());
     fFile->ls();
 
