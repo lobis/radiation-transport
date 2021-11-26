@@ -5,7 +5,7 @@ runManagerType: serial
 seed: 137
 
 detector:
-  geometry: geometry/box.gdml
+  geometry: geometry/veto.gdml
   volumes:
     - name: box
       sensitive: true

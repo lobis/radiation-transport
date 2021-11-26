@@ -4,10 +4,14 @@
 
 #include "Visualization.h"
 
+#include <TEveGeoNode.h>
 #include <TF1.h>
 #include <TGCanvas.h>
 #include <TGDockableFrame.h>
+#include <TGLTH3Composition.h>
+#include <TPaveLabel.h>
 #include <TRandom.h>
+#include <TStopwatch.h>
 #include <TSystem.h>
 #include <spdlog/spdlog.h>
 
@@ -19,9 +23,11 @@ namespace fs = std::filesystem;
 
 ClassImp(Visualization);
 
+void Visualization::Test() {}
+
 void Visualization::Initialize() { fEventTree->Branch("fEvent", &fEvent); }
 
-void Visualization::LoadGeometry() {
+void Visualization::LoadFile() {
     if (!fFile) {
         spdlog::warn("file is not populated yet, please select a valid ROOT file");
         return;
@@ -47,7 +53,19 @@ void Visualization::LoadGeometry() {
         return;
     }
 
-    // fGeo->GetTopVolume()->Draw("ogl");
+    if (!fEve) {
+        TStopwatch timer;
+        timer.Start();
+        spdlog::warn("Initializing Eve, this may take a while...");
+        TEveManager::Create();
+        timer.Stop();
+        // fViewer = fEve->GetDefaultGLViewer();
+        spdlog::info("Initialized Eve in {:.2f} seconds", timer.RealTime());
+    }
+
+    auto topNode = new TEveGeoTopNode(fGeo, fGeo->GetTopNode());
+    fEve->AddGlobalElement(topNode);
+    // fEve->FullRedraw3D(kTRUE);
 }
 
 void Visualization::OpenFile(const TString& filename) {
@@ -92,15 +110,17 @@ Visualization::Visualization(const TGWindow* p, UInt_t w, UInt_t h) : TGMainFram
     fOpenFile->SetToolTipText("Open ROOT file");
 
     fFileDisplay = new TGTextButton(fCframe, "&No File Selected");
-    fFileDisplay->Connect("Clicked()", "Visualization", this, nullptr);
+    fFileDisplay->Connect("Clicked()", "Visualization", this, "Test()");
     fCframe->AddFrame(fFileDisplay, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 3, 2, 2, 2));
 
-    fLoadGeometry = new TGTextButton(fCframe, "&Load Geometry");
-    fLoadGeometry->Connect("Clicked()", "Visualization", this, "LoadGeometry()");
+    fLoadGeometry = new TGTextButton(fCframe, "&Load File");
+    fLoadGeometry->Connect("Clicked()", "Visualization", this, "LoadFile()");
     fCframe->AddFrame(fLoadGeometry, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 3, 2, 2, 2));
     fLoadGeometry->SetToolTipText("Load Geometry from current TFile");
 
     AddFrame(fCframe, new TGLayoutHints(kLHintsCenterX, 2, 2, 5, 1));
+
+    // fCanvas = new TCanvas("canvas", "Main Canvas", 200, 10, 700, 500);
 
     MapSubwindows();
     Resize(GetDefaultSize());

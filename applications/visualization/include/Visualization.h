@@ -5,6 +5,8 @@
 #ifndef RADIATION_TRANSPORT_VISUALIZATION_H
 #define RADIATION_TRANSPORT_VISUALIZATION_H
 
+#include <TCanvas.h>
+#include <TEveManager.h>
 #include <TFile.h>
 #include <TGButton.h>
 #include <TGClient.h>
@@ -19,15 +21,20 @@
 
 class Visualization : public TGMainFrame {
    private:
+    inline Visualization() = default;
+
     TGCompositeFrame* fCframe;
     TGTextButton *fOpenFile, *fFileDisplay, *fLoadGeometry;
 
     TFile* fFile = nullptr;
     TGeoManager* fGeo = nullptr;
-
+    TEveManager* fEve = nullptr;
     TTree* fEventTree = nullptr;
+    TGLViewer* fViewer = nullptr;
 
     DataEvent fEvent;
+
+    TCanvas* fCanvas;
 
    public:
     Visualization(const TGWindow* p, UInt_t w, UInt_t h);
@@ -35,7 +42,8 @@ class Visualization : public TGMainFrame {
     // slots
     void SelectFile();
     void OpenFile(const TString&);
-    void LoadGeometry();
+    void LoadFile();
+    void Test();
 
     void Initialize();
 
