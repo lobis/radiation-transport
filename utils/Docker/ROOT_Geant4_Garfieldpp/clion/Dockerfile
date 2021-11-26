@@ -20,7 +20,7 @@ RUN apt-get update \
     rsync \
     tar \
     python \
-    nano
+    nano \
     && apt-get clean
 
 RUN ( \
