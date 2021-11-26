@@ -38,11 +38,13 @@ jobs:
           printenv
 
       - name: Configure CMake
-        run:
+        run: |
+          source entry-point.sh
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
-        run:
+        run: |
+          source entry-point.sh
           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Test
