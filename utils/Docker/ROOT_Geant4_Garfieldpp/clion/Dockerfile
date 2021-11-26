@@ -9,6 +9,8 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
 RUN apt-get update \
     && apt-get install -y  \
     ssh \
+    xauth \
+    xorg \
     build-essential \
     gcc \
     g++ \
@@ -28,10 +30,19 @@ RUN ( \
     ) > /etc/ssh/sshd_config_test_clion \
     && mkdir /run/sshd
 
+RUN ( \
+    echo 'ForwardAgent yes'; \
+    echo 'ForwardX11 yes'; \
+    echo 'ForwardX11Trusted yes'; \
+    echo 'PasswordAuthentication yes'; \
+    ) >> /etc/ssh/ssh_config
+
 RUN useradd -m user \
     && yes password | passwd user
 
 RUN cp /root/.bashrc /home/user/.bashrc
+
+RUN echo 'export DISPLAY=localhost:0' >> /home/user/.bashrc
 
 RUN usermod -s /bin/bash user
 
