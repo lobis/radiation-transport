@@ -7,6 +7,7 @@
 
 #include <DataEvent.h>
 #include <SimulationConfig.h>
+#include <SimulationGeometryInfo.h>
 #include <TFile.h>
 #include <TTree.h>
 
@@ -39,6 +40,8 @@ class GlobalManager {
 
     inline void SetSimulationConfig(const SimulationConfig& simulationConfig) { fSimulationConfig = simulationConfig; }
     inline SimulationConfig GetSimulationConfig() const { return fSimulationConfig; }
+
+    std::shared_ptr<SimulationGeometryInfo> fGeometryInfo;
 
    private:
     GlobalManager();

@@ -56,6 +56,7 @@ void OutputManager::FinishAndSubmitEvent() {
                   fEvent->fSubEventID, fEvent->fSensitiveVolumesTotalEnergy);
 
     if (IsValidEvent()) {
+        fEvent->fSimulationGeometryInfo = GlobalManager::Instance()->fGeometryInfo;
         GlobalManager::Instance()->InsertEvent(fEvent);
         // optical information
         spdlog::info("OutputManager::FinishAndSubmitEvent - Added valid event");
@@ -95,4 +96,26 @@ bool OutputManager::IsValidEvent() const {
     if (GlobalManager::Instance()->GetSimulationConfig().fSaveAllEvents) return true;
     if (fEvent->fSensitiveVolumesTotalEnergy <= 0) return false;
     return true;
+}
+
+void OutputManager::AddSensitiveEnergy(Double_t energy, const TString& physicalVolumeName) {
+    // 'physicalVolumeName' should be the same as the sensitive detector name
+    fEvent->fSensitiveVolumesTotalEnergy += energy;
+
+    const TString physicalVolumeNameNew = fEvent->fSimulationGeometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName);
+
+    bool sensitiveVolumeFound = false;
+    for (int i = 0; i < fEvent->fSensitiveVolumeEnergy.size(); i++) {
+        if (fEvent->fSensitiveVolumeName[i].EqualTo(physicalVolumeNameNew)) {
+            fEvent->fSensitiveVolumeEnergy[i] += energy;
+            sensitiveVolumeFound = true;
+            break;
+        }
+    }
+    if (!sensitiveVolumeFound) {
+        fEvent->fSensitiveVolumeName.emplace_back(physicalVolumeNameNew);
+        auto ID = fEvent->fSimulationGeometryInfo->GetIDFromVolumeName(physicalVolumeName);
+        fEvent->fSensitiveVolumeID.emplace_back(0);
+        fEvent->fSensitiveVolumeEnergy.emplace_back(energy);
+    }
 }

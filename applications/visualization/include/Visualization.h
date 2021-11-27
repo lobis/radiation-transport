@@ -30,7 +30,7 @@ class Visualization : public TGMainFrame {
     TGeoManager* fGeo = nullptr;
     TEveManager* fEve = nullptr;
     TTree* fEventTree = nullptr;
-    TGLViewer* fViewer = nullptr;
+    // TGLViewer* fViewer = nullptr;
 
     DataEvent fEvent;
 
@@ -47,7 +47,7 @@ class Visualization : public TGMainFrame {
 
     void Initialize();
 
-    ClassDef(Visualization, 0);
+    ClassDef(Visualization, 1);
 };
 
 #endif  // RADIATION_TRANSPORT_VISUALIZATION_H

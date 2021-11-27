@@ -6,6 +6,7 @@
 #define RADIATION_TRANSPORT_DATAEVENT_H
 
 #include "DataTrack.h"
+#include "SimulationGeometryInfo.h"
 
 class G4Event;
 class G4Track;
@@ -19,7 +20,9 @@ class DataEvent {
     TString fInfo = "";
 
     Double_t fSensitiveVolumesTotalEnergy{};
-    std::map<TString, Double_t> fSensitiveVolumeEnergy{};
+    std::vector<Double_t> fSensitiveVolumeEnergy{};
+    std::vector<Int_t> fSensitiveVolumeID{};
+    std::vector<TString> fSensitiveVolumeName{};
 
     TString fPrimaryParticleName = "";
     Double_t fPrimaryEnergy{};
@@ -33,6 +36,8 @@ class DataEvent {
 
     std::vector<DataTrack> fTracks{};
 
+    std::shared_ptr<SimulationGeometryInfo> fSimulationGeometryInfo;
+
    public:
     inline DataEvent() = default;
 
@@ -41,7 +46,7 @@ class DataEvent {
 
     void Print() const;
 
-    ClassDef(DataEvent, 1);
+    void PrintSensitiveInfo() const;
 
    private:
     DataSteps fInitialStep;  //!
@@ -57,6 +62,8 @@ class DataEvent {
    private:
     static bool IsValid(const G4Track*);  //!
     static bool IsValid(const G4Step*);   //!
+
+    ClassDef(DataEvent, 1);
 };
 
 #endif  // RADIATION_TRANSPORT_DATAEVENT_H

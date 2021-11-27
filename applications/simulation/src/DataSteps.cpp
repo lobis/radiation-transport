@@ -56,12 +56,16 @@ void DataSteps::InsertStep(const G4Step* step) {
         }
     }
 
-    const auto volumeNamePre = GetVolumeName(step->GetPreStepPoint()->GetPhysicalVolume());
+    auto volumeNamePre = GetVolumeName(step->GetPreStepPoint()->GetPhysicalVolume());
     auto volumeNamePost = (step->GetPostStepPoint()->GetPhysicalVolume() ? GetVolumeName(step->GetPostStepPoint()->GetPhysicalVolume()) : "?");
     if (volumeNamePre == volumeNamePost) {
         volumeNamePost = "";
     }
     const auto volumeID = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
+
+    volumeNamePre = GlobalManager::Instance()->fGeometryInfo->GetAlternativeNameFromGeant4PhysicalName(volumeNamePre);
+    volumeNamePost = GlobalManager::Instance()->fGeometryInfo->GetAlternativeNameFromGeant4PhysicalName(volumeNamePost);
+
     const auto& volumeName = volumeNamePre;
 
     fN += 1;

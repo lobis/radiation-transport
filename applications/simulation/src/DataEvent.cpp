@@ -14,7 +14,7 @@
 
 using namespace std;
 
-DataEvent::DataEvent(const G4Event* event) {
+DataEvent::DataEvent(const G4Event* event) : DataEvent() {
     fRunID = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();
     fEventID = event->GetEventID();
     fSubEventID = 0;

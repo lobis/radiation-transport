@@ -7,6 +7,7 @@
 #include <DetectorConstructionConfig.h>
 #include <GlobalManager.h>
 #include <SensitiveDetector.h>
+#include <SimulationGeometryInfo.h>
 #include <TString.h>
 
 #include <G4GDMLParser.hh>
@@ -61,6 +62,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
         spdlog::debug("Reading geometry as GDML");
         G4GDMLParser parser;
         parser.Read(fGeometryFilename.c_str(), true);
+        GlobalManager::Instance()->fGeometryInfo->PopulateFromGdml(fGeometryFilename.c_str());
         fWorld = parser.GetWorldVolume();
     } else {
         spdlog::debug("Reading geometry as TG (Text Geometry)");
@@ -85,6 +87,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
     PrintGeometryInfo();
 
+    GlobalManager::Instance()->fGeometryInfo->PopulateFromGeant4World(fWorld);
+
     return fWorld;
 }
 
@@ -93,7 +97,7 @@ void DetectorConstruction::ConstructSDandField() {
 
     DetectorConstructionConfig config = GlobalManager::Instance()->GetSimulationConfig().fDetectorConfig;
 
-    vector<string> sensitiveVolumes;
+    vector<string> sensitiveVolumes;  // user submitted sensitive volumes, may not exist or not be physical (be logical)
     for (const auto& volume : config.fVolumes) {
         if (volume.fIsSensitive) {
             sensitiveVolumes.emplace_back(volume.fName);
@@ -104,20 +108,33 @@ void DetectorConstruction::ConstructSDandField() {
         return;
     }
 
-    G4SDManager* SDManager = G4SDManager::GetSDMpointer();
-
-    for (const auto& sensitivePhysicalVolume : sensitiveVolumes) {
-        spdlog::info("DetectorConstruction::ConstructSDandField: Attaching sensitive detector to {}", sensitivePhysicalVolume);
-        G4VPhysicalVolume* physicalVolume = G4PhysicalVolumeStore::GetInstance()->GetVolume(sensitivePhysicalVolume);
+    set<G4LogicalVolume*> logicalVolumesSelected;
+    for (const auto& userSensitiveVolume : sensitiveVolumes) {
+        spdlog::debug("DetectorConstruction::ConstructSDandField: User selected volume: {}", userSensitiveVolume);
+        G4LogicalVolume* logicalVolume;
+        G4VPhysicalVolume* physicalVolume = G4PhysicalVolumeStore::GetInstance()->GetVolume(userSensitiveVolume);
         if (!physicalVolume) {
+            // perhaps user selected a logical volume with this name
+            logicalVolume = G4LogicalVolumeStore::GetInstance()->GetVolume(userSensitiveVolume);
+        } else {
+            logicalVolume = physicalVolume->GetLogicalVolume();
+        }
+        if (!logicalVolume) {
             PrintGeometryInfo();
             spdlog::error(
-                "Trying to attach a sensitive detector to the logical volume of physical volume '{}'"
-                ", but this physical volume is not found in store.",
-                sensitivePhysicalVolume);
+                "Trying to attach a sensitive detector to user selected volume '{}'"
+                ", but this physical volume is not found in physical or logical store. Please read the geometry info printed above to find the "
+                "correct name",
+                userSensitiveVolume);
             exit(1);
         }
-        G4LogicalVolume* logicalVolume = physicalVolume->GetLogicalVolume();
+        logicalVolumesSelected.insert(logicalVolume);
+    }
+
+    G4SDManager* SDManager = G4SDManager::GetSDMpointer();
+
+    for (G4LogicalVolume* logicalVolume : logicalVolumesSelected) {
+        spdlog::info("DetectorConstruction::ConstructSDandField: Attaching sensitive detector to logical volume '{}'", logicalVolume->GetName());
         G4VSensitiveDetector* sensitiveDetector = new SensitiveDetector(logicalVolume->GetName());
         SDManager->AddNewDetector(sensitiveDetector);
         logicalVolume->SetSensitiveDetector(sensitiveDetector);
@@ -142,4 +159,30 @@ void DetectorConstruction::PrintGeometryInfo() {
 bool DetectorConstruction::CheckOverlaps() const {
     spdlog::debug("DetectorConstruction::CheckOverlaps");
     return fWorld->CheckOverlaps();
+}
+
+void SimulationGeometryInfo::PopulateFromGeant4World(const G4VPhysicalVolume* world) {
+    const int n = int(world->GetLogicalVolume()->GetNoDaughters());
+    for (int i = 0; i < n; i++) {
+        G4VPhysicalVolume* volume = world->GetLogicalVolume()->GetDaughter(i);
+        TString namePhysical = (TString)volume->GetName();
+        if (fGdmlNewPhysicalNames.size() > i) {
+            // it has been filled
+            fGeant4PhysicalNameToNewPhysicalNameMap[namePhysical] = fGdmlNewPhysicalNames[i];
+        }
+        TString physicalNewName = GetAlternativeNameFromGeant4PhysicalName(namePhysical);
+        TString nameLogical = (TString)volume->GetLogicalVolume()->GetName();
+        TString nameMaterial = (TString)volume->GetLogicalVolume()->GetMaterial()->GetName();
+        auto position = volume->GetTranslation();
+
+        spdlog::info(
+            "SimulationGeometryInfo::PopulateFromGeant4World - {} - physical: {} ({})- logical: {} - material: {} - position: ({:0.2f}, {:0.2f}, "
+            "{:0.2f})",
+            i, namePhysical.Data(), physicalNewName.Data(), nameLogical.Data(), nameMaterial.Data(), position.x(), position.y(), position.z());
+
+        fPhysicalVolumes.emplace_back(namePhysical);
+        fPhysicalToLogicalVolumeMap[namePhysical] = nameLogical;
+        fLogicalToMaterialMap[nameLogical] = nameMaterial;
+        fPhysicalToPositionInWorldMap[namePhysical] = {position.x(), position.y(), position.z()};
+    }
 }

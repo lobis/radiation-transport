@@ -39,15 +39,13 @@ class OutputManager {
 
     void RecordStep(const G4Step*);
 
-    inline void AddSensitiveEnergy(double energy) { fEvent->fSensitiveVolumesTotalEnergy += energy; }
+    void AddSensitiveEnergy(Double_t energy, const TString& physicalVolumeName);
 
    private:
     inline OutputManager() = default;
     static thread_local OutputManager* pinstance_;
 
     std::unique_ptr<DataEvent> fEvent{};
-
-    double fSensitiveEnergyTotal{};
 
     bool IsEmptyEvent() const;
     bool IsValidEvent() const;

@@ -14,7 +14,7 @@
 
 using namespace std;
 
-DataTrack::DataTrack(const G4Track* track) {
+DataTrack::DataTrack(const G4Track* track) : DataTrack() {
     fTrackID = track->GetTrackID();
     fParentID = track->GetParentID();
 
