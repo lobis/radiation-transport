@@ -1,0 +1,37 @@
+verboseLevel: info
+
+runManagerType: serial
+
+seed: 137
+
+detector:
+  geometry: geometry/babyIAXO.gdml
+  volumes:
+    - name: gasVolume
+      sensitive: true
+
+commands:
+  - /run/beamOn 100
+
+output: test.root
+
+source:
+  generator:
+    point:
+      position: [ 0,1500,0 ]
+      direction: [ 0,-1,0 ]
+
+  particle:
+    name: mu-
+    energy: 1E6
+
+physics:
+  physicsLists:
+    - G4EmLivermorePhysics
+    - G4DecayPhysics
+    - G4RadioactiveDecayPhysics
+    - G4HadronElasticPhysicsHP
+    - G4IonBinaryCascadePhysics
+    - G4HadronPhysicsQGSP_BIC_HP
+    - G4NeutronTrackingCut
+    - G4EmExtraPhysics
