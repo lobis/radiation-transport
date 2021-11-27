@@ -44,6 +44,8 @@ class VetoEvent {
     std::vector<std::vector<Int_t>> fVetoHitsIsQuenched;  // Bool does not work for some reason
 
    public:
+    void Print() const;
+
     ClassDef(VetoEvent, 1);
 };
 

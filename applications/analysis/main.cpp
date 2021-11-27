@@ -3,6 +3,7 @@
 //
 
 #include <DataEvent.h>
+#include <SimulationGeometryInfo.h>
 #include <TApplication.h>
 #include <TBrowser.h>
 #include <TFile.h>
@@ -11,6 +12,7 @@
 #include <spdlog/spdlog.h>
 
 #include <ROOT/RDataFrame.hxx>
+#include <iostream>
 
 using namespace std;
 
@@ -29,7 +31,7 @@ int main(int argc, char** argv) {
 
     spdlog::info("Starting Analysis");
 
-    TFile fFile("/tmp/tmp.4cG6Rx5FKA/applications/simulation/examples/basic/test.root");
+    TFile fFile("/tmp/tmp.eYzASlam4v/cmake-build-docker/applications/simulation/examples/iaxo/babyIAXO.root");
     TTree* fEventTree = fFile.Get<TTree>("EventTree");
 
     DataEvent fEvent;
@@ -41,6 +43,7 @@ int main(int argc, char** argv) {
 
     for (int i = 0; i < fEventTree->GetEntries(); i++) {
         fEventTree->GetEntry(i);
+        cout << fEvent.fSimulationGeometryInfo << endl;
         spdlog::info("event id: {}, energy: {}", fEvent.fEventID, fEvent.fSensitiveVolumesTotalEnergy);
     }
 
