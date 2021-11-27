@@ -1,0 +1,12 @@
+//
+// Created by lobis on 27/11/2021.
+//
+
+#ifndef RADIATION_TRANSPORT_SIMULATIONANALYSIS_H
+#define RADIATION_TRANSPORT_SIMULATIONANALYSIS_H
+
+class SimulationAnalysis {
+   private:
+};
+
+#endif  // RADIATION_TRANSPORT_SIMULATIONANALYSIS_H
