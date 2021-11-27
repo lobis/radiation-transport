@@ -6,6 +6,7 @@
 #include <spdlog/spdlog.h>
 
 #include <filesystem>
+#include <vector>
 
 #include "Application.h"
 #include "Exceptions.h"
@@ -99,10 +100,11 @@ TEST(Application, BadPhysicsList) {
     }
 }
 
-TEST(Application, FullRun) {
+TEST(Application, FullRunSerial) {
     const string configFile = EXAMPLES_PATH + "basic/simulation.yaml";
 
-    const auto config = SimulationConfig(configFile);
+    auto config = SimulationConfig(configFile);
+    config.fRunManagerType = "serial";
 
     Application app;
 
@@ -123,11 +125,98 @@ TEST(Application, FullRun) {
     tree->Show();
 
     spdlog::info("Tree entries: {}", tree->GetEntries());
-
+    Double_t totalEnergy = 0;
     DataEvent* event = nullptr;
     tree->SetBranchAddress("fEvent", &event);
     for (int i = 0; i < tree->GetEntries(); i++) {
         tree->GetEntry(i);
         spdlog::info("\t-{} - EventID {}", i, event->fEventID);
+        totalEnergy += event->fSensitiveVolumesTotalEnergy;
     }
+
+    spdlog::warn("Serial run total energy: {} keV", totalEnergy);
 }
+
+TEST(Application, FullRunMT) {
+    const string configFile = EXAMPLES_PATH + "basic/simulation.yaml";
+
+    auto config = SimulationConfig(configFile);
+    config.fRunManagerType = "multithreading";
+
+    Application app;
+
+    app.LoadConfigFromFile(config);
+
+    app.PrintConfig();
+
+    app.UserInitialization();
+
+    app.Initialize();
+
+    TFile file(config.GetOutputFileAbsolutePath().c_str());
+
+    TTree* tree = file.Get<TTree>("EventTree");
+
+    tree->Print();
+
+    tree->Show();
+
+    spdlog::info("Tree entries: {}", tree->GetEntries());
+    Double_t totalEnergy = 0;
+    DataEvent* event = nullptr;
+    tree->SetBranchAddress("fEvent", &event);
+    for (int i = 0; i < tree->GetEntries(); i++) {
+        tree->GetEntry(i);
+        spdlog::info("\t-{} - EventID {}", i, event->fEventID);
+        totalEnergy += event->fSensitiveVolumesTotalEnergy;
+    }
+
+    spdlog::warn("Multithreading run total energy: {} keV", totalEnergy);
+}
+
+/*
+TEST(Application, SerialVsMTSameResults) {
+    const string configFile = EXAMPLES_PATH + "basic/simulation.yaml";
+
+    auto configOriginal = SimulationConfig(configFile);
+
+    auto configSerial = configOriginal;
+    configSerial.fRunManagerType = "serial";
+    configSerial.fOutputFilename = "/tmp/test.serial.root";
+
+    auto configMT = configOriginal;
+    configSerial.fRunManagerType = "multithreading";
+    configSerial.fOutputFilename = "/tmp/test.mt.root";
+
+    vector<Double_t> energySerial;
+    vector<Double_t> energyMT;
+
+    for (const auto& config : {configSerial, configMT}) {
+        Application app;
+
+        app.LoadConfigFromFile(config);
+        app.UserInitialization();
+        app.Initialize();
+
+        TFile file(config.fOutputFilename.c_str());
+
+        TTree* tree = file.Get<TTree>("EventTree");
+        DataEvent* event = nullptr;
+        tree->SetBranchAddress("fEvent", &event);
+        for (int i = 0; i < tree->GetEntries(); i++) {
+            tree->GetEntry(i);
+            if (config.fRunManagerType == "serial") {
+                energySerial.emplace_back(event->fSensitiveVolumesTotalEnergy);
+            } else {
+                energyMT.emplace_back(event->fSensitiveVolumesTotalEnergy);
+            }
+            event->PrintSensitiveInfo();
+        }
+    }
+
+    sort(energySerial.begin(), energySerial.end());
+    sort(energyMT.begin(), energyMT.end());
+
+    EXPECT_EQ(energySerial, energyMT);
+}
+ */

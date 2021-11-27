@@ -4,7 +4,7 @@ set(APPLICATION ${APPLICATION_EXECUTABLE}-executable)
 
 find_package(ROOT REQUIRED COMPONENTS RIO Geom)
 
-find_package(Geant4 REQUIRED)
+find_package(Geant4 REQUIRED vis_all ui_all)
 
 message("-- Found Geant4 version: ${Geant4_VERSION}")
 

@@ -21,6 +21,7 @@ RUN apt-get update \
     tar \
     python \
     nano \
+    x11-apps \
     && apt-get clean
 
 RUN ( \

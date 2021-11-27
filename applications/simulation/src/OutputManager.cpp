@@ -115,7 +115,7 @@ void OutputManager::AddSensitiveEnergy(Double_t energy, const TString& physicalV
     if (!sensitiveVolumeFound) {
         fEvent->fSensitiveVolumeName.emplace_back(physicalVolumeNameNew);
         auto ID = fEvent->fSimulationGeometryInfo->GetIDFromVolumeName(physicalVolumeName);
-        fEvent->fSensitiveVolumeID.emplace_back(0);
+        fEvent->fSensitiveVolumeID.emplace_back(ID);
         fEvent->fSensitiveVolumeEnergy.emplace_back(energy);
     }
 }

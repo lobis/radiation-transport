@@ -1,6 +1,8 @@
 verboseLevel: info
 
-runManagerType: serial
+runManagerType: multithreading
+
+threads: 4
 
 seed: 137
 
@@ -11,9 +13,9 @@ detector:
       sensitive: true
 
 commands:
-  - /run/beamOn 100
+  - /run/beamOn 100000
 
-output: test.root
+output: babyIAXO.root
 
 source:
   generator:
@@ -22,7 +24,7 @@ source:
       direction: [ 0,-1,0 ]
 
   particle:
-    name: mu-
+    name: neutron
     energy: 1E6
 
 physics:

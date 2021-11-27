@@ -127,6 +127,8 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
             case 't':
                 spdlog::info("Command line option (-t): 'threads' with value: {}", optarg);
                 spdlog::debug("Command line option 'threads' as int: {}", std::stoi(optarg));
+                spdlog::warn("User explicitly set number of threads, setting app run mode as MT");
+                fConfig.fRunManagerType = "multithreading";
                 fConfig.fThreads = std::stoi(optarg);
                 break;
 
@@ -182,7 +184,8 @@ std::vector<std::string> Application::fMacroVis = {
     "/control/verbose 2",
     "/run/verbose 2",
     "/run/initialize",
-    "/vis/open RayTracer 600x600-0+0",
+
+    "/vis/open OGL 800x600-0+0",
 
     "/vis/viewer/set/autoRefresh false",
     "/vis/verbose errors",

@@ -39,8 +39,7 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*) {
         return true;
     }
 
-    const auto volumeName = step->GetPostStepPoint()->GetPhysicalVolume()->GetName();
-
+    const G4String volumeName = step->GetPreStepPoint()->GetPhysicalVolume()->GetName();
     output->AddSensitiveEnergy(energy, volumeName);
 
     return true;  // return value will always be ignored
