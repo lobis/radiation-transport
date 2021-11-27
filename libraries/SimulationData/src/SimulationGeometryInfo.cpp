@@ -9,6 +9,8 @@
 
 using namespace std;
 
+ClassImp(SimulationGeometryInfo);
+
 namespace myXml {
 XMLNodePointer_t FindChildByName(TXMLEngine xml, XMLNodePointer_t node, const TString& name) {
     XMLNodePointer_t child = xml.GetChild(node);
@@ -16,23 +18,6 @@ XMLNodePointer_t FindChildByName(TXMLEngine xml, XMLNodePointer_t node, const TS
         TString childName = xml.GetNodeName(child);
         if (childName.EqualTo(name)) {
             return child;
-        }
-        child = xml.GetNext(child);
-    }
-    return nullptr;
-}
-XMLNodePointer_t FindVolumeOrAssemblyByName(TXMLEngine xml, XMLNodePointer_t node, const TString& name) {
-    XMLNodePointer_t child = xml.GetChild(node);
-    while (child) {
-        TString childName = xml.GetNodeName(child);
-        if (childName.EqualTo("volume") || childName.EqualTo("assembly")) {
-            XMLAttrPointer_t attr = xml.GetFirstAttr(child);
-            while (attr) {
-                if (TString(xml.GetAttrName(attr)).EqualTo("name")) {
-                    TString volumeName = xml.GetAttrValue(attr);
-                }
-                attr = xml.GetNextAttr(attr);
-            }
         }
         child = xml.GetNext(child);
     }
@@ -79,7 +64,6 @@ void SimulationGeometryInfo::PopulateFromGdml(const TString& gdmlFilename) {
     map<TString, vector<TString>> childrenTable;
     XMLNodePointer_t mainNode = xml.DocGetRootElement(xmldoc);
     XMLNodePointer_t structure = myXml::FindChildByName(xml, mainNode, "structure");
-    XMLNodePointer_t world = myXml::FindVolumeOrAssemblyByName(xml, structure, "world");
     XMLNodePointer_t child = xml.GetChild(structure);
     while (child) {
         TString name = xml.GetNodeName(child);
@@ -102,6 +86,7 @@ void SimulationGeometryInfo::PopulateFromGdml(const TString& gdmlFilename) {
         }
         child = xml.GetNext(child);
     }
+
     fGdmlNewPhysicalNames.clear();
     for (const auto& topName : childrenTable["world"]) {
         auto children = childrenTable[nameTable[topName]];
@@ -135,6 +120,13 @@ Int_t SimulationGeometryInfo::GetIDFromVolumeName(const TString& volumeName) con
             return i;
         }
     }
+
+    for (int i = 0; i < fPhysicalVolumes.size(); i++) {
+        if (volumeName.EqualTo(fPhysicalVolumes[i])) {
+            return i;
+        }
+    }
+
     spdlog::error("SimulationGeometryInfo::GetIDFromPhysicalName - ID not found for '{}'", volumeName);
     exit(1);
 }

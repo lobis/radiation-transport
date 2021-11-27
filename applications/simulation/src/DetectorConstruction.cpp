@@ -57,12 +57,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     spdlog::debug("DetectorConstruction::Construct");
     spdlog::info("DetectorConstruction::Construct - Reading geometry from '{}'", fGeometryFilename.c_str());
 
+    GlobalManager::Instance()->fGeometryInfo = new SimulationGeometryInfo();  // make_shared<SimulationGeometryInfo>();
+    auto geometryInfo = GlobalManager::Instance()->fGeometryInfo;
+    if (!geometryInfo) {
+        spdlog::error("geometry info not init yet");
+        exit(1);
+    }
     // read extension
     if (fGeometryFilename.extension() == ".gdml") {
         spdlog::debug("Reading geometry as GDML");
         G4GDMLParser parser;
         parser.Read(fGeometryFilename.c_str(), true);
-        GlobalManager::Instance()->fGeometryInfo->PopulateFromGdml(fGeometryFilename.c_str());
+        geometryInfo->PopulateFromGdml(fGeometryFilename.c_str());
         fWorld = parser.GetWorldVolume();
     } else {
         spdlog::debug("Reading geometry as TG (Text Geometry)");
@@ -87,7 +93,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
     PrintGeometryInfo();
 
-    GlobalManager::Instance()->fGeometryInfo->PopulateFromGeant4World(fWorld);
+    geometryInfo->PopulateFromGeant4World(fWorld);
 
     return fWorld;
 }
@@ -144,8 +150,13 @@ void DetectorConstruction::ConstructSDandField() {
 void DetectorConstruction::PrintGeometryInfo() {
     spdlog::info("DetectorConstruction::PrintGeometryInfo - Begin");
     const int n = int(fWorld->GetLogicalVolume()->GetNoDaughters());
-    for (int i = 0; i < n; i++) {
-        G4VPhysicalVolume* volume = fWorld->GetLogicalVolume()->GetDaughter(i);
+    for (int i = 0; i < n + 1; i++) {
+        G4VPhysicalVolume* volume;
+        if (i == n) {
+            volume = fWorld;
+        } else {
+            volume = fWorld->GetLogicalVolume()->GetDaughter(i);
+        }
         auto namePhysical = volume->GetName();
         auto nameLogical = volume->GetLogicalVolume()->GetName();
         auto nameMaterial = volume->GetLogicalVolume()->GetMaterial()->GetName();
@@ -163,8 +174,13 @@ bool DetectorConstruction::CheckOverlaps() const {
 
 void SimulationGeometryInfo::PopulateFromGeant4World(const G4VPhysicalVolume* world) {
     const int n = int(world->GetLogicalVolume()->GetNoDaughters());
-    for (int i = 0; i < n; i++) {
-        G4VPhysicalVolume* volume = world->GetLogicalVolume()->GetDaughter(i);
+    for (int i = 0; i < n + 1; i++) {  // world is the + 1
+        G4VPhysicalVolume* volume;
+        if (i == n) {
+            volume = const_cast<G4VPhysicalVolume*>(world);
+        } else {
+            volume = world->GetLogicalVolume()->GetDaughter(i);
+        }
         TString namePhysical = (TString)volume->GetName();
         if (fGdmlNewPhysicalNames.size() > i) {
             // it has been filled
@@ -176,7 +192,7 @@ void SimulationGeometryInfo::PopulateFromGeant4World(const G4VPhysicalVolume* wo
         auto position = volume->GetTranslation();
 
         spdlog::info(
-            "SimulationGeometryInfo::PopulateFromGeant4World - {} - physical: {} ({})- logical: {} - material: {} - position: ({:0.2f}, {:0.2f}, "
+            "SimulationGeometryInfo::PopulateFromGeant4World - {} - physical: {} ({}) - logical: {} - material: {} - position: ({:0.2f}, {:0.2f}, "
             "{:0.2f})",
             i, namePhysical.Data(), physicalNewName.Data(), nameLogical.Data(), nameMaterial.Data(), position.x(), position.y(), position.z());
 

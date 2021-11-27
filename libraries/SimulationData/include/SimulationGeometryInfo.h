@@ -15,7 +15,7 @@ class G4VPhysicalVolume;
 
 class SimulationGeometryInfo {
    private:
-    std::vector<TString> fGdmlNewPhysicalNames{};                       //!
+    std::vector<TString> fGdmlNewPhysicalNames;                         //!
     std::map<TString, TString> fGeant4PhysicalNameToNewPhysicalNameMap; /*
                                                                          * only makes sense when using assembly
                                                                          */
@@ -37,6 +37,9 @@ class SimulationGeometryInfo {
     Int_t GetIDFromVolumeName(const TString&) const;
 
     void PopulateFromGeant4World(const G4VPhysicalVolume*);
+
+   public:
+    ClassDef(SimulationGeometryInfo, 1);
 };
 
 #endif  // RADIATION_TRANSPORT_SIMULATIONGEOMETRYINFO_H

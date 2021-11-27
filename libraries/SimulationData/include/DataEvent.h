@@ -36,7 +36,8 @@ class DataEvent {
 
     std::vector<DataTrack> fTracks{};
 
-    std::shared_ptr<SimulationGeometryInfo> fSimulationGeometryInfo;
+    // std::shared_ptr<SimulationGeometryInfo> fSimulationGeometryInfo;
+    SimulationGeometryInfo* fSimulationGeometryInfo;  //!
 
    public:
     inline DataEvent() = default;

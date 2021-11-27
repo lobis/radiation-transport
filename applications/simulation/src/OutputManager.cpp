@@ -41,6 +41,7 @@ OutputManager* OutputManager::Instance() {
 void OutputManager::UpdateEvent() {
     auto event = G4EventManager::GetEventManager()->GetConstCurrentEvent();
     fEvent = make_unique<DataEvent>(event);
+    fEvent->fSimulationGeometryInfo = GlobalManager::Instance()->fGeometryInfo;
 }
 
 /*!
@@ -56,7 +57,6 @@ void OutputManager::FinishAndSubmitEvent() {
                   fEvent->fSubEventID, fEvent->fSensitiveVolumesTotalEnergy);
 
     if (IsValidEvent()) {
-        fEvent->fSimulationGeometryInfo = GlobalManager::Instance()->fGeometryInfo;
         GlobalManager::Instance()->InsertEvent(fEvent);
         // optical information
         spdlog::info("OutputManager::FinishAndSubmitEvent - Added valid event");
