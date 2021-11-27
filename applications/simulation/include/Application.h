@@ -21,6 +21,11 @@ class Application {
 
     void SetLoggingLevelFromConfig();
 
+    static void RunMacro(const std::vector<std::string>&);
+
+    static std::vector<std::string> fMacroVis;
+    static std::vector<std::string> fMacroGUI;
+
    public:
     inline Application() : fGlobalManager(GlobalManager::Instance()) { spdlog::set_pattern("[%T][%^%l%$]: %v"); };
     explicit Application(const SimulationConfig&);

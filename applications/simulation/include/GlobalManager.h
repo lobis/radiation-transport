@@ -41,8 +41,7 @@ class GlobalManager {
     inline void SetSimulationConfig(const SimulationConfig& simulationConfig) { fSimulationConfig = simulationConfig; }
     inline SimulationConfig GetSimulationConfig() const { return fSimulationConfig; }
 
-    // std::shared_ptr<SimulationGeometryInfo> fGeometryInfo = nullptr;
-    SimulationGeometryInfo* fGeometryInfo = nullptr;
+    SimulationGeometryInfo* fGeometryInfo = nullptr;  // std::shared_ptr<SimulationGeometryInfo>
 
    private:
     GlobalManager();

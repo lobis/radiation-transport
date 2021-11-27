@@ -30,6 +30,8 @@ class SimulationGeometryInfo {
     std::map<TString, TVector3> fPhysicalToPositionInWorldMap;
 
    public:
+    inline SimulationGeometryInfo() = default;
+
     void PopulateFromGdml(const TString&);
 
     TString GetAlternativeNameFromGeant4PhysicalName(const TString&) const;
