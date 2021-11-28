@@ -6,6 +6,7 @@
 #define RADIATION_TRANSPORT_VISUALIZATION_H
 
 #include <TCanvas.h>
+#include <TEveBrowser.h>
 #include <TEveGeoNode.h>
 #include <TEveManager.h>
 #include <TFile.h>
@@ -40,7 +41,7 @@ class Visualization : public TGMainFrame {
     TTree* fEventTree = nullptr;
     TGLViewer* fViewer = nullptr;
 
-    DataEvent fEvent;
+    DataEvent* fEvent = nullptr;
 
     TCanvas* fCanvas;
 

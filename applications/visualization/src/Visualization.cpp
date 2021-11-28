@@ -32,17 +32,18 @@ void Visualization::DrawEvent(Int_t index) {
 
     fEventTree->GetEntry(index);
 
-    spdlog::info("Visualization::DrawEvent - Index {} - EventID {} - Number of tracks: {}", index, fEvent.fEventID, fEvent.fTracks.size());
+    spdlog::info("Visualization::DrawEvent - Index {} - EventID {} - Number of tracks: {}", index, fEvent->fEventID, fEvent->fTracks.size());
 
-    for (const auto& track : fEvent.fTracks) {
-        /*
+    size_t trackCounter = 0;
+    for (const auto& track : fEvent->fTracks) {
         if (track.fInitialKineticEnergy < 1.0) {
             continue;
         }
-        */
         auto line = track.GetEveDrawable();
         fEveManager->AddElement(line);
+        trackCounter += 1;
     }
+    spdlog::info("Drawing {} tracks", trackCounter);
 
     // fViewer->GetClipSet()->SetClipType(TGLClip::EType(2));
 
@@ -105,21 +106,20 @@ void Visualization::LoadFile() {
         spdlog::warn("File '{}' does not have key '{}'", fFile->GetName(), eventTreeKey);
         return;
     }
-    auto pEvent = &fEvent;
-    fEventTree->SetBranchAddress("fEvent", &pEvent);
+    fEventTree->SetBranchAddress("fEvent", &fEvent);
 
     fComboBoxEventID->RemoveAll();
     for (int i = 0; i < fEventTree->GetEntries(); i++) {
         spdlog::info("Added entry: {}", i);
         fEventTree->GetEntry(i);
-        spdlog::info("EventID: {}", fEvent.fEventID);
-        fComboBoxEventID->AddEntry(TString::Format("%d | EventID: %d", i, fEvent.fEventID), i);
+        spdlog::info("EventID: {}", fEvent->fEventID);
+        fComboBoxEventID->AddEntry(TString::Format("%d | EventID: %d", i, fEvent->fEventID), i);
     }
     const Int_t initialEntry = 0;
     fComboBoxEventID->Select(initialEntry);
     fEventTree->GetEntry(initialEntry);
 
-    fEvent.Print();
+    fEvent->Print();
 
     if (!fEveManager || !fEveManager->GetMainWindow()) {
         TStopwatch timer;
@@ -138,14 +138,6 @@ void Visualization::LoadFile() {
     fEveManager->AddGlobalElement(fEveGeoTopNode);
 
     Update();  // for transparency
-
-    for (const auto& track : fEvent.fTracks) {
-        if (track.fInitialKineticEnergy < 1.0) {
-            continue;
-        }
-        auto line = track.GetEveDrawable();
-        fEveManager->AddElement(line);
-    }
 
     // fViewer->GetClipSet()->SetClipType(TGLClip::EType(2));
     fViewer->CurrentCamera().Reset();
