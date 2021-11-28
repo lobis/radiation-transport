@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
 
     app.Initialize();
 
-    spdlog::info("Time elapsed {:0.2f}", timer.RealTime());
+    spdlog::info("Time elapsed {:0.2f} seconds", timer.RealTime());
 
     return 0;
 }

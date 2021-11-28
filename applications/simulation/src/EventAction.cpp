@@ -28,8 +28,11 @@ void EventAction::BeginOfEventAction(const G4Event* event) {
     int s = G4RunManager::GetRunManager()->GetNumberOfEventsToBeProcessed() / 100;
     if ((s > 0 && (eventID + 1) % s == 0) || fTimer.RealTime() > 10.0) {
         fTimer.Start();
-        spdlog::info("EventAction::BeginOfEventAction - RunID: {} ---> Begin of event {} ({:03.2f}%) - Number of entries saved this run: {}",
+        spdlog::info("EventAction::BeginOfEventAction - RunID: {} ---> Begin of event {}{} [{:03.2f}%] - Number of entries saved this run: {}",
                      G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID(), eventID,
+                     G4Threading::IsMultithreadedApplication()
+                         ? TString::Format(" (T%d of %d)", G4Threading::G4GetThreadId() + 1, G4Threading::GetNumberOfRunningWorkerThreads())
+                         : "",
                      100 * float(eventID + 1) / static_cast<float>(G4RunManager::GetRunManager()->GetNumberOfEventsToBeProcessed()),
                      GlobalManager::Instance()->GetEntries());
     } else {
