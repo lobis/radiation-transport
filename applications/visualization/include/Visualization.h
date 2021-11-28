@@ -11,10 +11,13 @@
 #include <TFile.h>
 #include <TGButton.h>
 #include <TGClient.h>
+#include <TGComboBox.h>
 #include <TGFileBrowser.h>
 #include <TGFileDialog.h>
 #include <TGFrame.h>
 #include <TGMenu.h>
+#include <TGSlider.h>
+#include <TGTextEntry.h>
 #include <TGeoManager.h>
 #include <TTree.h>
 
@@ -25,8 +28,10 @@ class Visualization : public TGMainFrame {
     inline Visualization() = default;
 
     TGCompositeFrame* fCframe;
-    TGTextButton *fOpenFile, *fFileDisplay, *fLoadGeometry;
-
+    TGTextButton *fTextButtonLoadFile, *fTextButtonUpdate;
+    TGTextEntry* fTextEntryFile;
+    TGComboBox* fComboBoxEventID;
+    TGHSlider* fSliderTransparency;
     TFile* fFile = nullptr;
     TGeoManager* fGeoManager = nullptr;
     TEveManager* fEveManager = nullptr;
@@ -46,6 +51,7 @@ class Visualization : public TGMainFrame {
     void OpenFile(const TString&);
     void LoadFile();
     void Test();
+    void Update();
 
     void Initialize();
 

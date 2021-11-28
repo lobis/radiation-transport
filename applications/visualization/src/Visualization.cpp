@@ -23,9 +23,34 @@ namespace fs = std::filesystem;
 
 ClassImp(Visualization);
 
-void Visualization::Test() {}
+void Visualization::Test() { spdlog::warn("TEST!"); }
 
-void Visualization::Initialize() { fEventTree->Branch("fEvent", &fEvent); }
+void Visualization::Update() {
+    if (!fGeoManager) {
+        spdlog::error("Visualization::Update - Geometry does not exist yet");
+        exit(1);
+    }
+
+    const int transparencyLevel = fSliderTransparency->GetPosition();
+    spdlog::info("Visualization::Update - Transparency: {}", transparencyLevel);
+    for (int i = 0; i < fGeoManager->GetListOfVolumes()->GetEntries(); i++) {
+        auto volume = fGeoManager->GetVolume(i);
+        auto material = volume->GetMaterial();
+        if (material->GetDensity() <= 0.01) {
+            volume->SetTransparency(95);
+            if (material->GetDensity() <= 0.001) {
+                // We consider this vacuum for display purposes
+                volume->SetVisibility(kFALSE);
+            }
+        } else {
+            volume->SetTransparency(transparencyLevel);
+        }
+    }
+
+    fEveManager->FullRedraw3D(kTRUE);
+}
+
+void Visualization::Initialize() {}
 
 void Visualization::LoadFile() {
     if (!fFile) {
@@ -52,15 +77,30 @@ void Visualization::LoadFile() {
         spdlog::warn("File '{}' does not have key '{}'", fFile->GetName(), eventTreeKey);
         return;
     }
+    auto pEvent = &fEvent;
+    fEventTree->Branch("fEvent", &pEvent);
 
-    if (!fEveManager) {
+    fComboBoxEventID->RemoveAll();
+    for (int i = 0; i < fEventTree->GetEntries(); i++) {
+        spdlog::info("Added entry: {}", i);
+        // fEventTree->GetEntry(i);
+        spdlog::info("EventID: {}", fEvent.fEventID);
+        fComboBoxEventID->AddEntry(TString::Format("%d | EventID: %d", i, fEvent.fEventID), i + 1);
+    }
+    const Int_t initialEntry = 1;
+    fComboBoxEventID->Select(initialEntry);
+    fEventTree->GetEntry(initialEntry);
+
+    fEvent.Print();
+
+    if (!fEveManager || !fEveManager->GetMainWindow()) {
         TStopwatch timer;
         timer.Start();
         spdlog::warn("Initializing Eve, this may take a while...");
         fEveManager = TEveManager::Create();
         timer.Stop();
         // fViewer = fEve->GetDefaultGLViewer();
-        spdlog::info("Initialized Eve in {:.2f} seconds", timer.RealTime());
+        spdlog::info("Initialized Eve in {:0.2f} seconds", timer.RealTime());
     }
 
     auto node = fGeoManager->GetTopNode();
@@ -75,12 +115,12 @@ void Visualization::LoadFile() {
 void Visualization::OpenFile(const TString& filename) {
     if (gSystem->AccessPathName(filename, kFileExists)) {
         spdlog::warn("User selected file '{}' does not exist", filename);
-        fFileDisplay->SetText("&No File Selected");
+        fTextEntryFile->SetText("No File Selected");
         return;
     }
 
-    fFileDisplay->SetText(TString::Format("&%s", fs::path(filename.Data()).filename().c_str()));
-    fFileDisplay->SetToolTipText(filename.Data());
+    fTextEntryFile->SetText(TString::Format("%s", fs::path(filename.Data()).filename().c_str()));
+    fTextEntryFile->SetToolTipText(filename.Data());
 
     spdlog::info("Opening: '{}'", filename);
 
@@ -91,17 +131,17 @@ void Visualization::OpenFile(const TString& filename) {
 }
 
 void Visualization::SelectFile() {
-    fOpenFile->SetState(kButtonDown);
+    fTextButtonLoadFile->SetState(kButtonDown);
     static TString dir(".");
     TGFileInfo fi;
     const char* filetypes[] = {"ROOT files", "*.root", nullptr, nullptr};
     fi.fFileTypes = filetypes;
     fi.SetIniDir(dir);
-    printf("fIniDir = %s\n", fi.fIniDir);
+    // printf("fIniDir = %s\n", fi.fIniDir);
     new TGFileDialog(gClient->GetRoot(), this, kFDOpen, &fi);
-    printf("Open file: %s (dir: %s)\n", fi.fFilename, fi.fIniDir);
+    // printf("Open file: %s (dir: %s)\n", fi.fFilename, fi.fIniDir);
     dir = fi.fIniDir;
-    fOpenFile->SetState(kButtonUp);
+    fTextButtonLoadFile->SetState(kButtonUp);
     OpenFile(fi.fFilename);
 }
 
@@ -110,19 +150,29 @@ Visualization::Visualization(const TGWindow* p, UInt_t w, UInt_t h) : TGMainFram
     // Create a horizontal frame containing buttons
     fCframe = new TGCompositeFrame(this, 800, 600, kHorizontalFrame | kFixedWidth);
 
-    fOpenFile = new TGTextButton(fCframe, "&Open File");
-    fOpenFile->Connect("Clicked()", "Visualization", this, "SelectFile()");
-    fCframe->AddFrame(fOpenFile, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 3, 2, 2, 2));
-    fOpenFile->SetToolTipText("Open ROOT file");
+    fTextButtonLoadFile = new TGTextButton(fCframe, "&Open File");
+    fTextButtonLoadFile->Connect("Clicked()", "Visualization", this, "SelectFile()");
+    fCframe->AddFrame(fTextButtonLoadFile, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 3, 2, 2, 2));
+    fTextButtonLoadFile->SetToolTipText("Open ROOT file");
 
-    fFileDisplay = new TGTextButton(fCframe, "&No File Selected");
-    fFileDisplay->Connect("Clicked()", "Visualization", this, "Test()");
-    fCframe->AddFrame(fFileDisplay, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 3, 2, 2, 2));
+    fTextEntryFile = new TGTextEntry(fCframe, "&No File Selected");
+    fTextEntryFile->SetEditDisabled(true);
+    fCframe->AddFrame(fTextEntryFile, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 3, 2, 2, 2));
 
-    fLoadGeometry = new TGTextButton(fCframe, "&Load File");
-    fLoadGeometry->Connect("Clicked()", "Visualization", this, "LoadFile()");
-    fCframe->AddFrame(fLoadGeometry, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 3, 2, 2, 2));
-    fLoadGeometry->SetToolTipText("Load Geometry from current TFile");
+    fComboBoxEventID = new TGComboBox(fCframe);
+    fComboBoxEventID->Resize(150, 20);
+    fCframe->AddFrame(fComboBoxEventID, new TGLayoutHints(kLHintsTop | kLHintsLeft, 5, 5, 5, 5));
+
+    fSliderTransparency = new TGHSlider(fCframe, 150, kSlider1 | kScaleDownRight);
+    fSliderTransparency->SetRange(0, 100);
+    fSliderTransparency->SetPosition(70);
+    fSliderTransparency->Connect("Clicked()", "Visualization", this, "Test()");
+    fCframe->AddFrame(fSliderTransparency, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 3, 2, 2, 2));
+
+    fTextButtonUpdate = new TGTextButton(fCframe, "&Update");
+    fTextButtonUpdate->Connect("Clicked()", "Visualization", this, "Update()");
+    fCframe->AddFrame(fTextButtonUpdate, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 3, 2, 2, 2));
+    fTextButtonUpdate->SetToolTipText("Update TEveManager");
 
     AddFrame(fCframe, new TGLayoutHints(kLHintsCenterX, 2, 2, 5, 1));
 

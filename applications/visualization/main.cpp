@@ -25,6 +25,7 @@ int main(int argc, char** argv) {
     spdlog::info("Starting Visualization");
 
     auto visualization = new Visualization(gClient->GetRoot(), 350, 80);
+
     if (!filename.IsNull()) {
         visualization->OpenFile(filename);
     }
