@@ -47,7 +47,7 @@ void Visualization::Update() {
         }
     }
 
-    fEveManager->FullRedraw3D(kTRUE);
+    fEveManager->FullRedraw3D(kFALSE);
 }
 
 void Visualization::Initialize() {}
@@ -78,16 +78,16 @@ void Visualization::LoadFile() {
         return;
     }
     auto pEvent = &fEvent;
-    fEventTree->Branch("fEvent", &pEvent);
+    fEventTree->SetBranchAddress("fEvent", &pEvent);
 
     fComboBoxEventID->RemoveAll();
     for (int i = 0; i < fEventTree->GetEntries(); i++) {
         spdlog::info("Added entry: {}", i);
-        // fEventTree->GetEntry(i);
+        fEventTree->GetEntry(i);
         spdlog::info("EventID: {}", fEvent.fEventID);
-        fComboBoxEventID->AddEntry(TString::Format("%d | EventID: %d", i, fEvent.fEventID), i + 1);
+        fComboBoxEventID->AddEntry(TString::Format("%d | EventID: %d", i, fEvent.fEventID), i);
     }
-    const Int_t initialEntry = 1;
+    const Int_t initialEntry = 0;
     fComboBoxEventID->Select(initialEntry);
     fEventTree->GetEntry(initialEntry);
 
