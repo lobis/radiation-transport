@@ -4,7 +4,6 @@
 
 #include "Visualization.h"
 
-#include <TEveGeoNode.h>
 #include <TF1.h>
 #include <TGCanvas.h>
 #include <TGDockableFrame.h>
@@ -29,7 +28,6 @@ void Visualization::Test() {}
 void Visualization::Initialize() { fEventTree->Branch("fEvent", &fEvent); }
 
 void Visualization::LoadFile() {
-    // TFile file("/tmp/tmp.eYzASlam4v/cmake-build-docker/applications/simulation/examples/iaxo/babyIAXO.root");
     if (!fFile) {
         spdlog::warn("file is not populated yet, please select a valid ROOT file");
         return;
@@ -39,35 +37,39 @@ void Visualization::LoadFile() {
     fFile->ls();
 
     const char* geometryKey = "Geometry";
-    fGeo = fFile->Get<TGeoManager>(geometryKey);
-    fGeo->SetVisLevel(5);
-    if (!fGeo) {
+    delete fGeoManager;
+    fGeoManager = fFile->Get<TGeoManager>(geometryKey);
+    if (!fGeoManager) {
         spdlog::warn("File '{}' does not have key '{}'", fFile->GetName(), geometryKey);
         return;
     }
 
     const char* eventTreeKey = "EventTree";
     spdlog::debug("Getting key '{}' from file", eventTreeKey);
+    delete fEventTree;
     fEventTree = fFile->Get<TTree>(eventTreeKey);
     if (!fEventTree) {
         spdlog::warn("File '{}' does not have key '{}'", fFile->GetName(), eventTreeKey);
-        // return;
+        return;
     }
 
-    if (!fEve) {
+    if (!fEveManager) {
         TStopwatch timer;
         timer.Start();
         spdlog::warn("Initializing Eve, this may take a while...");
-        fEve = TEveManager::Create();
+        fEveManager = TEveManager::Create();
         timer.Stop();
         // fViewer = fEve->GetDefaultGLViewer();
         spdlog::info("Initialized Eve in {:.2f} seconds", timer.RealTime());
     }
 
-    auto node = fGeo->GetTopNode();
-    auto eveNode = new TEveGeoTopNode(fGeo, node);
-    fEve->AddGlobalElement(eveNode);
-    fEve->FullRedraw3D(kTRUE);
+    auto node = fGeoManager->GetTopNode();
+    delete fEveGeoTopNode;
+    fEveGeoTopNode = new TEveGeoTopNode(fGeoManager, node);
+    fEveGeoTopNode->SetVisLevel(5);
+    fEveManager->AddGlobalElement(fEveGeoTopNode);
+
+    fEveManager->FullRedraw3D(kTRUE);
 }
 
 void Visualization::OpenFile(const TString& filename) {
@@ -84,6 +86,8 @@ void Visualization::OpenFile(const TString& filename) {
 
     delete fFile;
     fFile = new TFile(filename);
+
+    LoadFile();
 }
 
 void Visualization::SelectFile() {

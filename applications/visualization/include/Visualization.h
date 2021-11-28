@@ -6,6 +6,7 @@
 #define RADIATION_TRANSPORT_VISUALIZATION_H
 
 #include <TCanvas.h>
+#include <TEveGeoNode.h>
 #include <TEveManager.h>
 #include <TFile.h>
 #include <TGButton.h>
@@ -27,8 +28,9 @@ class Visualization : public TGMainFrame {
     TGTextButton *fOpenFile, *fFileDisplay, *fLoadGeometry;
 
     TFile* fFile = nullptr;
-    TGeoManager* fGeo = nullptr;
-    TEveManager* fEve = nullptr;
+    TGeoManager* fGeoManager = nullptr;
+    TEveManager* fEveManager = nullptr;
+    TEveGeoTopNode* fEveGeoTopNode = nullptr;
     TTree* fEventTree = nullptr;
     // TGLViewer* fViewer = nullptr;
 
