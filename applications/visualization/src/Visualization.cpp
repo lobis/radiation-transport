@@ -4,6 +4,7 @@
 
 #include "Visualization.h"
 
+#include <TEveStraightLineSet.h>
 #include <TF1.h>
 #include <TGCanvas.h>
 #include <TGDockableFrame.h>
@@ -22,6 +23,31 @@ using namespace std;
 namespace fs = std::filesystem;
 
 ClassImp(Visualization);
+
+void Visualization::DrawEvent(Int_t index) {
+    if (!fEventTree || index >= fEventTree->GetEntries()) {
+        spdlog::error("Visualization::DrawEvent - Event tree does not exist or entry is out of bounds");
+        return;
+    }
+
+    fEventTree->GetEntry(index);
+
+    spdlog::info("Visualization::DrawEvent - Index {} - EventID {} - Number of tracks: {}", index, fEvent.fEventID, fEvent.fTracks.size());
+
+    for (const auto& track : fEvent.fTracks) {
+        /*
+        if (track.fInitialKineticEnergy < 1.0) {
+            continue;
+        }
+        */
+        auto line = track.GetEveDrawable();
+        fEveManager->AddElement(line);
+    }
+
+    // fViewer->GetClipSet()->SetClipType(TGLClip::EType(2));
+
+    fEveManager->FullRedraw3D(kTRUE);
+}
 
 void Visualization::Test() { spdlog::warn("TEST!"); }
 
@@ -46,6 +72,8 @@ void Visualization::Update() {
             volume->SetTransparency(transparencyLevel);
         }
     }
+
+    DrawEvent(fComboBoxEventID->GetSelected());
 
     fEveManager->FullRedraw3D(kFALSE);
 }
@@ -99,7 +127,7 @@ void Visualization::LoadFile() {
         spdlog::warn("Initializing Eve, this may take a while...");
         fEveManager = TEveManager::Create();
         timer.Stop();
-        // fViewer = fEve->GetDefaultGLViewer();
+        fViewer = fEveManager->GetDefaultGLViewer();
         spdlog::info("Initialized Eve in {:0.2f} seconds", timer.RealTime());
     }
 
@@ -108,6 +136,19 @@ void Visualization::LoadFile() {
     fEveGeoTopNode = new TEveGeoTopNode(fGeoManager, node);
     fEveGeoTopNode->SetVisLevel(5);
     fEveManager->AddGlobalElement(fEveGeoTopNode);
+
+    Update();  // for transparency
+
+    for (const auto& track : fEvent.fTracks) {
+        if (track.fInitialKineticEnergy < 1.0) {
+            continue;
+        }
+        auto line = track.GetEveDrawable();
+        fEveManager->AddElement(line);
+    }
+
+    // fViewer->GetClipSet()->SetClipType(TGLClip::EType(2));
+    fViewer->CurrentCamera().Reset();
 
     fEveManager->FullRedraw3D(kTRUE);
 }

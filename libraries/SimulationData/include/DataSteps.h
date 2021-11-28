@@ -14,6 +14,8 @@
 
 class G4Step;
 
+class TEvePointSet;
+
 class DataSteps {
    public:
     Int_t fN = 0;
@@ -43,6 +45,10 @@ class DataSteps {
     /* Geant4 */
    public:
     void InsertStep(const G4Step*);
+
+    /* Visualization */
+   public:
+    TEvePointSet GetEveDrawable() const;
 };
 
 #endif  // RADIATION_TRANSPORT_DATASTEPS_H

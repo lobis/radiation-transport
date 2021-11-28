@@ -67,6 +67,9 @@ class DataEvent {
     static bool IsValid(const G4Step*);   //!
 
     ClassDef(DataEvent, 1);
+
+    /* Visualization */
+    void Draw();
 };
 
 #endif  // RADIATION_TRANSPORT_DATAEVENT_H

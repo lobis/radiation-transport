@@ -15,6 +15,7 @@
 #include <TGFileBrowser.h>
 #include <TGFileDialog.h>
 #include <TGFrame.h>
+#include <TGLViewer.h>
 #include <TGMenu.h>
 #include <TGSlider.h>
 #include <TGTextEntry.h>
@@ -37,7 +38,7 @@ class Visualization : public TGMainFrame {
     TEveManager* fEveManager = nullptr;
     TEveGeoTopNode* fEveGeoTopNode = nullptr;
     TTree* fEventTree = nullptr;
-    // TGLViewer* fViewer = nullptr;
+    TGLViewer* fViewer = nullptr;
 
     DataEvent fEvent;
 
@@ -52,6 +53,7 @@ class Visualization : public TGMainFrame {
     void LoadFile();
     void Test();
     void Update();
+    void DrawEvent(Int_t);
 
     void Initialize();
 

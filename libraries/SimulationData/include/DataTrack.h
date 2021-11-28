@@ -10,6 +10,8 @@
 class G4Track;
 class G4Step;
 
+class TEveStraightLineSet;
+
 class DataTrack {
    public:
     Int_t fTrackID{};
@@ -41,6 +43,10 @@ class DataTrack {
     explicit DataTrack(const G4Track*);  //!
     void UpdateTrack(const G4Track*);    //!
     void InsertStep(const G4Step*);      //!
+
+    /* Visualization */
+   public:
+    TEveStraightLineSet* GetEveDrawable() const;
 };
 
 #endif  // RADIATION_TRANSPORT_DATATRACK_H
