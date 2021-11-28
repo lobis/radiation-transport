@@ -95,10 +95,9 @@ void GlobalManager::SetupFile() {
 
         spdlog::info("Writing metadata and geometry to {}", filename);
 
-        auto file = new TFile(filename, "RECREATE");
+        TFile file(filename, "RECREATE");
 
         // write geometry to file
-        auto detectorConstruction = (DetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
         const string geometryGdmlFilename = fSimulationConfig.fDetectorConfig.GetGeometryAbsolutePath();
 
         TGeoManager* geoManager;
@@ -110,6 +109,7 @@ void GlobalManager::SetupFile() {
                 "trying to save current geometry into '{}' and reading it back",
                 tmpGeometryFilename);
             G4GDMLParser parser;
+            auto detectorConstruction = (DetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
             parser.Write(tmpGeometryFilename.c_str(), detectorConstruction->GetWorld());
             remove(tmpGeometryFilename.c_str());
             geoManager = TGeoManager::Import(tmpGeometryFilename.c_str());
@@ -123,8 +123,7 @@ void GlobalManager::SetupFile() {
 
         delete geoManager;
 
-        file->Close();
-        delete file;
+        file.Close();
 
         fInitialized = true;
 

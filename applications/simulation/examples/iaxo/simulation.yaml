@@ -2,7 +2,7 @@ verboseLevel: info
 
 runManagerType: multithreading
 
-threads: 4
+threads: 6
 
 seed: 137
 
@@ -13,7 +13,7 @@ detector:
       sensitive: true
 
 commands:
-  - /run/beamOn 100000
+  - /run/beamOn 2000
 
 output: babyIAXO.root
 

@@ -57,9 +57,8 @@ void OutputManager::FinishAndSubmitEvent() {
                   fEvent->fSubEventID, fEvent->fSensitiveVolumesTotalEnergy);
 
     if (IsValidEvent()) {
-        GlobalManager::Instance()->InsertEvent(fEvent);
-        // optical information
-        spdlog::info("OutputManager::FinishAndSubmitEvent - Added valid event");
+        size_t numberOfInsertedEvents = GlobalManager::Instance()->InsertEvent(fEvent);
+        spdlog::debug("OutputManager::FinishAndSubmitEvent - Added valid event");
     }
     UpdateEvent();
 }

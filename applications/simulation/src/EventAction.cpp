@@ -15,20 +15,25 @@
 
 using namespace std;
 
-EventAction::EventAction() { output = OutputManager::Instance(); }
+EventAction::EventAction() {
+    output = OutputManager::Instance();
+    fTimer.Start();
+}
 
 void EventAction::BeginOfEventAction(const G4Event* event) {
     spdlog::debug("EventAction::BeginOfEventAction ---> Begin of event {}", event->GetEventID());
-
     output->UpdateEvent();
 
     auto eventID = event->GetEventID();
     int s = G4RunManager::GetRunManager()->GetNumberOfEventsToBeProcessed() / 100;
-    if ((s > 0 && (eventID + 1) % s == 0)) {
+    if ((s > 0 && (eventID + 1) % s == 0) || fTimer.RealTime() > 10.0) {
+        fTimer.Start();
         spdlog::info("EventAction::BeginOfEventAction - RunID: {} ---> Begin of event {} ({:03.2f}%) - Number of entries saved this run: {}",
                      G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID(), eventID,
                      100 * float(eventID + 1) / static_cast<float>(G4RunManager::GetRunManager()->GetNumberOfEventsToBeProcessed()),
                      GlobalManager::Instance()->GetEntries());
+    } else {
+        fTimer.Continue();
     }
 }
 

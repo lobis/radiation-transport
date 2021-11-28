@@ -2,6 +2,8 @@
 #ifndef SIMULATION_EVENTACTION_H
 #define SIMULATION_EVENTACTION_H
 
+#include <TStopwatch.h>
+
 #include <G4UserEventAction.hh>
 #include <globals.hh>
 #include <memory>
@@ -20,6 +22,8 @@ class EventAction : public G4UserEventAction {
 
    private:
     OutputManager* output;
+
+    TStopwatch fTimer;
 };
 
 #endif  // SIMULATION_EVENTACTION_H

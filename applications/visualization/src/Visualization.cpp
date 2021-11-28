@@ -16,6 +16,7 @@
 #include <spdlog/spdlog.h>
 
 #include <filesystem>
+#include <iostream>
 
 using namespace std;
 
@@ -28,44 +29,45 @@ void Visualization::Test() {}
 void Visualization::Initialize() { fEventTree->Branch("fEvent", &fEvent); }
 
 void Visualization::LoadFile() {
+    // TFile file("/tmp/tmp.eYzASlam4v/cmake-build-docker/applications/simulation/examples/iaxo/babyIAXO.root");
     if (!fFile) {
         spdlog::warn("file is not populated yet, please select a valid ROOT file");
         return;
     }
+
     spdlog::info("Printing contents of file: '{}'", fFile->GetName());
     fFile->ls();
 
     const char* geometryKey = "Geometry";
-    const char* eventTreeKey = "EventTree";
-
-    spdlog::debug("Getting key '{}' from file", geometryKey);
-
     fGeo = fFile->Get<TGeoManager>(geometryKey);
+    fGeo->SetVisLevel(5);
     if (!fGeo) {
         spdlog::warn("File '{}' does not have key '{}'", fFile->GetName(), geometryKey);
         return;
     }
 
+    const char* eventTreeKey = "EventTree";
     spdlog::debug("Getting key '{}' from file", eventTreeKey);
     fEventTree = fFile->Get<TTree>(eventTreeKey);
     if (!fEventTree) {
         spdlog::warn("File '{}' does not have key '{}'", fFile->GetName(), eventTreeKey);
-        return;
+        // return;
     }
 
     if (!fEve) {
         TStopwatch timer;
         timer.Start();
         spdlog::warn("Initializing Eve, this may take a while...");
-        TEveManager::Create();
+        fEve = TEveManager::Create();
         timer.Stop();
         // fViewer = fEve->GetDefaultGLViewer();
         spdlog::info("Initialized Eve in {:.2f} seconds", timer.RealTime());
     }
 
-    auto topNode = new TEveGeoTopNode(fGeo, fGeo->GetTopNode());
-    fEve->AddGlobalElement(topNode);
-    // fEve->FullRedraw3D(kTRUE);
+    auto node = fGeo->GetTopNode();
+    auto eveNode = new TEveGeoTopNode(fGeo, node);
+    fEve->AddGlobalElement(eveNode);
+    fEve->FullRedraw3D(kTRUE);
 }
 
 void Visualization::OpenFile(const TString& filename) {
