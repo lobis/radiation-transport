@@ -14,6 +14,8 @@
 #include <ROOT/RDataFrame.hxx>
 #include <iostream>
 
+#include "SimulationToVetoProcess.h"
+
 using namespace std;
 
 int main(int argc, char** argv) {
@@ -34,22 +36,35 @@ int main(int argc, char** argv) {
     TFile fFile("/tmp/tmp.eYzASlam4v/cmake-build-docker/applications/simulation/examples/iaxo/babyIAXO.root");
     TTree* fEventTree = fFile.Get<TTree>("EventTree");
 
-    DataEvent fEvent;
-    auto pEvent = &fEvent;
+    DataEvent* fEvent = nullptr;
 
     ROOT::EnableImplicitMT(4);
 
-    fEventTree->SetBranchAddress("fEvent", &pEvent);
+    fEventTree->SetBranchAddress("fEvent", &fEvent);
+
+    SimulationToVetoProcess process;
+
+    TFile file("/tmp/output.root", "RECREATE");
+
+    VetoEvent output;
+    output.fEventID = 2;
+    TTree outputTree("OutputVeto", "Output Veto");
+    int d = 1;
+    outputTree.Branch("fVetoEvent", &output);
+    outputTree.Branch("xxx", &d);
 
     for (int i = 0; i < fEventTree->GetEntries(); i++) {
         fEventTree->GetEntry(i);
-        cout << fEvent.fSimulationGeometryInfo << endl;
-        spdlog::info("event id: {}, energy: {}", fEvent.fEventID, fEvent.fSensitiveVolumesTotalEnergy);
+        spdlog::info("{}", i);
+        auto outputVeto = process.Process(*fEvent);
+        output = outputVeto;
+        outputTree.Fill();
     }
 
-    fEventTree->Draw("fEvent.fSensitiveVolumesTotalEnergy");
+    outputTree.Write();
 
-    app.Run();
+    file.Close();
+    // app.Run();
 
     return 0;
 }

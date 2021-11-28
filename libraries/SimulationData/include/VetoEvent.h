@@ -38,13 +38,16 @@ class VetoEvent {
     std::vector<Double_t> fVetoQuenchingFactor;
     std::vector<Double_t> fVetoAttenuationLength;
 
-    std::vector<std::vector<Double_t>> fVetoHitsRawEnergy;
-    std::vector<std::vector<Double_t>> fVetoHitsTime;
-    std::vector<std::vector<TVector3>> fVetoHitsPosition;
-    std::vector<std::vector<Int_t>> fVetoHitsIsQuenched;  // Bool does not work for some reason
+
+    std::vector<std::vector<Double_t>> fVetoHitsRawEnergy;  //!
+    std::vector<std::vector<Double_t>> fVetoHitsTime;       //!
+    std::vector<std::vector<TVector3>> fVetoHitsPosition;   //!
+    std::vector<std::vector<Int_t>> fVetoHitsIsQuenched;    //! // Bool does not work for some reason
 
    public:
     void Print() const;
+
+    Int_t IsVetoAdded(const TString&) const;
 
     ClassDef(VetoEvent, 1);
 };

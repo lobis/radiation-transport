@@ -14,8 +14,8 @@
 class G4VPhysicalVolume;
 
 class SimulationGeometryInfo {
-   private:
-    std::vector<TString> fGdmlNewPhysicalNames;                         //!
+   public:
+    std::vector<TString> fGdmlNewPhysicalNames;
     std::map<TString, TString> fGeant4PhysicalNameToNewPhysicalNameMap; /*
                                                                          * only makes sense when using assembly
                                                                          */

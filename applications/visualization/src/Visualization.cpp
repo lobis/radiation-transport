@@ -71,13 +71,7 @@ void Visualization::DrawEvent(Int_t index) {
 
     spdlog::info("Visualization::DrawEvent - Index {} - EventID {} - Number of tracks: {}", index, fEvent->fEventID, fEvent->fTracks.size());
 
-    /*
-    for (auto track : fTracksList) {
-        track->DestroyElements();
-    }
-    fTracksList.clear();
-    */
-    // gEve->GetViewers()->DeleteAnnotations();
+    gEve->GetViewers()->DeleteAnnotations();
     gEve->GetCurrentEvent()->DestroyElements();
 
     size_t trackCounter = 0;
@@ -86,7 +80,6 @@ void Visualization::DrawEvent(Int_t index) {
             continue;
         }
         auto line = track.GetEveDrawable();
-        fTracksList.push_back(line);
         fEveManager->AddElement(line);
         trackCounter += 1;
     }

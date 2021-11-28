@@ -15,3 +15,12 @@ void VetoEvent::Print() const {
         spdlog::info("\t- Veto ID {} - E = {} keV", fVetoID[i], fVetoRawEnergy[i]);
     }
 }
+
+Int_t VetoEvent::IsVetoAdded(const TString& volume) const {
+    for (int i = 0; i < fVetoName.size(); i++) {
+        if (fVetoName[i].EqualTo(volume)) {
+            return true;
+        }
+    }
+    return false;
+}

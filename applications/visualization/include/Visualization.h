@@ -44,8 +44,6 @@ class Visualization : public TGMainFrame {
 
     DataEvent* fEvent = nullptr;
 
-    std::vector<TEveStraightLineSet*> fTracksList;
-
    public:
     Visualization(const TGWindow* p, UInt_t w, UInt_t h);
     virtual ~Visualization();
