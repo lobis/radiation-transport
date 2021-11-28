@@ -9,6 +9,7 @@
 #include <TEveBrowser.h>
 #include <TEveGeoNode.h>
 #include <TEveManager.h>
+#include <TEveStraightLineSet.h>
 #include <TFile.h>
 #include <TGButton.h>
 #include <TGClient.h>
@@ -43,7 +44,7 @@ class Visualization : public TGMainFrame {
 
     DataEvent* fEvent = nullptr;
 
-    TCanvas* fCanvas;
+    std::vector<TEveStraightLineSet*> fTracksList;
 
    public:
     Visualization(const TGWindow* p, UInt_t w, UInt_t h);

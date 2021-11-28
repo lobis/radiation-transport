@@ -4,11 +4,14 @@
 
 #include "Visualization.h"
 
+#include <TEveEventManager.h>
 #include <TEveStraightLineSet.h>
+#include <TEveViewer.h>
 #include <TF1.h>
 #include <TGCanvas.h>
 #include <TGDockableFrame.h>
 #include <TGLTH3Composition.h>
+#include <TGTab.h>
 #include <TPaveLabel.h>
 #include <TRandom.h>
 #include <TStopwatch.h>
@@ -24,6 +27,40 @@ namespace fs = std::filesystem;
 
 ClassImp(Visualization);
 
+void AddGUI() {
+    // Create minimal GUI for event navigation.
+    // gEve->GetBrowser()->GetTabRight()->SetTab(1);
+
+    TEveBrowser* browser = gEve->GetBrowser();
+    browser->StartEmbedding(TRootBrowser::kLeft);
+
+    TGMainFrame* frmMain = new TGMainFrame(gClient->GetRoot(), 1000, 600);
+    frmMain->SetWindowName("XX GUI");
+    frmMain->SetCleanup(kDeepCleanup);
+
+    TGHorizontalFrame* hf = new TGHorizontalFrame(frmMain);
+    {
+        TString icondir(Form("%s/icons/", gSystem->Getenv("ROOTSYS")));
+        TGPictureButton* b = 0;
+
+        b = new TGPictureButton(hf, gClient->GetPicture(icondir + "GoBack.gif"));
+        hf->AddFrame(b);
+        // b->Connect("Clicked()", "EvNavHandler", fh, "Bck()");
+
+        b = new TGPictureButton(hf, gClient->GetPicture(icondir + "GoForward.gif"));
+        hf->AddFrame(b);
+        // b->Connect("Clicked()", "EvNavHandler", fh, "Fwd()");
+    }
+    frmMain->AddFrame(hf);
+
+    frmMain->MapSubwindows();
+    frmMain->Resize();
+    frmMain->MapWindow();
+
+    browser->StopEmbedding();
+    browser->SetTabTitle("Event Control", 0);
+}
+
 void Visualization::DrawEvent(Int_t index) {
     if (!fEventTree || index >= fEventTree->GetEntries()) {
         spdlog::error("Visualization::DrawEvent - Event tree does not exist or entry is out of bounds");
@@ -34,12 +71,22 @@ void Visualization::DrawEvent(Int_t index) {
 
     spdlog::info("Visualization::DrawEvent - Index {} - EventID {} - Number of tracks: {}", index, fEvent->fEventID, fEvent->fTracks.size());
 
+    /*
+    for (auto track : fTracksList) {
+        track->DestroyElements();
+    }
+    fTracksList.clear();
+    */
+    // gEve->GetViewers()->DeleteAnnotations();
+    gEve->GetCurrentEvent()->DestroyElements();
+
     size_t trackCounter = 0;
     for (const auto& track : fEvent->fTracks) {
-        if (track.fInitialKineticEnergy < 1.0) {
+        if (track.fInitialKineticEnergy < 1.0 || track.fTrackLength < 0.1) {
             continue;
         }
         auto line = track.GetEveDrawable();
+        fTracksList.push_back(line);
         fEveManager->AddElement(line);
         trackCounter += 1;
     }
@@ -111,7 +158,7 @@ void Visualization::LoadFile() {
     fComboBoxEventID->RemoveAll();
     for (int i = 0; i < fEventTree->GetEntries(); i++) {
         spdlog::info("Added entry: {}", i);
-        fEventTree->GetEntry(i);
+        // fEventTree->GetEntry(i);
         spdlog::info("EventID: {}", fEvent->fEventID);
         fComboBoxEventID->AddEntry(TString::Format("%d | EventID: %d", i, fEvent->fEventID), i);
     }
@@ -199,7 +246,6 @@ Visualization::Visualization(const TGWindow* p, UInt_t w, UInt_t h) : TGMainFram
     fSliderTransparency = new TGHSlider(fCframe, 150, kSlider1 | kScaleDownRight);
     fSliderTransparency->SetRange(0, 100);
     fSliderTransparency->SetPosition(70);
-    fSliderTransparency->Connect("Clicked()", "Visualization", this, "Test()");
     fCframe->AddFrame(fSliderTransparency, new TGLayoutHints(kLHintsTop | kLHintsExpandX, 3, 2, 2, 2));
 
     fTextButtonUpdate = new TGTextButton(fCframe, "&Update");
@@ -209,7 +255,12 @@ Visualization::Visualization(const TGWindow* p, UInt_t w, UInt_t h) : TGMainFram
 
     AddFrame(fCframe, new TGLayoutHints(kLHintsCenterX, 2, 2, 5, 1));
 
-    // fCanvas = new TCanvas("canvas", "Main Canvas", 200, 10, 700, 500);
+    TEveManager::Create();
+
+    gEve->AddEvent(new TEveEventManager("Event", "Event"));
+
+    AddGUI();
+    AddGUI();
 
     MapSubwindows();
     Resize(GetDefaultSize());
