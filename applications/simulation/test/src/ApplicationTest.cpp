@@ -122,8 +122,6 @@ TEST(Application, FullRunSerial) {
 
     tree->Print();
 
-    tree->Show();
-
     spdlog::info("Tree entries: {}", tree->GetEntries());
     Double_t totalEnergy = 0;
     DataEvent* event = nullptr;
@@ -158,8 +156,6 @@ TEST(Application, FullRunMT) {
     TTree* tree = file.Get<TTree>("EventTree");
 
     tree->Print();
-
-    tree->Show();
 
     spdlog::info("Tree entries: {}", tree->GetEntries());
     Double_t totalEnergy = 0;
