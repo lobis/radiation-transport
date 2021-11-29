@@ -10,7 +10,6 @@ macro(MY_GENERATE_ROOT_DICTIONARIES)
     FILE(GLOB HEADERS "include/*.h")
 
     foreach (header ${HEADERS})
-        message(${header})
         get_filename_component(class ${header} NAME_WE)
         file(APPEND LinkDef.h "#pragma link C++ class ${class}+;\n")
     endforeach ()

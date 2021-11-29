@@ -26,4 +26,4 @@ MY_GENERATE_ROOT_DICTIONARIES()
 
 install(TARGETS ${LIBRARY} DESTINATION lib)
 
-add_subdirectory(test)
+MY_ADD_TEST()

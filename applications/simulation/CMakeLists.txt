@@ -51,7 +51,7 @@ set_target_properties(
         PROPERTIES OUTPUT_NAME ${APPLICATION_EXECUTABLE}
 )
 
-add_subdirectory(test)
+MY_ADD_TEST()
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
