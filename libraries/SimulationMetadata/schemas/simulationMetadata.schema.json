@@ -37,6 +37,11 @@
       "type": "integer",
       "default": 0
     },
+    "fullChain": {
+      "type": "bool",
+      "default": false,
+      "description": "If enabled, simulate all subsequent decays and store them in separate events. Otherwise ignore them"
+    },
     "commands": {
       "description": "Geant4 UI Manager compatible command, executed in order of appearance",
       "type": "array",

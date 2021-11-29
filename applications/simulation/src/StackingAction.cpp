@@ -11,10 +11,12 @@
 #include <G4UnitsTable.hh>
 #include <G4VProcess.hh>
 
+#include "GlobalManager.h"
 #include "OutputManager.h"
 #include "spdlog/spdlog.h"
 
-StackingAction::StackingAction() : G4UserStackingAction(), fMaxAllowedLifetime(100 / nanosecond) {
+StackingAction::StackingAction()
+    : G4UserStackingAction(), fMaxAllowedLifetime(100 / nanosecond), fFullChain(GlobalManager::Instance()->GetSimulationConfig().fFullChain) {
     output = OutputManager::Instance();
 
     fMaxAllowedLifetimeWithUnit = G4BestUnit(fMaxAllowedLifetime, "Time");
@@ -66,8 +68,7 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* track
             }
             */
             //  TODO: kill/wait it when it stops, not before
-            // return fKill;
-            return fWaiting;
+            return fFullChain ? fWaiting : fKill;
         }
     }
     return fUrgent;

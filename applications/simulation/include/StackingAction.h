@@ -8,7 +8,6 @@
 #define SIMULATION_STACKINGACTION_H
 
 class OutputManager;
-class TrackingMessenger;
 
 class StackingAction : public G4UserStackingAction {
    public:
@@ -23,9 +22,9 @@ class StackingAction : public G4UserStackingAction {
 
    private:
     OutputManager* output;
-    TrackingMessenger* fMessenger;
 
-    G4double fMaxAllowedLifetime;
+    const bool fFullChain;
+    const G4double fMaxAllowedLifetime;
     G4String fMaxAllowedLifetimeWithUnit;
 
     std::set<const G4ParticleDefinition*> fParticlesToIgnore;

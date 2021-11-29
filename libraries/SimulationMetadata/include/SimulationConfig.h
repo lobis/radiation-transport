@@ -26,6 +26,7 @@ class SimulationConfig : public SerializableConfig {
     std::string fRunManagerType = "serial";
     int fThreads = 2;
     int fSeed = 0;
+    bool fFullChain = false;
     std::vector<std::string> fCommands;
 
     std::string fOutputFilename;
