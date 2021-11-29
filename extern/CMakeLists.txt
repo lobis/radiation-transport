@@ -6,7 +6,7 @@ set(FETCHCONTENT_QUIET ON)
 include(FetchContent)
 
 # Google Test
-if (DEFINED TEST)
+if (TEST)
     message("--> --> Google Test")
     FetchContent_Declare(
             googletest
