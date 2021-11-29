@@ -22,8 +22,7 @@ target_link_libraries(
         spdlog
 )
 
-FILE(GLOB HEADERS include/*.h)
-ROOT_GENERATE_DICTIONARY(${LIBRARY}RootDict ${HEADERS} MODULE ${LIBRARY})
+MY_GENERATE_ROOT_DICTIONARIES()
 
 install(TARGETS ${LIBRARY} DESTINATION lib)
 

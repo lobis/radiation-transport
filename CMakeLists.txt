@@ -12,6 +12,8 @@ project(radiation-transport LANGUAGES CXX HOMEPAGE_URL https://github.com/lobis/
 
 message("--> ${CMAKE_PROJECT_NAME} | ${CMAKE_PROJECT_HOMEPAGE_URL}")
 
+include(cmake/MyGenerateRootDictionaries.cmake)
+
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 find_package(ROOT REQUIRED COMPONENTS RIO Geom XMLIO)

@@ -56,5 +56,7 @@ add_subdirectory(test)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+# No dictionaries here
+
 install(TARGETS ${LIBRARY} DESTINATION lib)
 install(TARGETS ${APPLICATION} DESTINATION bin)
