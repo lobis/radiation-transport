@@ -8,10 +8,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" CACHE STRING "Default CXX options
 
 if (NOT DEFINED TEST)
     set(TEST OFF)
-    message(STATUS "--> Testing disabled")
+    message(STATUS "--> Testing disabled (Disabled by default, enabled via -DTEST=ON flag)")
 endif ()
 if (TEST)
-    message(STATUS "--> Testing enabled")
+    message(STATUS "--> Testing enabled (Disabled by default, enabled via -DTEST=ON flag)")
     enable_testing()
 endif ()
 
