@@ -1,33 +1,30 @@
 verboseLevel: info
 
-runManagerType: multithreading
-
-threads: 6
+runManagerType: serial
 
 seed: 137
 
 detector:
-  geometry: geometry/babyIAXO.gdml
+  geometry: geometry/box.gdml
   volumes:
-    - name: gasVolume
+    - name: box
       sensitive: true
 
 commands:
-  - /run/beamOn 2000
+  - /run/beamOn 100
+
+output: decay.root
 
 fullChain: true
-
-output: babyIAXO.root
 
 source:
   generator:
     point:
-      position: [ 0,1500,0 ]
-      direction: [ 0,-1,0 ]
+      position: [ 0, 0, 0 ]
 
   particle:
-    name: neutron
-    energy: 1E6
+    name: Pb210
+    energy: 0
 
 physics:
   physicsLists:

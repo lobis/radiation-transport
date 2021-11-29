@@ -48,14 +48,23 @@ void SourceConfig::Deserialize(const YAML::Node& node) {
         fParticleExcitedLevel = particle["excitedLevel"].as<double>();
     }
 
+    // TODO: reduce code duplication
     if (generator["point"]) {
         fGeneratorType = "point";
-        fGeneratorPosition = generator["point"]["position"].as<TVector3>();
-        fGeneratorDirection = generator["point"]["direction"].as<TVector3>();
+        if (generator["point"]["position"]) {
+            fGeneratorPosition = generator["point"]["position"].as<TVector3>();
+        }
+        if (generator["point"]["direction"]) {
+            fGeneratorDirection = generator["point"]["direction"].as<TVector3>();
+        }
     } else if (generator["plane"]) {
         fGeneratorType = "plane";
-        fGeneratorPosition = generator["point"]["position"].as<TVector3>();
-        fGeneratorDirection = generator["point"]["direction"].as<TVector3>();
+        if (generator["point"]["position"]) {
+            fGeneratorPosition = generator["point"]["position"].as<TVector3>();
+        }
+        if (generator["point"]["direction"]) {
+            fGeneratorDirection = generator["point"]["direction"].as<TVector3>();
+        }
         fGeneratorSize = generator["point"]["size"].as<TVector3>();
 
     } else {

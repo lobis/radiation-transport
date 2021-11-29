@@ -34,20 +34,14 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     spdlog::debug("PrimaryGeneratorAction::GeneratePrimaries");
 
     auto particleName = fSourceConfig.fParticleName;
-    auto particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
-    if (!particle) {
-        spdlog::error("PrimaryGeneratorAction::GeneratePrimaries - Could not find particle ''", particleName);
-        exit(1);
-    }
+    auto particleDefinition = GetParticle();
 
-    fGun.SetParticleDefinition(particle);
+    fGun.SetParticleDefinition(particleDefinition);
 
     auto particleEnergy = fSourceConfig.fParticleEnergy;
     if (particleEnergy < 0) {
         spdlog::error("PrimaryGeneratorAction::GeneratePrimaries - Particle energy cannot be negative");
     }
-
-    fGun.SetParticleEnergy(particleEnergy * keV);
 
     if (fSourceConfig.fGeneratorType == "point" || fSourceConfig.fGeneratorType == "plane") {
         fGun.SetParticlePosition({fSourceConfig.fGeneratorPosition.x(), fSourceConfig.fGeneratorPosition.y(), fSourceConfig.fGeneratorPosition.z()});
@@ -73,4 +67,49 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
         primaryEnergy / keV,                                                           //
         primaryDirection.x(), primaryDirection.y(), primaryDirection.z()               //
     );
+}
+
+G4ParticleDefinition* PrimaryGeneratorAction::GetParticle() const {
+    const auto& particleName = fSourceConfig.fParticleName;
+    const auto& particleExcitedLevel = fSourceConfig.fParticleExcitedLevel;
+
+    if (particleExcitedLevel < 0) {
+        spdlog::error("PrimaryGeneratorAction::GetParticle - Particle excitation energy cannot be negative");
+        exit(1);
+    }
+
+    auto particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
+    if (particle && particleExcitedLevel > 0) {
+        spdlog::error("Particle '{}' with non zero excited level not supported");
+        exit(1);
+    }
+    if (!particle) {
+        // Maybe it is an isotope
+        auto ionTable = G4IonTable::GetIonTable();
+        for (int i = 0; i < ionTable->Entries(); i++) {
+            auto ion = ionTable->GetParticle(i);
+            spdlog::info("ion: {}", ion->GetParticleName());
+        }
+
+        // there is probably a better way to find the ion
+        for (int Z = 1; Z <= 110; Z++) {
+            if (particle) {
+                break;
+            }
+            for (int A = 2 * Z - 1; A <= 3 * Z; A++) {
+                if (particleName == G4IonTable::GetIonTable()->GetIonName(Z, A)) {
+                    particle = G4IonTable::GetIonTable()->GetIon(Z, A, particleExcitedLevel / keV);
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!particle) {
+        spdlog::error("PrimaryGeneratorAction::GeneratePrimaries - Could not find particle '{}'", particleName);
+        // fSourceConfig.Print();
+        exit(1);
+    }
+
+    return particle;
 }

@@ -51,7 +51,7 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
         fOutputFilename = node["output"].as<string>();
     }
 
-    if (node["output"]) {
+    if (node["fullChain"]) {
         fFullChain = node["fullChain"].as<bool>();
     }
 

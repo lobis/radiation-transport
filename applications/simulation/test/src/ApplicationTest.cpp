@@ -170,6 +170,45 @@ TEST(Application, FullRunMT) {
     spdlog::warn("Multithreading run total energy: {} keV", totalEnergy);
 }
 
+TEST(Application, DecayFullChainOff) {
+    const string configFile = EXAMPLES_PATH + "decay/simulation.yaml";
+
+    auto config = SimulationConfig(configFile);
+    config.fSeed = 1;
+    config.fRunManagerType = "serial";
+    config.fFullChain = false;
+
+    Application app;
+    app.LoadConfigFromFile(config);
+    app.PrintConfig();
+    app.UserInitialization();
+    app.Initialize();
+
+    TFile file(config.GetOutputFileAbsolutePath().c_str());
+    TTree* tree = file.Get<TTree>("EventTree");
+
+    EXPECT_EQ(100, tree->GetEntries());
+}
+
+TEST(Application, DecayFullChainOn) {
+    const string configFile = EXAMPLES_PATH + "decay/simulation.yaml";
+
+    auto config = SimulationConfig(configFile);
+    config.fSeed = 1;
+    config.fRunManagerType = "serial";
+    config.fFullChain = true;
+
+    Application app;
+    app.LoadConfigFromFile(config);
+    app.PrintConfig();
+    app.UserInitialization();
+    app.Initialize();
+
+    TFile file(config.GetOutputFileAbsolutePath().c_str());
+    TTree* tree = file.Get<TTree>("EventTree");
+
+    EXPECT_EQ(300, tree->GetEntries());
+}
 /*
 TEST(Application, SerialVsMTSameResults) {
     const string configFile = EXAMPLES_PATH + "basic/simulation.yaml";
