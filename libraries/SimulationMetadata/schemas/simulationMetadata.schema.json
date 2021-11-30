@@ -143,12 +143,17 @@
           }
         },
         "generator": {
+          "description": "One of the available generators: 'point', 'plane', 'disk', ...",
           "additionalProperties": false,
           "properties": {
             "point": {
               "type": "object",
+              "required": [
+                "position"
+              ],
               "properties": {
                 "position": {
+                  "description": "position of point",
                   "type": "array",
                   "minItems": 3,
                   "maxItems": 3,
@@ -162,8 +167,14 @@
             },
             "plane": {
               "type": "object",
+              "required": [
+                "position",
+                "direction",
+                "size"
+              ],
               "properties": {
                 "position": {
+                  "description": "position of the center of mass",
                   "type": "array",
                   "minItems": 3,
                   "maxItems": 3,
@@ -175,6 +186,7 @@
                 },
                 "direction": {
                   "type": "array",
+                  "description": "normal vector to the plane. NOT the direction of the particles",
                   "minItems": 3,
                   "maxItems": 3,
                   "default": [
@@ -185,6 +197,7 @@
                 },
                 "size": {
                   "type": "array",
+                  "description": "size of the plane [X,Z]",
                   "minItems": 2,
                   "maxItems": 2,
                   "default": [
@@ -196,8 +209,13 @@
             },
             "disk": {
               "type": "object",
+              "required": [
+                "position",
+                "diameter"
+              ],
               "properties": {
                 "position": {
+                  "description": "position of the center of mass",
                   "type": "array",
                   "minItems": 3,
                   "maxItems": 3,
@@ -209,6 +227,7 @@
                 },
                 "direction": {
                   "type": "array",
+                  "description": "normal vector to the disk. NOT the direction of the particles",
                   "minItems": 3,
                   "maxItems": 3,
                   "default": [
@@ -219,6 +238,7 @@
                 },
                 "diameter": {
                   "type": "number",
+                  "description": "diameter of disk in mm",
                   "minimum": 0,
                   "default": 0
                 }
@@ -242,53 +262,168 @@
               ]
             }
           ]
+        },
+        "energy": {
+          "description": "One of the available energy distributions: 'mono', ...",
+          "additionalProperties": false,
+          "properties": {
+            "unit": {
+              "description": "energy units (default keV)",
+              "default": "keV",
+              "enum": [
+                "meV",
+                "eV",
+                "keV",
+                "MeV",
+                "GeV",
+                "TeV"
+              ]
+            },
+            "min": {
+              "description": "left cut of energy distribution (in selected units)",
+              "type": "number",
+              "minimum": 0,
+              "default": 0
+            },
+            "max": {
+              "description": "right cut of energy distribution (in selected units). Should be bigger than 'min'",
+              "type": "number",
+              "minimum": 0,
+              "default": 0
+            },
+            "mono": {
+              "type": "object",
+              "description": "mono energetic source",
+              "required": [
+                "value"
+              ],
+              "properties": {
+                "value": {
+                  "description": "energy of source (in selected units)",
+                  "type": "number",
+                  "minimum": 0,
+                  "default": 100
+                }
+              }
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "mono"
+              ]
+            }
+          ]
+        },
+        "angular": {
+          "description": "One of the available angular distributions: 'isotropic', 'flux'",
+          "additionalProperties": false,
+          "properties": {
+            "thetaMin": {
+              "description": "cut for theta (radians)",
+              "default": 0,
+              "minimum": 0,
+              "type": "number"
+            },
+            "thetaMax": {
+              "description": "cut for theta (radians)",
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            "phiMin": {
+              "description": "cut for phi (radians)",
+              "default": 0,
+              "minimum": 0,
+              "type": "number"
+            },
+            "phiMax": {
+              "description": "cut for phi (radians)",
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            "isotropic": {
+              "nullable": true,
+              "description": "isotropic source (this has no additional properties)"
+            },
+            "flux": {
+              "type": "object",
+              "description": "particles launched in a specified direction (narrow beam)",
+              "required": [
+                "direction"
+              ],
+              "properties": {
+                "direction": {
+                  "description": "direction of particles",
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "default": [
+                    0,
+                    1,
+                    0
+                  ]
+                }
+              }
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "isotropic"
+              ]
+            },
+            {
+              "required": [
+                "flux"
+              ]
+            }
+          ]
         }
-      }
-    },
-    "physics": {
-      "type": "object",
-      "description": "PhysicsList definition",
-      "required": [
-        "physicsLists"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "verbosity": {
-          "type": "int",
-          "description": "Verbosity level for the physics list (Geant4 verbosity)"
-        },
-        "productionCutsLengthGlobal": {
-          "type": "number",
-          "description": "Global production cuts (in mm)",
-          "exclusiveMinimum": 0
-        },
-        "productionCutsEnergyMin": {
-          "type": "number",
-          "description": "Minimum energy production cut",
-          "exclusiveMinimum": 0
-        },
-        "productionCutsEnergyMax": {
-          "type": "number",
-          "description": "Maximum energy production cut",
-          "exclusiveMinimum": 0
-        },
-        "physicsLists": {
-          "type": "array",
-          "description": "List of Geant4 physics lists to register",
-          "items": {
-            "enum": [
-              "G4EmLivermorePhysics",
-              "G4DecayPhysics",
-              "G4RadioactiveDecayPhysics",
-              "G4HadronElasticPhysicsHP",
-              "G4IonBinaryCascadePhysics",
-              "G4HadronPhysicsQGSP_BIC_HP",
-              "G4NeutronTrackingCut",
-              "G4EmExtraPhysics"
-            ]
+      },
+      "physics": {
+        "type": "object",
+        "description": "PhysicsList definition",
+        "required": [
+          "physicsLists"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "verbosity": {
+            "type": "int",
+            "description": "Verbosity level for the physics list (Geant4 verbosity)"
+          },
+          "productionCutsLengthGlobal": {
+            "type": "number",
+            "description": "Global production cuts (in mm)",
+            "exclusiveMinimum": 0
+          },
+          "productionCutsEnergyMin": {
+            "type": "number",
+            "description": "Minimum energy production cut",
+            "exclusiveMinimum": 0
+          },
+          "productionCutsEnergyMax": {
+            "type": "number",
+            "description": "Maximum energy production cut",
+            "exclusiveMinimum": 0
+          },
+          "physicsLists": {
+            "type": "array",
+            "description": "List of Geant4 physics lists to register",
+            "items": {
+              "enum": [
+                "G4EmLivermorePhysics",
+                "G4DecayPhysics",
+                "G4RadioactiveDecayPhysics",
+                "G4HadronElasticPhysicsHP",
+                "G4IonBinaryCascadePhysics",
+                "G4HadronPhysicsQGSP_BIC_HP",
+                "G4NeutronTrackingCut",
+                "G4EmExtraPhysics"
+              ]
+            }
           }
         }
       }
     }
   }
-}
