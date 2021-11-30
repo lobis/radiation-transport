@@ -22,6 +22,7 @@
       "default": "default.root"
     },
     "runManagerType": {
+      "type": "string",
       "enum": [
         "serial",
         "multithreading"
@@ -38,7 +39,7 @@
       "default": 0
     },
     "fullChain": {
-      "type": "bool",
+      "type": "boolean",
       "default": false,
       "description": "If enabled, simulate all subsequent decays and store them in separate events. Otherwise ignore them"
     },
@@ -49,7 +50,9 @@
         "type": "string",
         "pattern": "^/"
       },
-      "default": []
+      "default": [
+        "/run/beamOn 100"
+      ]
     },
     "detector": {
       "$ref": "#/$defs/detector"
@@ -74,7 +77,7 @@
           "type": "string"
         },
         "sensitive": {
-          "type": "bool",
+          "type": "boolean",
           "description": "Select as sensitive volume",
           "default": false
         }
@@ -132,7 +135,7 @@
               "type": "number",
               "description": "Particle kinetic energy (keV)",
               "exclusiveMinimum": 0,
-              "default": 661.7
+              "default": 100.0
             },
             "excitedLevel": {
               "type": "number",
@@ -269,6 +272,7 @@
           "properties": {
             "unit": {
               "description": "energy units (default keV)",
+              "type": "string",
               "default": "keV",
               "enum": [
                 "meV",
@@ -390,8 +394,9 @@
       "additionalProperties": false,
       "properties": {
         "verbosity": {
-          "type": "int",
-          "description": "Verbosity level for the physics list (Geant4 verbosity)"
+          "type": "integer",
+          "description": "Verbosity level for the physics list (Geant4 verbosity)",
+          "default": 0
         },
         "productionCutsLengthGlobal": {
           "type": "number",
@@ -412,6 +417,7 @@
           "type": "array",
           "description": "List of Geant4 physics lists to register",
           "items": {
+            "type": "string",
             "enum": [
               "G4EmLivermorePhysics",
               "G4DecayPhysics",
@@ -422,7 +428,17 @@
               "G4NeutronTrackingCut",
               "G4EmExtraPhysics"
             ]
-          }
+          },
+          "default": [
+            "G4EmLivermorePhysics",
+            "G4DecayPhysics",
+            "G4RadioactiveDecayPhysics",
+            "G4HadronElasticPhysicsHP",
+            "G4IonBinaryCascadePhysics",
+            "G4HadronPhysicsQGSP_BIC_HP",
+            "G4NeutronTrackingCut",
+            "G4EmExtraPhysics"
+          ]
         }
       }
     }
