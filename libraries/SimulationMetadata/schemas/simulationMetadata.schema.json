@@ -379,49 +379,49 @@
             }
           ]
         }
-      },
-      "physics": {
-        "type": "object",
-        "description": "PhysicsList definition",
-        "required": [
-          "physicsLists"
-        ],
-        "additionalProperties": false,
-        "properties": {
-          "verbosity": {
-            "type": "int",
-            "description": "Verbosity level for the physics list (Geant4 verbosity)"
-          },
-          "productionCutsLengthGlobal": {
-            "type": "number",
-            "description": "Global production cuts (in mm)",
-            "exclusiveMinimum": 0
-          },
-          "productionCutsEnergyMin": {
-            "type": "number",
-            "description": "Minimum energy production cut",
-            "exclusiveMinimum": 0
-          },
-          "productionCutsEnergyMax": {
-            "type": "number",
-            "description": "Maximum energy production cut",
-            "exclusiveMinimum": 0
-          },
-          "physicsLists": {
-            "type": "array",
-            "description": "List of Geant4 physics lists to register",
-            "items": {
-              "enum": [
-                "G4EmLivermorePhysics",
-                "G4DecayPhysics",
-                "G4RadioactiveDecayPhysics",
-                "G4HadronElasticPhysicsHP",
-                "G4IonBinaryCascadePhysics",
-                "G4HadronPhysicsQGSP_BIC_HP",
-                "G4NeutronTrackingCut",
-                "G4EmExtraPhysics"
-              ]
-            }
+      }
+    },
+    "physics": {
+      "type": "object",
+      "description": "PhysicsList definition",
+      "required": [
+        "physicsLists"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "verbosity": {
+          "type": "int",
+          "description": "Verbosity level for the physics list (Geant4 verbosity)"
+        },
+        "productionCutsLengthGlobal": {
+          "type": "number",
+          "description": "Global production cuts (in mm)",
+          "exclusiveMinimum": 0
+        },
+        "productionCutsEnergyMin": {
+          "type": "number",
+          "description": "Minimum energy production cut",
+          "exclusiveMinimum": 0
+        },
+        "productionCutsEnergyMax": {
+          "type": "number",
+          "description": "Maximum energy production cut",
+          "exclusiveMinimum": 0
+        },
+        "physicsLists": {
+          "type": "array",
+          "description": "List of Geant4 physics lists to register",
+          "items": {
+            "enum": [
+              "G4EmLivermorePhysics",
+              "G4DecayPhysics",
+              "G4RadioactiveDecayPhysics",
+              "G4HadronElasticPhysicsHP",
+              "G4IonBinaryCascadePhysics",
+              "G4HadronPhysicsQGSP_BIC_HP",
+              "G4NeutronTrackingCut",
+              "G4EmExtraPhysics"
+            ]
           }
         }
       }
