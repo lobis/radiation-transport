@@ -118,10 +118,10 @@ void DetectorConstruction::ConstructSDandField() {
     for (const auto& userSensitiveVolume : sensitiveVolumes) {
         spdlog::debug("DetectorConstruction::ConstructSDandField: User selected volume: {}", userSensitiveVolume);
         G4LogicalVolume* logicalVolume;
-        G4VPhysicalVolume* physicalVolume = G4PhysicalVolumeStore::GetInstance()->GetVolume(userSensitiveVolume);
+        G4VPhysicalVolume* physicalVolume = G4PhysicalVolumeStore::GetInstance()->GetVolume(userSensitiveVolume, false);
         if (!physicalVolume) {
             // perhaps user selected a logical volume with this name
-            logicalVolume = G4LogicalVolumeStore::GetInstance()->GetVolume(userSensitiveVolume);
+            logicalVolume = G4LogicalVolumeStore::GetInstance()->GetVolume(userSensitiveVolume, false);
         } else {
             logicalVolume = physicalVolume->GetLogicalVolume();
         }

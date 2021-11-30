@@ -92,18 +92,14 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
 
     auto generator = node["generator"];
     // check one and only one generator type is present
-    cout << "DEBUG\n" << generator << endl;
 
     size_t count = 0;
     for (const auto& type : fGeneratorTypesAvailable) {
-        cout << type << endl;
         if (generator[type]) {
             count += 1;
             fGeneratorType = type;
-            cout << "OK" << endl;
         }
     }
-    cout << fGeneratorType << endl;
 
     if (count != 1) {
         spdlog::error("SourceConfig::Deserialize - zero or more than one types of generator present");
@@ -157,7 +153,6 @@ void SourceConfig::DeserializeEnergy(const YAML::Node& node) {
     }
 
     auto energy = node["energy"];
-    cout << "ENERGY NODE: " << endl << energy << "DONE!" << endl;
     {
         size_t count = 0;
         for (const auto& type : fEnergyDistributionTypesAvailable) {

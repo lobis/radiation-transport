@@ -29,41 +29,16 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
       fOutput(OutputManager::Instance()),
       fSourceConfig(GlobalManager::Instance()->GetSimulationConfig().fSourceConfig) {
     spdlog::info("PrimaryGeneratorAction::PrimaryGeneratorAction");
-
-    spdlog::warn("{}", G4UnitDefinition::GetCategory(fSourceConfig.fEnergyDistributionUnit));
-
-    fParticle = GetParticle();
-
-    if (!G4UnitDefinition::IsUnitDefined(fSourceConfig.fEnergyDistributionUnit) ||
-        G4UnitDefinition::GetCategory(fSourceConfig.fEnergyDistributionUnit) != "energy") {
-        spdlog::error("energy unit '{}' not defined", fSourceConfig.fEnergyDistributionUnit);
-        exit(1);
-    }
-    fEnergyScaleFactor = G4UnitDefinition::GetValueOf(fSourceConfig.fEnergyDistributionUnit);
-
-    if (fSourceConfig.fEnergyDistributionType == "mono") {
-        fEnergyDistribution = make_unique<G4SPSEneDistribution>();
-        fEnergyDistribution->SetEnergyDisType("Mono");
-    } else {
-        spdlog::error("Energy distribution type '{}' sampling not implemented yet", fSourceConfig.fEnergyDistributionType);
-        exit(1);
-    }
-
-    if (fSourceConfig.fAngularDistributionType == "flux") {
-        //
-    } else if (fSourceConfig.fAngularDistributionType == "isotropic") {
-        fAngularDistribution = make_unique<G4SPSAngDistribution>();
-        fAngularDistribution->SetAngDistType("iso");
-    } else {
-        spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
-        exit(1);
-    }
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() = default;
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     spdlog::debug("PrimaryGeneratorAction::GeneratePrimaries");
+
+    if (!fInitialized) {
+        Initialize();
+    }
 
     auto particleName = fSourceConfig.fParticleName;
 
@@ -75,13 +50,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
         exit(1);
     }
 
-    fGun.SetParticleEnergy(particleEnergy);
-
-    auto particleDirection = GetDirection();
-    fGun.SetParticleMomentumDirection(particleDirection);
+    fGun.SetParticleEnergy(particleEnergy * fEnergyScaleFactor);
 
     auto particlePosition = GetPosition();
     fGun.SetParticlePosition(particlePosition);
+
+    auto particleDirection = GetDirection();
+    fGun.SetParticleMomentumDirection(particleDirection);
 
     if (fSourceConfig.fGeneratorType == "point" || fSourceConfig.fGeneratorType == "plane" || fSourceConfig.fGeneratorType == "disk") {
         /*fGun.SetParticlePosition({fSourceConfig.fGeneratorPosition.x(), fSourceConfig.fGeneratorPosition.y(),
@@ -122,13 +97,6 @@ G4ParticleDefinition* PrimaryGeneratorAction::GetParticle() const {
         exit(1);
     }
     if (!particle) {
-        // Maybe it is an isotope
-        auto ionTable = G4IonTable::GetIonTable();
-        for (int i = 0; i < ionTable->Entries(); i++) {
-            auto ion = ionTable->GetParticle(i);
-            spdlog::info("ion: {}", ion->GetParticleName());
-        }
-
         // there is probably a better way to find the ion
         for (int Z = 1; Z <= 110; Z++) {
             if (particle) {
@@ -137,6 +105,7 @@ G4ParticleDefinition* PrimaryGeneratorAction::GetParticle() const {
             for (int A = 2 * Z - 1; A <= 3 * Z; A++) {
                 if (particleName == G4IonTable::GetIonTable()->GetIonName(Z, A)) {
                     particle = G4IonTable::GetIonTable()->GetIon(Z, A, particleExcitedLevel / keV);
+                    spdlog::info("PrimaryGeneratorAction::GetParticle - Found ion '{}' with Z={} and A={}", particleName, Z, A);
                     break;
                 }
             }
@@ -145,7 +114,6 @@ G4ParticleDefinition* PrimaryGeneratorAction::GetParticle() const {
 
     if (!particle) {
         spdlog::error("PrimaryGeneratorAction::GeneratePrimaries - Could not find particle '{}'", particleName);
-        // fSourceConfig.Print();
         exit(1);
     }
 
@@ -154,6 +122,7 @@ G4ParticleDefinition* PrimaryGeneratorAction::GetParticle() const {
 
 double PrimaryGeneratorAction::GetEnergy() const {
     if (fEnergyDistribution) {
+        spdlog::debug("PrimaryGeneratorAction::GetEnergy - Generating from Geant4");
         return fEnergyDistribution->GenerateOne(fParticle);
     }
 
@@ -169,8 +138,11 @@ double PrimaryGeneratorAction::GetEnergy() const {
 }
 
 G4ThreeVector PrimaryGeneratorAction::GetDirection() const {
+    spdlog::debug("PrimaryGeneratorAction::GetDirection - {}", fAngularDistribution ? fAngularDistribution->GetDistType() : "Not defined");
     if (fAngularDistribution) {
-        return fAngularDistribution->GenerateOne();
+        spdlog::debug("PrimaryGeneratorAction::GetDirection - Generating from Geant4");
+        auto momentum = fAngularDistribution->GenerateOne();
+        return momentum;
     }
 
     G4ThreeVector direction;
@@ -178,6 +150,9 @@ G4ThreeVector PrimaryGeneratorAction::GetDirection() const {
         direction = {fSourceConfig.fAngularDistributionDirection.x(), fSourceConfig.fAngularDistributionDirection.y(),
                      fSourceConfig.fAngularDistributionDirection.z()};
     } else if (fSourceConfig.fAngularDistributionType == "isotropic") {
+        //
+        spdlog::error("isotropic not implemented");
+        exit(1);
     } else {
         spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
         exit(1);
@@ -188,6 +163,7 @@ G4ThreeVector PrimaryGeneratorAction::GetDirection() const {
 
 G4ThreeVector PrimaryGeneratorAction::GetPosition() const {
     if (fPositionDistribution) {
+        spdlog::debug("PrimaryGeneratorAction::GetPosition - Generating from Geant4");
         return fPositionDistribution->GenerateOne();
     }
 
@@ -200,4 +176,56 @@ G4ThreeVector PrimaryGeneratorAction::GetPosition() const {
     }
 
     return position;
+}
+
+void PrimaryGeneratorAction::Initialize() {
+    spdlog::debug("PrimaryGeneratorAction::Initialize");
+
+    fParticle = GetParticle();
+
+    if (!G4UnitDefinition::IsUnitDefined(fSourceConfig.fEnergyDistributionUnit) ||
+        G4UnitDefinition::GetCategory(fSourceConfig.fEnergyDistributionUnit) != "Energy") {
+        spdlog::error("energy unit '{}' not defined", fSourceConfig.fEnergyDistributionUnit);
+        exit(1);
+    }
+    fEnergyScaleFactor = G4UnitDefinition::GetValueOf(fSourceConfig.fEnergyDistributionUnit);
+
+    if (fSourceConfig.fEnergyDistributionType == "mono") {
+        fEnergyDistribution = make_unique<G4SPSEneDistribution>();
+        fEnergyDistribution->SetEnergyDisType("Mono");
+    } else {
+        spdlog::error("Energy distribution type '{}' sampling not implemented yet", fSourceConfig.fEnergyDistributionType);
+        exit(1);
+    }
+    if (fEnergyDistribution) {
+        spdlog::info("Geant4 energy distribution: {}", fEnergyDistribution->GetEnergyDisType());
+    }
+
+    fPositionDistribution = make_unique<G4SPSPosDistribution>();
+    if (fSourceConfig.fGeneratorType == "point") {
+        fPositionDistribution->SetPosDisType("Point");
+    } else if (fSourceConfig.fGeneratorType == "plane" || fSourceConfig.fGeneratorType == "disk") {
+        fPositionDistribution->SetPosDisType("Plane");
+    } else {
+        spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
+        exit(1);
+    }
+    if (fPositionDistribution) {
+        spdlog::info("Geant4 position distribution: {}", fPositionDistribution->GetPosDisType());
+    }
+
+    if (fSourceConfig.fAngularDistributionType == "flux") {
+        //
+    } else if (fSourceConfig.fAngularDistributionType == "isotropic") {
+        fAngularDistribution = make_unique<G4SPSAngDistribution>();
+        fAngularDistribution->SetAngDistType("iso");
+    } else {
+        spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
+        exit(1);
+    }
+    if (fPositionDistribution) {
+        spdlog::info("Geant4 angular distribution: {}", fAngularDistribution->GetDistType());
+    }
+
+    fInitialized = true;
 }

@@ -39,6 +39,10 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
     std::unique_ptr<G4SPSAngDistribution> fAngularDistribution = nullptr;
     std::unique_ptr<G4SPSEneDistribution> fEnergyDistribution = nullptr;
     std::unique_ptr<G4SPSPosDistribution> fPositionDistribution = nullptr;
+
+    bool fInitialized = false;
+
+    void Initialize();
 };
 
 #endif  // RADIATION_TRANSPORT_PRIMARYGENERATORACTION_H

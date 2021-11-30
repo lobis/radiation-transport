@@ -5,7 +5,8 @@
 #ifndef RADIATION_TRANSPORT_SOURCECONFIG_H
 #define RADIATION_TRANSPORT_SOURCECONFIG_H
 
-#define INFINITY 1.0E30
+#define INFINITY_ENERGY 1.0E30
+
 #include <TVector3.h>
 
 #include "SerializableConfig.h"
@@ -47,7 +48,7 @@ class SourceConfig : public SerializableConfig {
     std::string fEnergyDistributionUnit = "keV";
 
     double fEnergyDistributionLimitMin = 0;
-    double fEnergyDistributionLimitMax = INFINITY;
+    double fEnergyDistributionLimitMax = INFINITY_ENERGY;
 
     double fEnergyDistributionMonoValue = 100;
 
