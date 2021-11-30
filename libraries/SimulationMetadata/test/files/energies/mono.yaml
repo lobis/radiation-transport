@@ -1,0 +1,7 @@
+source:
+  particle:
+    name: geantino
+
+  energy:
+    type: "mono"
+    value: 10

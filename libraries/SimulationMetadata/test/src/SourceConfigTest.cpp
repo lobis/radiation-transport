@@ -44,6 +44,9 @@ TEST(SourceConfig, DeserializePlane) {
     fSourceConfig.Print();
 
     EXPECT_EQ(fSourceConfig.fGeneratorType, "plane");
+    EXPECT_EQ(fSourceConfig.fGeneratorPosition, TVector3({0, 200, 0}));
+    EXPECT_EQ(fSourceConfig.fGeneratorDirection, TVector3({0, 1, 1}));
+    EXPECT_EQ(fSourceConfig.fGeneratorSize, TVector3({10, 0, 20}));
 }
 
 TEST(SourceConfig, DeserializeDisk) {
@@ -60,4 +63,7 @@ TEST(SourceConfig, DeserializeDisk) {
     fSourceConfig.Print();
 
     EXPECT_EQ(fSourceConfig.fGeneratorType, "disk");
+    EXPECT_EQ(fSourceConfig.fGeneratorPosition, TVector3({10, 0, 0}));
+    EXPECT_EQ(fSourceConfig.fGeneratorDirection, TVector3({10, 0, 0}));
+    EXPECT_EQ(fSourceConfig.fGeneratorDiameter, 15);
 }

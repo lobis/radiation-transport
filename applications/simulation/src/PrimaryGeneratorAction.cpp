@@ -38,12 +38,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
 
     fGun.SetParticleDefinition(particleDefinition);
 
-    auto particleEnergy = fSourceConfig.fParticleEnergy;
+    auto particleEnergy = fSourceConfig.fEnergyDistributionMonoValue;
     if (particleEnergy < 0) {
         spdlog::error("PrimaryGeneratorAction::GeneratePrimaries - Particle energy cannot be negative");
     }
 
-    if (fSourceConfig.fGeneratorType == "point" || fSourceConfig.fGeneratorType == "plane") {
+    if (fSourceConfig.fGeneratorType == "point" || fSourceConfig.fGeneratorType == "plane" || fSourceConfig.fGeneratorType == "disk") {
         fGun.SetParticlePosition({fSourceConfig.fGeneratorPosition.x(), fSourceConfig.fGeneratorPosition.y(), fSourceConfig.fGeneratorPosition.z()});
     }
 

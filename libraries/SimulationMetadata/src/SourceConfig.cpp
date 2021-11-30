@@ -34,33 +34,52 @@ void SourceConfig::Deserialize(const YAML::Node& node) {
         spdlog::error("Bad parameters in particle source. You need to set 'particle' and 'generator'");
     }
     auto particle = node["particle"];
-    auto generator = node["generator"];
 
     if (particle["name"]) {
         fParticleName = particle["name"].as<string>();
-    }
-
-    if (particle["energy"]) {
-        fParticleEnergy = particle["energy"].as<double>();
     }
 
     if (particle["excitedLevel"]) {
         fParticleExcitedLevel = particle["excitedLevel"].as<double>();
     }
 
+    DeserializeGenerator(node);
+    DeserializeEnergy(node);
+    DeserializeAngular(node);
+}
+
+YAML::Node SourceConfig::Serialize() const {
+    YAML::Node node;
+
+    node["particle"] = YAML::Node();
+    node["particle"]["name"] = fParticleName;
+    node["particle"]["excitedLevel"] = fParticleExcitedLevel;
+
+    node["generator"] = SerializeGenerator();
+    node["energy"] = SerializeEnergy();
+    node["angular"] = SerializeAngular();
+
+    return node;
+}
+
+void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
+    if (!node["generator"]) {
+        return;
+    }
+
+    auto generator = node["generator"];
     // check one and only one generator type is present
-    {
-        size_t count = 0;
-        for (const auto& type : fGeneratorTypesAvailable) {
-            if (generator[type]) {
-                count += 1;
-                fGeneratorType = type;
-            }
+
+    size_t count = 0;
+    for (const auto& type : fGeneratorTypesAvailable) {
+        if (generator[type]) {
+            count += 1;
+            fGeneratorType = type;
         }
-        if (count != 1) {
-            spdlog::error("SourceConfig::Deserialize - zero or more than one types of generator present");
-            exit(1);
-        }
+    }
+    if (count != 1) {
+        spdlog::error("SourceConfig::Deserialize - zero or more than one types of generator present");
+        exit(1);
     }
 
     if (fGeneratorType == "point" || fGeneratorType == "plane" || fGeneratorType == "disk") {
@@ -86,26 +105,119 @@ void SourceConfig::Deserialize(const YAML::Node& node) {
     }
 }
 
-YAML::Node SourceConfig::Serialize() const {
+void SourceConfig::DeserializeEnergy(const YAML::Node& node) {
+    if (!node["energy"]) {
+        return;
+    }
+
+    auto energy = node["energy"];
+
+    {
+        size_t count = 0;
+        for (const auto& type : fEnergyDistributionTypesAvailable) {
+            if (energy[type]) {
+                count += 1;
+                fEnergyDistributionType = type;
+            }
+        }
+        if (count != 1) {
+            spdlog::error("SourceConfig::Deserialize - zero or more than one types of energy distribution present");
+            exit(1);
+        }
+    }
+
+    if (energy[fEnergyDistributionType]["unit"]) {
+        fEnergyDistributionUnits = energy[fEnergyDistributionType]["unit"].as<string>();
+    }
+    if (energy[fEnergyDistributionType]["min"]) {
+        fEnergyDistributionLimitMin = energy[fEnergyDistributionType]["min"].as<double>();
+    }
+    if (energy[fEnergyDistributionType]["max"]) {
+        fEnergyDistributionLimitMax = energy[fEnergyDistributionType]["max"].as<double>();
+    }
+    if (fEnergyDistributionType == "mono") {
+        if (energy[fEnergyDistributionType]["value"]) {
+            fEnergyDistributionMonoValue = energy[fEnergyDistributionType]["value"].as<double>();
+        }
+    } else {
+        spdlog::error("Not implemented yet");
+        exit(1);
+    }
+}
+
+void SourceConfig::DeserializeAngular(const YAML::Node& node) {
+    if (!node["angular"]) {
+        return;
+    }
+
+    auto angular = node["angular"];
+
+    {
+        size_t count = 0;
+        for (const auto& type : fAngularDistributionTypesAvailable) {
+            if (angular[type]) {
+                count += 1;
+                fAngularDistributionType = type;
+            }
+        }
+        if (count != 1) {
+            spdlog::error("SourceConfig::Deserialize - zero or more than one types of energy distribution present");
+            exit(1);
+        }
+    }
+}
+
+YAML::Node SourceConfig::SerializeGenerator() const {
     YAML::Node node;
 
-    node["particle"] = YAML::Node();
-    node["particle"]["name"] = fParticleName;
-    node["particle"]["energy"] = fParticleEnergy;
-    node["particle"]["excitedLevel"] = fParticleExcitedLevel;
+    node["type"] = fGeneratorType;
 
-    node["generator"] = YAML::Node();
     if (fGeneratorType == "point" || fGeneratorType == "plane" || fGeneratorType == "disk") {
-        node["generator"]["position"] = fGeneratorPosition;
+        node["position"] = fGeneratorPosition;
     }
     if (fGeneratorType == "plane" || fGeneratorType == "disk") {
-        node["generator"]["direction"] = fGeneratorDirection;
+        node["direction"] = fGeneratorDirection;
     }
     if (fGeneratorType == "plane") {
-        node["generator"]["size"] = fGeneratorDirection;
+        node["size"] = fGeneratorSize;
     }
     if (fGeneratorType == "disk") {
-        node["generator"]["diameter"] = fGeneratorDiameter;
+        node["diameter"] = fGeneratorDiameter;
+    }
+
+    return node;
+}
+
+YAML::Node SourceConfig::SerializeEnergy() const {
+    YAML::Node node;
+
+    node["type"] = fEnergyDistributionType;
+
+    node["unit"] = fEnergyDistributionUnits;
+
+    node["min"] = fEnergyDistributionLimitMin;
+    node["max"] = fEnergyDistributionLimitMax;
+
+    if (fEnergyDistributionType == "mono") {
+        node["value"] = fGeneratorPosition;
+    }
+
+    return node;
+}
+
+YAML::Node SourceConfig::SerializeAngular() const {
+    YAML::Node node;
+
+    node["type"] = fAngularDistributionType;
+
+    node["thetaMin"] = fAngularDistributionLimitThetaMin;
+    node["thetaMax"] = fAngularDistributionLimitThetaMax;
+
+    node["phiMin"] = fAngularDistributionLimitPhiMin;
+    node["phiMax"] = fAngularDistributionLimitPhiMax;
+
+    if (fAngularDistributionType == "flux") {
+        node["direction"] = fAngularDistributionDirection;
     }
 
     return node;
