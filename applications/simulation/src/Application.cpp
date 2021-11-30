@@ -144,7 +144,7 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
 
             default:
                 // invalid option
-                spdlog::error("Error processing command line arguments");
+                spdlog::error("Error processing command line arguments, probably you missed and argument (e.g. you used '-v' instead of '-v debug'");
                 exit(1);
         }
     }

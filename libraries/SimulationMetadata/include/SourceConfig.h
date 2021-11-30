@@ -19,9 +19,12 @@ class SourceConfig : public SerializableConfig {
     double fParticleEnergy = 100 /* keV */;
     double fParticleExcitedLevel = 0;
 
+    std::set<std::string> fGeneratorTypesAvailable = {"point", "plane", "disk"};
+
     std::string fGeneratorType = "point";
     TVector3 fGeneratorPosition = {0, 0, 0};
-    TVector3 fGeneratorDirection = {1, 0, 0};
+    TVector3 fGeneratorDirection = {0, -1, 0};
     TVector3 fGeneratorSize = {0, 0, 0};
+    double fGeneratorDiameter = 0;
 };
 #endif  // RADIATION_TRANSPORT_SOURCECONFIG_H

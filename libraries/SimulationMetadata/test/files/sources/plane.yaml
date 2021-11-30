@@ -1,0 +1,9 @@
+source:
+  particle:
+    name: geantino
+
+  generator:
+    plane:
+      position: [ 0, 100, 0 ]
+      direction: [ 0, 1, 0 ]
+      size: [ 10, 0, 20 ]

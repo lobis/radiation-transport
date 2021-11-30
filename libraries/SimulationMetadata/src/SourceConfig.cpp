@@ -48,28 +48,41 @@ void SourceConfig::Deserialize(const YAML::Node& node) {
         fParticleExcitedLevel = particle["excitedLevel"].as<double>();
     }
 
-    // TODO: reduce code duplication
-    if (generator["point"]) {
-        fGeneratorType = "point";
-        if (generator["point"]["position"]) {
-            fGeneratorPosition = generator["point"]["position"].as<TVector3>();
+    // check one and only one generator type is present
+    {
+        size_t count = 0;
+        for (const auto& type : fGeneratorTypesAvailable) {
+            if (generator[type]) {
+                count += 1;
+                fGeneratorType = type;
+            }
         }
-        if (generator["point"]["direction"]) {
-            fGeneratorDirection = generator["point"]["direction"].as<TVector3>();
+        if (count != 1) {
+            spdlog::error("SourceConfig::Deserialize - zero or more than one types of generator present");
+            exit(1);
         }
-    } else if (generator["plane"]) {
-        fGeneratorType = "plane";
-        if (generator["point"]["position"]) {
-            fGeneratorPosition = generator["point"]["position"].as<TVector3>();
-        }
-        if (generator["point"]["direction"]) {
-            fGeneratorDirection = generator["point"]["direction"].as<TVector3>();
-        }
-        fGeneratorSize = generator["point"]["size"].as<TVector3>();
+    }
 
-    } else {
-        spdlog::error("Invalid generator '{}'", generator.as<string>());
-        exit(1);
+    if (fGeneratorType == "point" || fGeneratorType == "plane" || fGeneratorType == "disk") {
+        if (generator[fGeneratorType]["position"]) {
+            fGeneratorPosition = generator[fGeneratorType]["position"].as<TVector3>();
+        }
+    }
+
+    if (fGeneratorType == "plane" || fGeneratorType == "disk") {
+        if (generator[fGeneratorType]["direction"]) {
+            fGeneratorDirection = generator[fGeneratorType]["direction"].as<TVector3>();
+            if (fGeneratorDirection == TVector3({0, 0, 0})) {
+                spdlog::error("SourceConfig::Deserialize - direction cannot be the zero vector");
+                exit(1);
+            }
+        }
+    }
+    if (fGeneratorType == "plane") {
+        fGeneratorSize = generator["point"]["size"].as<TVector3>();
+    }
+    if (fGeneratorType == "disk") {
+        fGeneratorDiameter = generator["point"]["diameter"].as<double>();
     }
 }
 
@@ -82,13 +95,17 @@ YAML::Node SourceConfig::Serialize() const {
     node["particle"]["excitedLevel"] = fParticleExcitedLevel;
 
     node["generator"] = YAML::Node();
-    if (node["generator"].as<string>() == "point") {
+    if (fGeneratorType == "point" || fGeneratorType == "plane" || fGeneratorType == "disk") {
         node["generator"]["position"] = fGeneratorPosition;
+    }
+    if (fGeneratorType == "plane" || fGeneratorType == "disk") {
         node["generator"]["direction"] = fGeneratorDirection;
-    } else if (node["generator"].as<string>() == "plane") {
-        node["generator"]["position"] = fGeneratorPosition;
-        node["generator"]["direction"] = fGeneratorDirection;
+    }
+    if (fGeneratorType == "plane") {
         node["generator"]["size"] = fGeneratorDirection;
+    }
+    if (fGeneratorType == "disk") {
+        node["generator"]["diameter"] = fGeneratorDiameter;
     }
 
     return node;

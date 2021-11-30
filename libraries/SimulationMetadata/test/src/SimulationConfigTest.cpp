@@ -10,10 +10,10 @@
 
 using namespace std;
 
-auto testsBasePath = string(std::filesystem::path(__FILE__).parent_path().parent_path()) + "/";
+#define BASE_PATH string(std::filesystem::path(__FILE__).parent_path().parent_path()) + "/"
 
 TEST(SimulationConfig, LoadFromFile) {
-    const auto config = SimulationConfig(testsBasePath + "files/simulation.yaml");
+    const auto config = SimulationConfig(BASE_PATH + "files/simulation.yaml");
 
     EXPECT_EQ(config.fRunManagerType, "serial");
 }

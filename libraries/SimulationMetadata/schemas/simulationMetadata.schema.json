@@ -161,16 +161,6 @@
                     0,
                     0
                   ]
-                },
-                "direction": {
-                  "type": "array",
-                  "minItems": 3,
-                  "maxItems": 3,
-                  "default": [
-                    0,
-                    0,
-                    0
-                  ]
                 }
               }
             },
@@ -204,6 +194,37 @@
                   "default": [
                     10,
                     5
+                  ]
+                }
+              }
+            },
+            "disk": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "default": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "direction": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "default": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "diameter": {
+                  "type": "number",
+                  "minimum": 0,
+                  "default": 0
                   ]
                 }
               }
