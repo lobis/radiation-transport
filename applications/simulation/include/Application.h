@@ -15,7 +15,7 @@ class G4RunManager;
 class Application {
    private:
     SimulationConfig fConfig;
-    G4RunManager* fRunManager;
+    G4RunManager* fRunManager = nullptr;
     G4VisManager* fG4VisManager = nullptr;
     G4UIExecutive* fG4UIExecutive = nullptr;
 
@@ -30,7 +30,7 @@ class Application {
     inline Application() : fGlobalManager(GlobalManager::Instance()) { spdlog::set_pattern("[%T][%^%l%$]: %v"); };
     explicit Application(const SimulationConfig&);
     Application(int argc, char** argv);
-
+    ~Application();
     void ShowUsage() const;
 
     inline void PrintConfig() const { fConfig.Print(); }

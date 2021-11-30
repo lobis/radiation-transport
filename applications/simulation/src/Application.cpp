@@ -180,6 +180,12 @@ void Application::RunMacro(const vector<string>& macroLines) {
     }
 }
 
+Application::~Application() {
+    delete fRunManager;
+    delete fG4VisManager;
+    delete fG4UIExecutive;
+}
+
 std::vector<std::string> Application::fMacroVis = {
     "/control/verbose 2",
     "/run/verbose 2",
