@@ -29,6 +29,10 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
       fOutput(OutputManager::Instance()),
       fSourceConfig(GlobalManager::Instance()->GetSimulationConfig().fSourceConfig) {
     spdlog::info("PrimaryGeneratorAction::PrimaryGeneratorAction");
+
+    fEnergyDistribution = fSPS.GetEneDist();
+    fAngularDistribution = fSPS.GetAngDist();
+    fPositionDistribution = fSPS.GetPosDist();
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() = default;
@@ -42,15 +46,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
 
     auto particleName = fSourceConfig.fParticleName;
 
-    fGun.SetParticleDefinition(GetParticle());
-
     auto particleEnergy = GetEnergy();
     if (particleEnergy < 0) {
         spdlog::error("PrimaryGeneratorAction::GeneratePrimaries - Particle energy cannot be negative");
         exit(1);
     }
 
-    fGun.SetParticleEnergy(particleEnergy * fEnergyScaleFactor);
+    fGun.SetParticleEnergy(particleEnergy);
 
     auto particlePosition = GetPosition();
     fGun.SetParticlePosition(particlePosition);
@@ -59,7 +61,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     fGun.SetParticleMomentumDirection(particleDirection);
 
     if (fSourceConfig.fGeneratorType == "point" || fSourceConfig.fGeneratorType == "plane" || fSourceConfig.fGeneratorType == "disk") {
-        /*fGun.SetParticlePosition({fSourceConfig.fGeneratorPosition.x(), fSourceConfig.fGeneratorPosition.y(),
+        /*fSPS.SetParticlePosition({fSourceConfig.fGeneratorPosition.x(), fSourceConfig.fGeneratorPosition.y(),
          * fSourceConfig.fGeneratorPosition.z()});*/
     }
 
@@ -150,7 +152,6 @@ G4ThreeVector PrimaryGeneratorAction::GetDirection() const {
         direction = {fSourceConfig.fAngularDistributionDirection.x(), fSourceConfig.fAngularDistributionDirection.y(),
                      fSourceConfig.fAngularDistributionDirection.z()};
     } else if (fSourceConfig.fAngularDistributionType == "isotropic") {
-        //
         spdlog::error("isotropic not implemented");
         exit(1);
     } else {
@@ -183,17 +184,24 @@ void PrimaryGeneratorAction::Initialize() {
 
     fParticle = GetParticle();
 
+    fSPS.SetParticleDefinition(fParticle);
+    fGun.SetParticleDefinition(fSPS.GetParticleDefinition());
+
     if (!G4UnitDefinition::IsUnitDefined(fSourceConfig.fEnergyDistributionUnit) ||
         G4UnitDefinition::GetCategory(fSourceConfig.fEnergyDistributionUnit) != "Energy") {
         spdlog::error("energy unit '{}' not defined", fSourceConfig.fEnergyDistributionUnit);
         exit(1);
     }
     fEnergyScaleFactor = G4UnitDefinition::GetValueOf(fSourceConfig.fEnergyDistributionUnit);
+    // Energy
+    fEnergyDistribution->SetEmin(fSourceConfig.fEnergyDistributionLimitMin * fEnergyScaleFactor);
+    fEnergyDistribution->SetEmax(fSourceConfig.fEnergyDistributionLimitMax * fEnergyScaleFactor);
 
     if (fSourceConfig.fEnergyDistributionType == "mono") {
-        fEnergyDistribution = make_unique<G4SPSEneDistribution>();
         fEnergyDistribution->SetEnergyDisType("Mono");
+        fEnergyDistribution->SetMonoEnergy(fSourceConfig.fEnergyDistributionMonoValue * fEnergyScaleFactor);
     } else {
+        fEnergyDistribution = nullptr;
         spdlog::error("Energy distribution type '{}' sampling not implemented yet", fSourceConfig.fEnergyDistributionType);
         exit(1);
     }
@@ -201,12 +209,15 @@ void PrimaryGeneratorAction::Initialize() {
         spdlog::info("Geant4 energy distribution: {}", fEnergyDistribution->GetEnergyDisType());
     }
 
-    fPositionDistribution = make_unique<G4SPSPosDistribution>();
+    // Position
+    auto position = fSourceConfig.fGeneratorPosition;
+    fPositionDistribution->SetCentreCoords({position.x(), position.y(), position.z()});
     if (fSourceConfig.fGeneratorType == "point") {
         fPositionDistribution->SetPosDisType("Point");
     } else if (fSourceConfig.fGeneratorType == "plane" || fSourceConfig.fGeneratorType == "disk") {
         fPositionDistribution->SetPosDisType("Plane");
     } else {
+        fPositionDistribution = nullptr;
         spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
         exit(1);
     }
@@ -214,12 +225,21 @@ void PrimaryGeneratorAction::Initialize() {
         spdlog::info("Geant4 position distribution: {}", fPositionDistribution->GetPosDisType());
     }
 
+    // Angular
+    fAngularDistribution->SetMinTheta(fSourceConfig.fAngularDistributionLimitThetaMin);
+    fAngularDistribution->SetMaxTheta(fSourceConfig.fAngularDistributionLimitThetaMax);
+
+    fAngularDistribution->SetMinTheta(fSourceConfig.fAngularDistributionLimitPhiMin);
+    fAngularDistribution->SetMaxTheta(fSourceConfig.fAngularDistributionLimitPhiMax);
+
     if (fSourceConfig.fAngularDistributionType == "flux") {
-        //
+        fAngularDistribution->SetAngDistType("planar");
+        auto direction = fSourceConfig.fAngularDistributionDirection;
+        fAngularDistribution->SetParticleMomentumDirection({direction.x(), direction.y(), direction.z()});
     } else if (fSourceConfig.fAngularDistributionType == "isotropic") {
-        fAngularDistribution = make_unique<G4SPSAngDistribution>();
         fAngularDistribution->SetAngDistType("iso");
     } else {
+        fAngularDistribution = nullptr;
         spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
         exit(1);
     }

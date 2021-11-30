@@ -9,6 +9,7 @@
 
 #include <G4GeneralParticleSource.hh>
 #include <G4ParticleGun.hh>
+#include <G4SingleParticleSource.hh>
 #include <G4ThreeVector.hh>
 #include <G4VUserPrimaryGeneratorAction.hh>
 #include <globals.hh>
@@ -29,16 +30,20 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
 
    private:
     OutputManager* fOutput;
-    G4ParticleGun fGun;
+
+    G4ParticleGun fGun;           // This object will generate primary vertex
+    G4SingleParticleSource fSPS;  // used to initialize and sample geant4 built in distributions
+
     const SourceConfig fSourceConfig;
 
     G4ParticleDefinition* fParticle;
 
     double fEnergyScaleFactor = 1.0;
 
-    std::unique_ptr<G4SPSAngDistribution> fAngularDistribution = nullptr;
-    std::unique_ptr<G4SPSEneDistribution> fEnergyDistribution = nullptr;
-    std::unique_ptr<G4SPSPosDistribution> fPositionDistribution = nullptr;
+    /* Distributions extracted from the G4SingleParticleSource instance */
+    G4SPSAngDistribution* fAngularDistribution = nullptr;
+    G4SPSEneDistribution* fEnergyDistribution = nullptr;
+    G4SPSPosDistribution* fPositionDistribution = nullptr;
 
     bool fInitialized = false;
 
