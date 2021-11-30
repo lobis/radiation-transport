@@ -118,21 +118,26 @@ TEST(Application, FullRunSerial) {
 
     TFile file(config.GetOutputFileAbsolutePath().c_str());
 
+    file.ls();
+
     TTree* tree = file.Get<TTree>("EventTree");
+
+    EXPECT_TRUE(tree != nullptr);
+
+    spdlog::info("Tree entries: {}", tree->GetEntries());
 
     tree->Print();
 
-    spdlog::info("Tree entries: {}", tree->GetEntries());
-    Double_t totalEnergy = 0;
+    Double_t averageEnergy = 0;
     DataEvent* event = nullptr;
     tree->SetBranchAddress("fEvent", &event);
     for (int i = 0; i < tree->GetEntries(); i++) {
         tree->GetEntry(i);
         spdlog::info("\t-{} - EventID {}", i, event->fEventID);
-        totalEnergy += event->fSensitiveVolumesTotalEnergy;
+        averageEnergy += event->fSensitiveVolumesTotalEnergy / tree->GetEntries();
     }
 
-    spdlog::warn("Serial run total energy: {} keV", totalEnergy);
+    spdlog::warn("Serial run average energy: {} keV", averageEnergy);
 }
 
 TEST(Application, FullRunMT) {
