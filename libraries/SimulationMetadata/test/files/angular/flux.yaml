@@ -1,0 +1,4 @@
+source:
+  angular:
+    flux:
+      direction: [ -1, 1, 2 ]

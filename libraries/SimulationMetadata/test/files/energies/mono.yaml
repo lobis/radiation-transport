@@ -1,7 +1,5 @@
 source:
-  particle:
-    name: geantino
-
   energy:
-    type: "mono"
-    value: 10
+    unit: MeV
+    mono:
+      value: 120.5

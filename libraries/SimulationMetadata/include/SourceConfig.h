@@ -44,7 +44,7 @@ class SourceConfig : public SerializableConfig {
     // Energy
     std::string fEnergyDistributionType = "mono";
 
-    std::string fEnergyDistributionUnits = "keV";
+    std::string fEnergyDistributionUnit = "keV";
 
     double fEnergyDistributionLimitMin = 0;
     double fEnergyDistributionLimitMax = INFINITY;

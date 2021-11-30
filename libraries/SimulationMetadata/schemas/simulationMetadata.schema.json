@@ -112,25 +112,21 @@
     "source": {
       "type": "object",
       "description": "Primary generator",
-      "required": [
-        "particle",
-        "generator"
-      ],
+      "required": [],
       "additionalProperties": false,
       "properties": {
         "particle": {
           "type": "object",
           "description": "Particle definition and energy",
           "required": [
-            "name",
-            "energy"
+            "name"
           ],
           "additionalProperties": false,
           "properties": {
             "name": {
               "type": "string",
-              "description": "Particle name in Geant4 format such as mu-, neutron ...",
-              "default": "gamma"
+              "description": "Particle name in Geant4 format such as mu-, neutron etc. Also supports isotopes such as Pb210",
+              "default": "geantino"
             },
             "energy": {
               "type": "number",
@@ -140,7 +136,7 @@
             },
             "excitedLevel": {
               "type": "number",
-              "description": "Current excited level (for decays). In keV",
+              "description": "Current excited level (for decays). In keV.",
               "minimum": 0,
               "default": 0
             }
@@ -225,11 +221,27 @@
                   "type": "number",
                   "minimum": 0,
                   "default": 0
-                  ]
                 }
               }
             }
-          }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "point"
+              ]
+            },
+            {
+              "required": [
+                "plane"
+              ]
+            },
+            {
+              "required": [
+                "disk"
+              ]
+            }
+          ]
         }
       }
     },
