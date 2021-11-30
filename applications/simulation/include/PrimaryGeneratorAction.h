@@ -23,11 +23,22 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
     virtual void GeneratePrimaries(G4Event* event);
 
     G4ParticleDefinition* GetParticle() const;
+    double GetEnergy() const;
+    G4ThreeVector GetDirection() const;
+    G4ThreeVector GetPosition() const;
 
    private:
     OutputManager* fOutput;
     G4ParticleGun fGun;
     const SourceConfig fSourceConfig;
+
+    G4ParticleDefinition* fParticle;
+
+    double fEnergyScaleFactor = 1.0;
+
+    std::unique_ptr<G4SPSAngDistribution> fAngularDistribution = nullptr;
+    std::unique_ptr<G4SPSEneDistribution> fEnergyDistribution = nullptr;
+    std::unique_ptr<G4SPSPosDistribution> fPositionDistribution = nullptr;
 };
 
 #endif  // RADIATION_TRANSPORT_PRIMARYGENERATORACTION_H
