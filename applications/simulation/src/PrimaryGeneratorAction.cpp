@@ -240,9 +240,9 @@ void PrimaryGeneratorAction::Initialize() {
         fPositionDistribution->SetPosRot2({1, 0, 1});
         if (fSourceConfig.fPositionDistributionType == "rectangle") {
             fPositionDistribution->SetPosDisShape("Rectangle");
-            fPositionDistribution->SetHalfX(fSourceConfig.fPositionDistributionRectangleSideLong / 2.0 / fPositionScaleFactor);
-            fPositionDistribution->SetHalfY(fSourceConfig.fPositionDistributionRectangleSideShort / 2.0 / fPositionScaleFactor);
-            fPositionDistribution->SetHalfZ(fSourceConfig.fPositionDistributionRectangleSideShort / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfX(fSourceConfig.fPositionDistributionRectangleDimensions.x() / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfY(fSourceConfig.fPositionDistributionRectangleDimensions.y() / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfZ(fSourceConfig.fPositionDistributionRectangleDimensions.z() / 2.0 / fPositionScaleFactor);
         } else if (fSourceConfig.fPositionDistributionType == "square") {
             fPositionDistribution->SetPosDisShape("Square");
             fPositionDistribution->SetHalfX(fSourceConfig.fPositionDistributionSquareSide / 2.0 / fPositionScaleFactor);

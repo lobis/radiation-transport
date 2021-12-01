@@ -78,8 +78,7 @@ YAML::Node SourceConfig::SerializeGenerator() const {
         node[fPositionDistributionType]["direction"] = fPositionDistributionOrientation;
     }
     if (fPositionDistributionType == "rectangle") {
-        node[fPositionDistributionType]["sideLong"] = fPositionDistributionRectangleSideLong;
-        node[fPositionDistributionType]["sideShort"] = fPositionDistributionRectangleSideShort;
+        node[fPositionDistributionType]["dimensions"] = fPositionDistributionRectangleDimensions;
     }
     if (fPositionDistributionType == "square") {
         node[fPositionDistributionType]["side"] = fPositionDistributionSquareSide;
@@ -137,8 +136,7 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
         fPositionDistributionSquareSide = generator[fPositionDistributionType]["side"].as<double>();
     }
     if (fPositionDistributionType == "rectangle") {
-        fPositionDistributionRectangleSideLong = generator[fPositionDistributionType]["sideLong"].as<double>();
-        fPositionDistributionRectangleSideShort = generator[fPositionDistributionType]["sideShort"].as<double>();
+        fPositionDistributionRectangleDimensions = generator[fPositionDistributionType]["dimensions"].as<TVector3>();
     }
     if (fPositionDistributionType == "disk") {
         fPositionDistributionDiameter = generator[fPositionDistributionType]["diameter"].as<double>();

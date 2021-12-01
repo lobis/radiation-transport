@@ -40,8 +40,7 @@ class SourceConfig : public SerializableConfig {
     TVector3 fPositionDistributionCenter = {0, 0, 0};
     TVector3 fPositionDistributionOrientation = {0, -1, 0};
 
-    double fPositionDistributionRectangleSideLong = 0;
-    double fPositionDistributionRectangleSideShort = 0;
+    TVector3 fPositionDistributionRectangleDimensions = {0, 0, 0};
 
     double fPositionDistributionDiameter = 0;
     double fPositionDistributionSquareSide = 0;

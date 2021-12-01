@@ -3,5 +3,4 @@ source:
     rectangle:
       position: [ 0, 200, 0 ]
       direction: [ 0, 1, 1 ]
-      sideLong: 55
-      sideShort: 23
+      dimensions: [ 55, 23, 0 ]

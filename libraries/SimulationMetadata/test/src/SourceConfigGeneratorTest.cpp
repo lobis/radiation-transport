@@ -52,8 +52,9 @@ TEST(SourceConfigGenerator, DeserializeRectangle) {
     EXPECT_EQ(fSourceConfig.fPositionDistributionType, "rectangle");
     EXPECT_EQ(fSourceConfig.fPositionDistributionCenter, TVector3({0, 200, 0}));
     EXPECT_EQ(fSourceConfig.fPositionDistributionOrientation, TVector3({0, 1, 1}));
-    EXPECT_EQ(fSourceConfig.fPositionDistributionRectangleSideLong, 55);
-    EXPECT_EQ(fSourceConfig.fPositionDistributionRectangleSideShort, 23);
+    EXPECT_EQ(fSourceConfig.fPositionDistributionRectangleDimensions.x(), 55);
+    EXPECT_EQ(fSourceConfig.fPositionDistributionRectangleDimensions.y(), 23);
+    EXPECT_EQ(fSourceConfig.fPositionDistributionRectangleDimensions.z(), 0);
 }
 
 TEST(SourceConfigGenerator, DeserializeSquare) {
