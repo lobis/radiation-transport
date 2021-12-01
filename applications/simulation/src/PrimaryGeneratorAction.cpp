@@ -61,7 +61,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     auto particleDirection = GetDirection();
     fGun.SetParticleMomentumDirection(particleDirection);
 
-    if (fSourceConfig.fGeneratorType == "point" || fSourceConfig.fGeneratorType == "plane" || fSourceConfig.fGeneratorType == "disk") {
+    if (fSourceConfig.fPositionDistributionType == "point" || fSourceConfig.fPositionDistributionType == "plane" ||
+        fSourceConfig.fPositionDistributionType == "disk") {
         /*fSPS.SetParticlePosition({fSourceConfig.fGeneratorPosition.x(), fSourceConfig.fGeneratorPosition.y(),
          * fSourceConfig.fGeneratorPosition.z()});*/
     }
@@ -75,7 +76,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     const auto primaryEnergy = primary->GetKineticEnergy();
     const auto& primaryDirection = primary->GetMomentumDirection();
 
-    spdlog::warn(
+    spdlog::debug(
         "PrimaryGeneratorAction::GeneratePrimaries - Particle: {} - Position (mm): [{:03.2f}, {:03.2f}, {:03.2f}] - Energy: {:03.2f} keV"
         " - Direction: [{:03.4f}, {:03.4f}, {:03.4f}] ",                               //
         primary->GetParticleDefinition()->GetParticleName(),                           //
@@ -177,11 +178,11 @@ G4ThreeVector PrimaryGeneratorAction::GetPosition() const {
         return fPositionDistribution->GenerateOne();
     }
 
-    spdlog::debug("PrimaryGeneratorAction::GetPosition - NOT Generating from Geant4 - {}", fSourceConfig.fGeneratorType);
+    spdlog::debug("PrimaryGeneratorAction::GetPosition - NOT Generating from Geant4 - {}", fSourceConfig.fPositionDistributionType);
 
     G4ThreeVector position;
 
-    spdlog::error("Position distribution type '{}' sampling not implemented yet", fSourceConfig.fGeneratorType);
+    spdlog::error("Position distribution type '{}' sampling not implemented yet", fSourceConfig.fPositionDistributionType);
     exit(1);
 
     return position;
@@ -226,32 +227,34 @@ void PrimaryGeneratorAction::Initialize() {
     }
     fPositionScaleFactor = G4UnitDefinition::GetValueOf(fSourceConfig.fPositionDistributionUnit);
 
-    auto position = fSourceConfig.fGeneratorPosition;
+    auto position = fSourceConfig.fPositionDistributionCenter;
     fPositionDistribution->SetCentreCoords(
         {position.x() / fPositionScaleFactor, position.y() / fPositionScaleFactor, position.z() / fPositionScaleFactor});
-    if (fSourceConfig.fGeneratorType == "point") {
+    if (fSourceConfig.fPositionDistributionType == "point") {
         fPositionDistribution->SetPosDisType("Point");
-    } else if (fSourceConfig.fGeneratorType == "rectangle" || fSourceConfig.fGeneratorType == "square" || fSourceConfig.fGeneratorType == "disk") {
+    } else if (fSourceConfig.fPositionDistributionType == "rectangle" || fSourceConfig.fPositionDistributionType == "square" ||
+               fSourceConfig.fPositionDistributionType == "disk") {
+        // TODO: Not fully working yet
         fPositionDistribution->SetPosDisType("Plane");
         fPositionDistribution->SetPosRot1({1, 0, 0});
         fPositionDistribution->SetPosRot2({1, 0, 1});
-        if (fSourceConfig.fGeneratorType == "rectangle") {
+        if (fSourceConfig.fPositionDistributionType == "rectangle") {
             fPositionDistribution->SetPosDisShape("Rectangle");
-            fPositionDistribution->SetHalfX(fSourceConfig.fGeneratorRectangleSideLong / 2.0 / fPositionScaleFactor);
-            fPositionDistribution->SetHalfY(fSourceConfig.fGeneratorRectangleSideShort / 2.0 / fPositionScaleFactor);
-            fPositionDistribution->SetHalfZ(fSourceConfig.fGeneratorRectangleSideShort / 2.0 / fPositionScaleFactor);
-        } else if (fSourceConfig.fGeneratorType == "square") {
+            fPositionDistribution->SetHalfX(fSourceConfig.fPositionDistributionRectangleSideLong / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfY(fSourceConfig.fPositionDistributionRectangleSideShort / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfZ(fSourceConfig.fPositionDistributionRectangleSideShort / 2.0 / fPositionScaleFactor);
+        } else if (fSourceConfig.fPositionDistributionType == "square") {
             fPositionDistribution->SetPosDisShape("Square");
-            fPositionDistribution->SetHalfX(fSourceConfig.fGeneratorSquareSide / 2.0 / fPositionScaleFactor);
-            fPositionDistribution->SetHalfY(fSourceConfig.fGeneratorSquareSide / 2.0 / fPositionScaleFactor);
-            fPositionDistribution->SetHalfZ(fSourceConfig.fGeneratorSquareSide / 2.0 / fPositionScaleFactor);
-        } else if (fSourceConfig.fGeneratorType == "disk") {
+            fPositionDistribution->SetHalfX(fSourceConfig.fPositionDistributionSquareSide / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfY(fSourceConfig.fPositionDistributionSquareSide / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfZ(fSourceConfig.fPositionDistributionSquareSide / 2.0 / fPositionScaleFactor);
+        } else if (fSourceConfig.fPositionDistributionType == "disk") {
             fPositionDistribution->SetPosDisShape("Circle");
-            fPositionDistribution->SetRadius(fSourceConfig.fGeneratorDiameter / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetRadius(fSourceConfig.fPositionDistributionDiameter / 2.0 / fPositionScaleFactor);
         }
     } else {
         fPositionDistribution = nullptr;
-        spdlog::error("cannot process '{}' position dist yet", fSourceConfig.fGeneratorType);
+        spdlog::error("cannot process '{}' position dist yet", fSourceConfig.fPositionDistributionType);
         exit(1);
     }
     if (fPositionDistribution) {

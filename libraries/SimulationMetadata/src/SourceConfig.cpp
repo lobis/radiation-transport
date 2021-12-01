@@ -68,23 +68,24 @@ YAML::Node SourceConfig::SerializeGenerator() const {
 
     node["unit"] = fPositionDistributionUnit;
 
-    node[fGeneratorType] = YAML::Node();
+    node[fPositionDistributionType] = YAML::Node();
 
-    if (fGeneratorType == "point" || fGeneratorType == "rectangle" || fGeneratorType == "square" || fGeneratorType == "disk") {
-        node[fGeneratorType]["position"] = fGeneratorPosition;
+    if (fPositionDistributionType == "point" || fPositionDistributionType == "rectangle" || fPositionDistributionType == "square" ||
+        fPositionDistributionType == "disk") {
+        node[fPositionDistributionType]["position"] = fPositionDistributionCenter;
     }
-    if (fGeneratorType == "rectangle" || fGeneratorType == "square" || fGeneratorType == "disk") {
-        node[fGeneratorType]["direction"] = fGeneratorDirection;
+    if (fPositionDistributionType == "rectangle" || fPositionDistributionType == "square" || fPositionDistributionType == "disk") {
+        node[fPositionDistributionType]["direction"] = fPositionDistributionOrientation;
     }
-    if (fGeneratorType == "rectangle") {
-        node[fGeneratorType]["sideLong"] = fGeneratorRectangleSideLong;
-        node[fGeneratorType]["sideShort"] = fGeneratorRectangleSideShort;
+    if (fPositionDistributionType == "rectangle") {
+        node[fPositionDistributionType]["sideLong"] = fPositionDistributionRectangleSideLong;
+        node[fPositionDistributionType]["sideShort"] = fPositionDistributionRectangleSideShort;
     }
-    if (fGeneratorType == "square") {
-        node[fGeneratorType]["side"] = fGeneratorSquareSide;
+    if (fPositionDistributionType == "square") {
+        node[fPositionDistributionType]["side"] = fPositionDistributionSquareSide;
     }
-    if (fGeneratorType == "disk") {
-        node[fGeneratorType]["diameter"] = fGeneratorDiameter;
+    if (fPositionDistributionType == "disk") {
+        node[fPositionDistributionType]["diameter"] = fPositionDistributionDiameter;
     }
 
     return node;
@@ -107,7 +108,7 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
     for (const auto& type : fGeneratorTypesAvailable) {
         if (generator[type]) {
             count += 1;
-            fGeneratorType = type;
+            fPositionDistributionType = type;
         }
     }
 
@@ -116,30 +117,31 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
         exit(1);
     }
 
-    if (fGeneratorType == "point" || fGeneratorType == "rectangle" || fGeneratorType == "square" || fGeneratorType == "disk") {
-        if (generator[fGeneratorType]["position"]) {
-            fGeneratorPosition = generator[fGeneratorType]["position"].as<TVector3>();
+    if (fPositionDistributionType == "point" || fPositionDistributionType == "rectangle" || fPositionDistributionType == "square" ||
+        fPositionDistributionType == "disk") {
+        if (generator[fPositionDistributionType]["position"]) {
+            fPositionDistributionCenter = generator[fPositionDistributionType]["position"].as<TVector3>();
         }
     }
 
-    if (fGeneratorType == "rectangle" || fGeneratorType == "square" || fGeneratorType == "disk") {
-        if (generator[fGeneratorType]["direction"]) {
-            fGeneratorDirection = generator[fGeneratorType]["direction"].as<TVector3>();
-            if (fGeneratorDirection == TVector3({0, 0, 0})) {
+    if (fPositionDistributionType == "rectangle" || fPositionDistributionType == "square" || fPositionDistributionType == "disk") {
+        if (generator[fPositionDistributionType]["direction"]) {
+            fPositionDistributionOrientation = generator[fPositionDistributionType]["direction"].as<TVector3>();
+            if (fPositionDistributionOrientation == TVector3({0, 0, 0})) {
                 spdlog::error("SourceConfig::Deserialize - direction cannot be the zero vector");
                 exit(1);
             }
         }
     }
-    if (fGeneratorType == "square") {
-        fGeneratorSquareSide = generator[fGeneratorType]["side"].as<double>();
+    if (fPositionDistributionType == "square") {
+        fPositionDistributionSquareSide = generator[fPositionDistributionType]["side"].as<double>();
     }
-    if (fGeneratorType == "rectangle") {
-        fGeneratorRectangleSideLong = generator[fGeneratorType]["sideLong"].as<double>();
-        fGeneratorRectangleSideShort = generator[fGeneratorType]["sideShort"].as<double>();
+    if (fPositionDistributionType == "rectangle") {
+        fPositionDistributionRectangleSideLong = generator[fPositionDistributionType]["sideLong"].as<double>();
+        fPositionDistributionRectangleSideShort = generator[fPositionDistributionType]["sideShort"].as<double>();
     }
-    if (fGeneratorType == "disk") {
-        fGeneratorDiameter = generator[fGeneratorType]["diameter"].as<double>();
+    if (fPositionDistributionType == "disk") {
+        fPositionDistributionDiameter = generator[fPositionDistributionType]["diameter"].as<double>();
     }
 }
 

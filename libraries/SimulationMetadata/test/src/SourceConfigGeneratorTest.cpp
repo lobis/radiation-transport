@@ -30,7 +30,7 @@ TEST(SourceConfigGenerator, DeserializePoint) {
 
     fSourceConfig.Print();
 
-    EXPECT_EQ(fSourceConfig.fGeneratorType, "point");
+    EXPECT_EQ(fSourceConfig.fPositionDistributionType, "point");
 }
 
 TEST(SourceConfigGenerator, DeserializeRectangle) {
@@ -49,11 +49,11 @@ TEST(SourceConfigGenerator, DeserializeRectangle) {
 
     fSourceConfig.Print();
 
-    EXPECT_EQ(fSourceConfig.fGeneratorType, "rectangle");
-    EXPECT_EQ(fSourceConfig.fGeneratorPosition, TVector3({0, 200, 0}));
-    EXPECT_EQ(fSourceConfig.fGeneratorDirection, TVector3({0, 1, 1}));
-    EXPECT_EQ(fSourceConfig.fGeneratorRectangleSideLong, 55);
-    EXPECT_EQ(fSourceConfig.fGeneratorRectangleSideShort, 23);
+    EXPECT_EQ(fSourceConfig.fPositionDistributionType, "rectangle");
+    EXPECT_EQ(fSourceConfig.fPositionDistributionCenter, TVector3({0, 200, 0}));
+    EXPECT_EQ(fSourceConfig.fPositionDistributionOrientation, TVector3({0, 1, 1}));
+    EXPECT_EQ(fSourceConfig.fPositionDistributionRectangleSideLong, 55);
+    EXPECT_EQ(fSourceConfig.fPositionDistributionRectangleSideShort, 23);
 }
 
 TEST(SourceConfigGenerator, DeserializeSquare) {
@@ -72,10 +72,10 @@ TEST(SourceConfigGenerator, DeserializeSquare) {
 
     fSourceConfig.Print();
 
-    EXPECT_EQ(fSourceConfig.fGeneratorType, "square");
-    EXPECT_EQ(fSourceConfig.fGeneratorPosition, TVector3({0, 200, 0}));
-    EXPECT_EQ(fSourceConfig.fGeneratorDirection, TVector3({0, 1, 1}));
-    EXPECT_EQ(fSourceConfig.fGeneratorSquareSide, 25);
+    EXPECT_EQ(fSourceConfig.fPositionDistributionType, "square");
+    EXPECT_EQ(fSourceConfig.fPositionDistributionCenter, TVector3({0, 200, 0}));
+    EXPECT_EQ(fSourceConfig.fPositionDistributionOrientation, TVector3({0, 1, 1}));
+    EXPECT_EQ(fSourceConfig.fPositionDistributionSquareSide, 25);
 }
 
 TEST(SourceConfigGenerator, DeserializeDisk) {
@@ -94,8 +94,8 @@ TEST(SourceConfigGenerator, DeserializeDisk) {
 
     fSourceConfig.Print();
 
-    EXPECT_EQ(fSourceConfig.fGeneratorType, "disk");
-    EXPECT_EQ(fSourceConfig.fGeneratorPosition, TVector3({10, 0, 0}));
-    EXPECT_EQ(fSourceConfig.fGeneratorDirection, TVector3({1, 0, 0}));
-    EXPECT_EQ(fSourceConfig.fGeneratorDiameter, 15);
+    EXPECT_EQ(fSourceConfig.fPositionDistributionType, "disk");
+    EXPECT_EQ(fSourceConfig.fPositionDistributionCenter, TVector3({10, 0, 0}));
+    EXPECT_EQ(fSourceConfig.fPositionDistributionOrientation, TVector3({1, 0, 0}));
+    EXPECT_EQ(fSourceConfig.fPositionDistributionDiameter, 15);
 }

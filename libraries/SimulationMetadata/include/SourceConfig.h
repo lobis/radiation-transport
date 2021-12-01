@@ -35,16 +35,16 @@ class SourceConfig : public SerializableConfig {
     // Generator
     std::string fPositionDistributionUnit = "mm";
 
-    std::string fGeneratorType = "point";
+    std::string fPositionDistributionType = "point";
 
-    TVector3 fGeneratorPosition = {0, 0, 0};
-    TVector3 fGeneratorDirection = {0, -1, 0};
+    TVector3 fPositionDistributionCenter = {0, 0, 0};
+    TVector3 fPositionDistributionOrientation = {0, -1, 0};
 
-    double fGeneratorRectangleSideLong = 0;
-    double fGeneratorRectangleSideShort = 0;
+    double fPositionDistributionRectangleSideLong = 0;
+    double fPositionDistributionRectangleSideShort = 0;
 
-    double fGeneratorDiameter = 0;
-    double fGeneratorSquareSide = 0;
+    double fPositionDistributionDiameter = 0;
+    double fPositionDistributionSquareSide = 0;
 
     // Energy
     std::string fEnergyDistributionType = "mono";
