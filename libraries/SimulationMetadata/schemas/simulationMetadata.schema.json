@@ -151,7 +151,7 @@
           }
         },
         "generator": {
-          "description": "One of the available generators: 'point', 'plane', 'disk', ...",
+          "description": "One of the available generators: 'point', 'square', 'rectangle', 'disk', ...",
           "additionalProperties": false,
           "properties": {
             "point": {
@@ -173,12 +173,12 @@
                 }
               }
             },
-            "plane": {
+            "square": {
               "type": "object",
               "required": [
                 "position",
                 "direction",
-                "size"
+                "side"
               ],
               "properties": {
                 "position": {
@@ -203,14 +203,53 @@
                     0
                   ]
                 },
-                "size": {
+                "side": {
+                  "type": "number",
+                  "description": "size of square plane",
+                  "minimum": 0,
+                  "default": 0
+                }
+              }
+            },
+            "rectangle": {
+              "type": "object",
+              "required": [
+                "position",
+                "direction",
+                "dimensions"
+              ],
+              "properties": {
+                "position": {
+                  "description": "position of the center of mass",
                   "type": "array",
-                  "description": "size of the plane [X,Z]",
-                  "minItems": 2,
-                  "maxItems": 2,
+                  "minItems": 3,
+                  "maxItems": 3,
                   "default": [
-                    10,
-                    5
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "direction": {
+                  "type": "array",
+                  "description": "normal vector to the plane. NOT the direction of the particles",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "default": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "dimensions": {
+                  "type": "array",
+                  "description": "normal vector to the plane. NOT the direction of the particles",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "default": [
+                    0,
+                    0,
+                    0
                   ]
                 }
               }
@@ -261,7 +300,12 @@
             },
             {
               "required": [
-                "plane"
+                "square"
+              ]
+            },
+            {
+              "required": [
+                "rectangle"
               ]
             },
             {
@@ -325,7 +369,7 @@
           ]
         },
         "angular": {
-          "description": "One of the available angular distributions: 'isotropic', 'flux'",
+          "description": "One of the available angular distributions: 'isotropic', 'flux', 'cos2', ...",
           "additionalProperties": false,
           "properties": {
             "thetaMin": {
@@ -373,6 +417,10 @@
                   ]
                 }
               }
+            },
+            "cos2": {
+              "nullable": true,
+              "description": "cosine squared distribution"
             }
           },
           "oneOf": [
@@ -384,6 +432,11 @@
             {
               "required": [
                 "flux"
+              ]
+            },
+            {
+              "required": [
+                "cos2"
               ]
             }
           ]
