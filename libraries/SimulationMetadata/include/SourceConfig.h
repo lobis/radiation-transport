@@ -53,7 +53,7 @@ class SourceConfig : public SerializableConfig {
     double fEnergyDistributionMonoValue = 100;
 
     // Angular
-    std::set<std::string> fAngularDistributionTypesAvailable = {"isotropic", "focused", "flux"};
+    std::set<std::string> fAngularDistributionTypesAvailable = {"isotropic", "focused", "flux", "cos2"};
 
     std::string fAngularDistributionType = "isotropic";
 

@@ -1,6 +1,7 @@
 
 #include "PrimaryGeneratorAction.h"
 
+#include <TF1.h>
 #include <spdlog/spdlog.h>
 
 #include <G4Event.hh>
@@ -74,7 +75,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     const auto primaryEnergy = primary->GetKineticEnergy();
     const auto& primaryDirection = primary->GetMomentumDirection();
 
-    spdlog::debug(
+    spdlog::warn(
         "PrimaryGeneratorAction::GeneratePrimaries - Particle: {} - Position (mm): [{:03.2f}, {:03.2f}, {:03.2f}] - Energy: {:03.2f} keV"
         " - Direction: [{:03.4f}, {:03.4f}, {:03.4f}] ",                               //
         primary->GetParticleDefinition()->GetParticleName(),                           //
@@ -140,7 +141,9 @@ double PrimaryGeneratorAction::GetEnergy() const {
 }
 
 G4ThreeVector PrimaryGeneratorAction::GetDirection() const {
-    spdlog::debug("PrimaryGeneratorAction::GetDirection - {}", fAngularDistribution ? fAngularDistribution->GetDistType() : "Not defined");
+    spdlog::warn("PrimaryGeneratorAction::GetDirection - {}",
+                 fAngularDistribution ? fAngularDistribution->GetDistType()
+                                      : TString::Format("Not Geant4 - %s", fSourceConfig.fAngularDistributionType.c_str()));
     if (fAngularDistribution) {
         spdlog::debug("PrimaryGeneratorAction::GetDirection - Generating from Geant4");
         auto momentum = fAngularDistribution->GenerateOne();
@@ -148,12 +151,18 @@ G4ThreeVector PrimaryGeneratorAction::GetDirection() const {
     }
 
     G4ThreeVector direction;
-    if (fSourceConfig.fAngularDistributionType == "flux") {
-        direction = {fSourceConfig.fAngularDistributionDirection.x(), fSourceConfig.fAngularDistributionDirection.y(),
-                     fSourceConfig.fAngularDistributionDirection.z()};
-    } else if (fSourceConfig.fAngularDistributionType == "isotropic") {
-        spdlog::error("isotropic not implemented");
-        exit(1);
+    if (fSourceConfig.fAngularDistributionType == "cos2") {
+        // TODO: NOT WORKING YET
+        auto random = G4UniformRand();  // ~U(0,1)
+        auto phi = random * 2 * TMath::Pi();
+
+        TF1 cos2("cos2", "cos(x^2)", 0., TMath::Pi() / 2);
+        auto theta = cos2.GetRandom();
+
+        direction = G4ThreeVector({TMath::Cos(phi) * TMath::Sin(theta),  //
+                                   TMath::Sin(phi) * TMath::Sin(theta),  //
+                                   TMath::Cos(theta)})
+                        .unit();
     } else {
         spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
         exit(1);
@@ -218,7 +227,7 @@ void PrimaryGeneratorAction::Initialize() {
         fPositionDistribution->SetPosDisType("Plane");
     } else {
         fPositionDistribution = nullptr;
-        spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
+        spdlog::error("cannot process '{}' position dist yet", fSourceConfig.fGeneratorType);
         exit(1);
     }
     if (fPositionDistribution) {
@@ -238,12 +247,15 @@ void PrimaryGeneratorAction::Initialize() {
         fAngularDistribution->SetParticleMomentumDirection({direction.x(), direction.y(), direction.z()});
     } else if (fSourceConfig.fAngularDistributionType == "isotropic") {
         fAngularDistribution->SetAngDistType("iso");
+    } else if (fSourceConfig.fAngularDistributionType == "cos2") {
+        fAngularDistribution = nullptr;
+        spdlog::info("NON Geant4 angular distribution: {}", fSourceConfig.fAngularDistributionType);
     } else {
         fAngularDistribution = nullptr;
         spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
         exit(1);
     }
-    if (fPositionDistribution) {
+    if (fAngularDistribution) {
         spdlog::info("Geant4 angular distribution: {}", fAngularDistribution->GetDistType());
     }
 
