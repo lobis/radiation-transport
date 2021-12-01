@@ -38,6 +38,11 @@
       "type": "integer",
       "default": 0
     },
+    "saveAllEvents": {
+      "description": "If enabled, all events will be saved to the tree, regardless of sensitive volume conditions. Useful for checking primary distributions etc. Also the only way to record 'geantino' events",
+      "type": "boolean",
+      "default": false
+    },
     "fullChain": {
       "type": "boolean",
       "default": false,
