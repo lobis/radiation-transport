@@ -66,16 +66,22 @@ YAML::Node SourceConfig::Serialize() const {
 YAML::Node SourceConfig::SerializeGenerator() const {
     YAML::Node node;
 
+    node["unit"] = fPositionDistributionUnit;
+
     node[fGeneratorType] = YAML::Node();
 
-    if (fGeneratorType == "point" || fGeneratorType == "plane" || fGeneratorType == "disk") {
+    if (fGeneratorType == "point" || fGeneratorType == "rectangle" || fGeneratorType == "square" || fGeneratorType == "disk") {
         node[fGeneratorType]["position"] = fGeneratorPosition;
     }
-    if (fGeneratorType == "plane" || fGeneratorType == "disk") {
+    if (fGeneratorType == "rectangle" || fGeneratorType == "square" || fGeneratorType == "disk") {
         node[fGeneratorType]["direction"] = fGeneratorDirection;
     }
-    if (fGeneratorType == "plane") {
-        node[fGeneratorType]["size"] = fGeneratorSize;
+    if (fGeneratorType == "rectangle") {
+        node[fGeneratorType]["sideLong"] = fGeneratorRectangleSideLong;
+        node[fGeneratorType]["sideShort"] = fGeneratorRectangleSideShort;
+    }
+    if (fGeneratorType == "square") {
+        node[fGeneratorType]["side"] = fGeneratorSquareSide;
     }
     if (fGeneratorType == "disk") {
         node[fGeneratorType]["diameter"] = fGeneratorDiameter;
@@ -91,8 +97,12 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
     }
 
     auto generator = node["generator"];
-    // check one and only one generator type is present
 
+    if (generator["unit"]) {
+        fPositionDistributionUnit = generator["unit"].as<string>();
+    }
+
+    // check one and only one generator type is present
     size_t count = 0;
     for (const auto& type : fGeneratorTypesAvailable) {
         if (generator[type]) {
@@ -106,13 +116,13 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
         exit(1);
     }
 
-    if (fGeneratorType == "point" || fGeneratorType == "plane" || fGeneratorType == "disk") {
+    if (fGeneratorType == "point" || fGeneratorType == "rectangle" || fGeneratorType == "square" || fGeneratorType == "disk") {
         if (generator[fGeneratorType]["position"]) {
             fGeneratorPosition = generator[fGeneratorType]["position"].as<TVector3>();
         }
     }
 
-    if (fGeneratorType == "plane" || fGeneratorType == "disk") {
+    if (fGeneratorType == "rectangle" || fGeneratorType == "square" || fGeneratorType == "disk") {
         if (generator[fGeneratorType]["direction"]) {
             fGeneratorDirection = generator[fGeneratorType]["direction"].as<TVector3>();
             if (fGeneratorDirection == TVector3({0, 0, 0})) {
@@ -121,8 +131,12 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
             }
         }
     }
-    if (fGeneratorType == "plane") {
-        fGeneratorSize = generator[fGeneratorType]["size"].as<TVector3>();
+    if (fGeneratorType == "square") {
+        fGeneratorSquareSide = generator[fGeneratorType]["side"].as<double>();
+    }
+    if (fGeneratorType == "rectangle") {
+        fGeneratorRectangleSideLong = generator[fGeneratorType]["sideLong"].as<double>();
+        fGeneratorRectangleSideShort = generator[fGeneratorType]["sideShort"].as<double>();
     }
     if (fGeneratorType == "disk") {
         fGeneratorDiameter = generator[fGeneratorType]["diameter"].as<double>();

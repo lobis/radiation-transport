@@ -90,13 +90,6 @@ PhysicsList::PhysicsList(const PhysicsListConfig& config) : G4VModularPhysicsLis
     }
 }
 
-void PhysicsList::ConstructParticle() {
-    //
-    G4VModularPhysicsList::ConstructParticle();
-}
-
-void PhysicsList::ConstructProcess() { G4VModularPhysicsList::ConstructProcess(); }
-
 void PhysicsList::SetCuts() {
     SetCutsWithDefault();
 
@@ -114,3 +107,7 @@ void PhysicsList::SetCuts() {
     DumpCutValuesTable();
     */
 }
+
+void PhysicsList::ConstructParticle() { G4VModularPhysicsList::ConstructParticle(); }
+
+void PhysicsList::ConstructProcess() { G4VModularPhysicsList::ConstructProcess(); }

@@ -17,7 +17,7 @@ class SourceConfig : public SerializableConfig {
     YAML::Node Serialize() const override;
 
    private:
-    std::set<std::string> fGeneratorTypesAvailable = {"point", "plane", "disk"};
+    std::set<std::string> fGeneratorTypesAvailable = {"point", "rectangle", "square", "disk"};
     std::set<std::string> fEnergyDistributionTypesAvailable = {"mono", "linear", "exponential", "power"};
 
     void DeserializeGenerator(const YAML::Node&);
@@ -33,14 +33,18 @@ class SourceConfig : public SerializableConfig {
     double fParticleExcitedLevel = 0;
 
     // Generator
+    std::string fPositionDistributionUnit = "mm";
+
     std::string fGeneratorType = "point";
 
     TVector3 fGeneratorPosition = {0, 0, 0};
     TVector3 fGeneratorDirection = {0, -1, 0};
 
-    TVector3 fGeneratorSize = {0, 0, 0};
+    double fGeneratorRectangleSideLong = 0;
+    double fGeneratorRectangleSideShort = 0;
 
     double fGeneratorDiameter = 0;
+    double fGeneratorSquareSide = 0;
 
     // Energy
     std::string fEnergyDistributionType = "mono";

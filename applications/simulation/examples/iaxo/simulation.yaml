@@ -21,11 +21,12 @@ output: babyIAXO.root
 
 source:
   generator:
-    point:
-      position: [ 0,1500,0 ]
+    disk:
+      position: [ 0, 1500, 0 ]
+      diameter: 5000
 
   particle:
-    name: neutron
+    name: geantino
 
   energy:
     unit: MeV
@@ -34,7 +35,7 @@ source:
 
   angular:
     flux:
-      direction: [ 0,-1,0 ]
+      direction: [ 0, -1, 0 ]
 
 physics:
   physicsLists:

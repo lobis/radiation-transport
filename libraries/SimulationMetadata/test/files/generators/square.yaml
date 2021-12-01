@@ -1,0 +1,6 @@
+source:
+  generator:
+    square:
+      position: [ 0, 200, 0 ]
+      direction: [ 0, 1, 1 ]
+      side: 25

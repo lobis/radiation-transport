@@ -1,6 +1,7 @@
 source:
   generator:
-    plane:
+    rectangle:
       position: [ 0, 200, 0 ]
       direction: [ 0, 1, 1 ]
-      size: [ 10, 0, 20 ]
+      sideLong: 55
+      sideShort: 23

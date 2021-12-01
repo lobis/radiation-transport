@@ -38,7 +38,8 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
 
     G4ParticleDefinition* fParticle;
 
-    double fEnergyScaleFactor = 1.0;
+    double fEnergyScaleFactor = CLHEP::keV;
+    double fPositionScaleFactor = CLHEP::mm;
 
     /* Distributions extracted from the G4SingleParticleSource instance */
     G4SPSAngDistribution* fAngularDistribution = nullptr;

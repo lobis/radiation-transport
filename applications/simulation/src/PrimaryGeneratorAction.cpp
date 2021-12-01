@@ -125,9 +125,11 @@ G4ParticleDefinition* PrimaryGeneratorAction::GetParticle() const {
 
 double PrimaryGeneratorAction::GetEnergy() const {
     if (fEnergyDistribution) {
-        spdlog::debug("PrimaryGeneratorAction::GetEnergy - Generating from Geant4");
+        spdlog::debug("PrimaryGeneratorAction::GetEnergy - Generating from Geant4 - {}", fEnergyDistribution->GetEnergyDisType());
         return fEnergyDistribution->GenerateOne(fParticle);
     }
+
+    spdlog::debug("PrimaryGeneratorAction::GetEnergy - NOT Generating from Geant4 - {}", fSourceConfig.fEnergyDistributionType);
 
     double energy;
     if (fSourceConfig.fEnergyDistributionType == "mono") {
@@ -141,14 +143,12 @@ double PrimaryGeneratorAction::GetEnergy() const {
 }
 
 G4ThreeVector PrimaryGeneratorAction::GetDirection() const {
-    spdlog::warn("PrimaryGeneratorAction::GetDirection - {}",
-                 fAngularDistribution ? fAngularDistribution->GetDistType()
-                                      : TString::Format("Not Geant4 - %s", fSourceConfig.fAngularDistributionType.c_str()));
     if (fAngularDistribution) {
-        spdlog::debug("PrimaryGeneratorAction::GetDirection - Generating from Geant4");
-        auto momentum = fAngularDistribution->GenerateOne();
-        return momentum;
+        spdlog::debug("PrimaryGeneratorAction::GetDirection - Generating from Geant4 - {}", fAngularDistribution->GetDistType());
+        return fAngularDistribution->GenerateOne();
     }
+
+    spdlog::debug("PrimaryGeneratorAction::GetDirection - NOT Generating from Geant4 - {}", fSourceConfig.fAngularDistributionType);
 
     G4ThreeVector direction;
     if (fSourceConfig.fAngularDistributionType == "cos2") {
@@ -173,17 +173,16 @@ G4ThreeVector PrimaryGeneratorAction::GetDirection() const {
 
 G4ThreeVector PrimaryGeneratorAction::GetPosition() const {
     if (fPositionDistribution) {
-        spdlog::debug("PrimaryGeneratorAction::GetPosition - Generating from Geant4");
+        spdlog::debug("PrimaryGeneratorAction::GetPosition - Generating from Geant4 - {}", fPositionDistribution->GetPosDisType());
         return fPositionDistribution->GenerateOne();
     }
 
+    spdlog::debug("PrimaryGeneratorAction::GetPosition - NOT Generating from Geant4 - {}", fSourceConfig.fGeneratorType);
+
     G4ThreeVector position;
-    if (fSourceConfig.fGeneratorType == "point") {
-        position = {fSourceConfig.fGeneratorPosition.x(), fSourceConfig.fGeneratorPosition.y(), fSourceConfig.fGeneratorPosition.z()};
-    } else {
-        spdlog::error("Position distribution type '{}' sampling not implemented yet", fSourceConfig.fGeneratorType);
-        exit(1);
-    }
+
+    spdlog::error("Position distribution type '{}' sampling not implemented yet", fSourceConfig.fGeneratorType);
+    exit(1);
 
     return position;
 }
@@ -196,13 +195,14 @@ void PrimaryGeneratorAction::Initialize() {
     fSPS.SetParticleDefinition(fParticle);
     fGun.SetParticleDefinition(fSPS.GetParticleDefinition());
 
+    // Energy
     if (!G4UnitDefinition::IsUnitDefined(fSourceConfig.fEnergyDistributionUnit) ||
         G4UnitDefinition::GetCategory(fSourceConfig.fEnergyDistributionUnit) != "Energy") {
         spdlog::error("energy unit '{}' not defined", fSourceConfig.fEnergyDistributionUnit);
         exit(1);
     }
     fEnergyScaleFactor = G4UnitDefinition::GetValueOf(fSourceConfig.fEnergyDistributionUnit);
-    // Energy
+
     fEnergyDistribution->SetEmin(fSourceConfig.fEnergyDistributionLimitMin * fEnergyScaleFactor);
     fEnergyDistribution->SetEmax(fSourceConfig.fEnergyDistributionLimitMax * fEnergyScaleFactor);
 
@@ -219,12 +219,36 @@ void PrimaryGeneratorAction::Initialize() {
     }
 
     // Position
+    if (!G4UnitDefinition::IsUnitDefined(fSourceConfig.fPositionDistributionUnit) ||
+        G4UnitDefinition::GetCategory(fSourceConfig.fPositionDistributionUnit) != "Length") {
+        spdlog::error("length unit '{}' not defined", fSourceConfig.fPositionDistributionUnit);
+        exit(1);
+    }
+    fPositionScaleFactor = G4UnitDefinition::GetValueOf(fSourceConfig.fPositionDistributionUnit);
+
     auto position = fSourceConfig.fGeneratorPosition;
-    fPositionDistribution->SetCentreCoords({position.x(), position.y(), position.z()});
+    fPositionDistribution->SetCentreCoords(
+        {position.x() / fPositionScaleFactor, position.y() / fPositionScaleFactor, position.z() / fPositionScaleFactor});
     if (fSourceConfig.fGeneratorType == "point") {
         fPositionDistribution->SetPosDisType("Point");
-    } else if (fSourceConfig.fGeneratorType == "plane" || fSourceConfig.fGeneratorType == "disk") {
+    } else if (fSourceConfig.fGeneratorType == "rectangle" || fSourceConfig.fGeneratorType == "square" || fSourceConfig.fGeneratorType == "disk") {
         fPositionDistribution->SetPosDisType("Plane");
+        fPositionDistribution->SetPosRot1({1, 0, 0});
+        fPositionDistribution->SetPosRot2({1, 0, 1});
+        if (fSourceConfig.fGeneratorType == "rectangle") {
+            fPositionDistribution->SetPosDisShape("Rectangle");
+            fPositionDistribution->SetHalfX(fSourceConfig.fGeneratorRectangleSideLong / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfY(fSourceConfig.fGeneratorRectangleSideShort / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfZ(fSourceConfig.fGeneratorRectangleSideShort / 2.0 / fPositionScaleFactor);
+        } else if (fSourceConfig.fGeneratorType == "square") {
+            fPositionDistribution->SetPosDisShape("Square");
+            fPositionDistribution->SetHalfX(fSourceConfig.fGeneratorSquareSide / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfY(fSourceConfig.fGeneratorSquareSide / 2.0 / fPositionScaleFactor);
+            fPositionDistribution->SetHalfZ(fSourceConfig.fGeneratorSquareSide / 2.0 / fPositionScaleFactor);
+        } else if (fSourceConfig.fGeneratorType == "disk") {
+            fPositionDistribution->SetPosDisShape("Circle");
+            fPositionDistribution->SetRadius(fSourceConfig.fGeneratorDiameter / 2.0 / fPositionScaleFactor);
+        }
     } else {
         fPositionDistribution = nullptr;
         spdlog::error("cannot process '{}' position dist yet", fSourceConfig.fGeneratorType);

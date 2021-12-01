@@ -33,8 +33,8 @@ TEST(SourceConfigGenerator, DeserializePoint) {
     EXPECT_EQ(fSourceConfig.fGeneratorType, "point");
 }
 
-TEST(SourceConfigGenerator, DeserializePlane) {
-    const auto file = fs::path(GENERATORS_PATH + "plane.yaml");
+TEST(SourceConfigGenerator, DeserializeRectangle) {
+    const auto file = fs::path(GENERATORS_PATH + "rectangle.yaml");
 
     YAML::Node config = YAML::LoadFile(file);
 
@@ -49,10 +49,33 @@ TEST(SourceConfigGenerator, DeserializePlane) {
 
     fSourceConfig.Print();
 
-    EXPECT_EQ(fSourceConfig.fGeneratorType, "plane");
+    EXPECT_EQ(fSourceConfig.fGeneratorType, "rectangle");
     EXPECT_EQ(fSourceConfig.fGeneratorPosition, TVector3({0, 200, 0}));
     EXPECT_EQ(fSourceConfig.fGeneratorDirection, TVector3({0, 1, 1}));
-    EXPECT_EQ(fSourceConfig.fGeneratorSize, TVector3({10, 0, 20}));
+    EXPECT_EQ(fSourceConfig.fGeneratorRectangleSideLong, 55);
+    EXPECT_EQ(fSourceConfig.fGeneratorRectangleSideShort, 23);
+}
+
+TEST(SourceConfigGenerator, DeserializeSquare) {
+    const auto file = fs::path(GENERATORS_PATH + "square.yaml");
+
+    YAML::Node config = YAML::LoadFile(file);
+
+    cout << "FILE " << file << " CONTENTS: " << endl;
+    cout << config << endl;
+
+    EXPECT_TRUE(config["source"]);
+
+    SourceConfig fSourceConfig;
+
+    fSourceConfig.Deserialize(config["source"]);
+
+    fSourceConfig.Print();
+
+    EXPECT_EQ(fSourceConfig.fGeneratorType, "square");
+    EXPECT_EQ(fSourceConfig.fGeneratorPosition, TVector3({0, 200, 0}));
+    EXPECT_EQ(fSourceConfig.fGeneratorDirection, TVector3({0, 1, 1}));
+    EXPECT_EQ(fSourceConfig.fGeneratorSquareSide, 25);
 }
 
 TEST(SourceConfigGenerator, DeserializeDisk) {
