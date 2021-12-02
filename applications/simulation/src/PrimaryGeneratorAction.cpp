@@ -38,7 +38,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() {
-    delete fRandom;
     delete fAngularDistributionCustomFunctionCDF;
     delete fEnergyDistributionCustomFunctionCDF;
 };
