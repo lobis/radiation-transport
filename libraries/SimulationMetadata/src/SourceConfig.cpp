@@ -104,7 +104,7 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
 
     // check one and only one generator type is present
     size_t count = 0;
-    for (const auto& type : fGeneratorTypesAvailable) {
+    for (const auto& type : fPositionDistributionTypesAvailable) {
         if (generator[type]) {
             count += 1;
             fPositionDistributionType = type;
@@ -195,6 +195,7 @@ void SourceConfig::DeserializeEnergy(const YAML::Node& node) {
         if (energy[fEnergyDistributionType]["value"]) {
             fEnergyDistributionMonoValue = energy[fEnergyDistributionType]["value"].as<double>();
         }
+    } else if (fEnergyDistributionType == "cosmicMuonsSeaLevel" || fEnergyDistributionType == "cosmicNeutronsSeaLevel") {
     } else {
         spdlog::error("Not implemented yet");
         exit(1);

@@ -206,6 +206,21 @@ void PrimaryGeneratorAction::Initialize() {
     if (fSourceConfig.fEnergyDistributionType == "mono") {
         fEnergyDistribution->SetEnergyDisType("Mono");
         fEnergyDistribution->SetMonoEnergy(fSourceConfig.fEnergyDistributionMonoValue * fEnergyScaleFactor);
+    } else if (fSourceConfig.fEnergyDistributionType == "cosmicMuonsSeaLevel" || fSourceConfig.fEnergyDistributionType == "cosmicNeutronsSeaLevel") {
+        fEnergyDistribution->SetEnergyDisType("Pow");
+        if (fSourceConfig.fEnergyDistributionType == "cosmicMuonsSeaLevel") {
+            fEnergyDistribution->SetAlpha(-2.7);
+            if (fParticle->GetParticleName() != "mu-" || fParticle->GetParticleName() != "mu+") {
+                spdlog::warn("Using '{}' energy distribution for particle '{}'", fSourceConfig.fEnergyDistributionType, fParticle->GetParticleName());
+            }
+        } else if (fSourceConfig.fEnergyDistributionType == "cosmicNeutronsSeaLevel") {
+            fEnergyDistribution->SetAlpha(-1.36287);
+            if (fParticle->GetParticleName() != "neutron") {
+                spdlog::warn("Using '{}' energy distribution for particle '{}'", fSourceConfig.fEnergyDistributionType, fParticle->GetParticleName());
+            }
+        } else {
+            spdlog::error("Energy distribution type '{}' sampling not implemented yet", fSourceConfig.fEnergyDistributionType);
+        }
     } else {
         fEnergyDistribution = nullptr;
         spdlog::error("Energy distribution type '{}' sampling not implemented yet", fSourceConfig.fEnergyDistributionType);

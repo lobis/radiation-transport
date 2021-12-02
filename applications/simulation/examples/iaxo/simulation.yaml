@@ -13,7 +13,7 @@ detector:
       sensitive: true
 
 commands:
-  - /run/beamOn 2000
+  - /run/beamOn 10000
 
 fullChain: true
 
@@ -22,20 +22,20 @@ output: babyIAXO.root
 source:
   generator:
     disk:
-      position: [ 0, 1500, 0 ]
+      position: [ 0, 1250, 0 ]
       diameter: 5000
 
   particle:
-    name: geantino
+    name: neutron
 
   energy:
     unit: MeV
-    mono:
-      value: 12.5
+    min: 10
+    max: 1000
+    cosmicNeutronsSeaLevel:
 
   angular:
-    flux:
-      direction: [ 0, -1, 0 ]
+    cos2:
 
 physics:
   physicsLists:

@@ -17,8 +17,14 @@ class SourceConfig : public SerializableConfig {
     YAML::Node Serialize() const override;
 
    private:
-    std::set<std::string> fGeneratorTypesAvailable = {"point", "rectangle", "square", "disk"};
-    std::set<std::string> fEnergyDistributionTypesAvailable = {"mono", "linear", "exponential", "power"};
+    std::set<std::string> fPositionDistributionTypesAvailable = {"point", "rectangle", "square", "disk"};
+    std::set<std::string> fEnergyDistributionTypesAvailable = {"mono", "linear", "exponential",
+                                                               "power",  //
+                                                                         // Custom
+                                                               "cosmicMuonsSeaLevel", "cosmicNeutronsSeaLevel"};
+    std::set<std::string> fAngularDistributionTypesAvailable = {"isotropic", "focused", "flux",  //
+                                                                                                 // Custom
+                                                                "cos2"};
 
     void DeserializeGenerator(const YAML::Node&);
     void DeserializeEnergy(const YAML::Node&);
@@ -56,7 +62,6 @@ class SourceConfig : public SerializableConfig {
     double fEnergyDistributionMonoValue = 100;
 
     // Angular
-    std::set<std::string> fAngularDistributionTypesAvailable = {"isotropic", "focused", "flux", "cos2"};
 
     std::string fAngularDistributionType = "isotropic";
 
