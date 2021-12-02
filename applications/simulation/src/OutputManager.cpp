@@ -97,7 +97,6 @@ bool OutputManager::IsValidEvent() const {
 }
 
 void OutputManager::AddSensitiveEnergy(Double_t energy, const TString& physicalVolumeName) {
-    // 'physicalVolumeName' should be the same as the sensitive detector name
     fEvent->fSensitiveVolumesTotalEnergy += energy;
 
     const TString physicalVolumeNameNew = fEvent->fSimulationGeometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName);

@@ -304,18 +304,12 @@ void PrimaryGeneratorAction::Initialize() {
         spdlog::info("Geant4 angular distribution: {}", fAngularDistribution->GetDistType());
     } else {
         spdlog::info("NON Geant4 angular distribution: {}", fSourceConfig.fAngularDistributionType);
-        // TODO: NOT WORKING YET
-        auto seed = GlobalManager::Instance()->GetSimulationConfig().fSeed;
-        if (seed != 0) {
-            fRandom = new TRandom(GlobalManager::Instance()->GetSimulationConfig().fSeed + G4Threading::G4GetThreadId());
+        if (fSourceConfig.fAngularDistributionType == "cos2") {
+            fAngularDistributionCustomFunctionCDF = new TF1("cos2CDF", "2 * x / TMath::Pi() + TMath::Sin(2 * x) / TMath::Pi()", 0, TMath::Pi() / 2);
         } else {
-            fRandom = new TRandom();
+            spdlog::error("distribution not implemented");
+            exit(1);
         }
-        spdlog::debug("Using TRandom with seed: {}", fRandom->GetSeed());
-
-        // TODO: fix problem in MT with more than one thread
-        fAngularDistributionCustomFunctionCDF = new TF1("cos2CDF", "2.0*x/TMath::Pi() + TMath::Sin(2.0*x)/TMath::Pi()", 0,
-                                                        TMath::Pi() / 2);  // CDF of PDF = cos(x)**2
     }
 
     fInitialized = true;

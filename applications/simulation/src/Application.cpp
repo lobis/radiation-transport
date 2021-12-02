@@ -5,6 +5,7 @@
 #include "Application.h"
 
 #include <SteppingVerbose.h>
+#include <TROOT.h>
 #include <TSystem.h>
 #include <spdlog/spdlog.h>
 #include <unistd.h>
@@ -44,6 +45,7 @@ void Application::UserInitialization() {
     if (G4Threading::IsMultithreadedApplication()) {
         spdlog::debug("Multithreaded Application");
         spdlog::set_pattern("[%T][%^%l%$][thread %t]: %v");
+        ROOT::EnableThreadSafety();
     } else {
         spdlog::debug("Serial Application");
         spdlog::set_pattern("[%T][%^%l%$]: %v");

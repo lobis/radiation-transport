@@ -50,7 +50,6 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
 
     bool fInitialized = false;
 
-    TRandom* fRandom = nullptr;
     TF1* fAngularDistributionCustomFunctionCDF = nullptr;
     TF1* fEnergyDistributionCustomFunctionCDF = nullptr;
 
