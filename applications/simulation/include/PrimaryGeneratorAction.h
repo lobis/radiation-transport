@@ -50,9 +50,9 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
 
     bool fInitialized = false;
 
-    std::unique_ptr<TRandom> fRandom = nullptr;
-    std::unique_ptr<TF1> fAngularDistributionCustomFunctionCDF = nullptr;
-    std::unique_ptr<TF1> fEnergyDistributionCustomFunctionCDF = nullptr;
+    TRandom* fRandom = nullptr;
+    TF1* fAngularDistributionCustomFunctionCDF = nullptr;
+    TF1* fEnergyDistributionCustomFunctionCDF = nullptr;
 
     void Initialize();
 };

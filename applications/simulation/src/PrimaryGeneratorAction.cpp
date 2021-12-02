@@ -37,7 +37,11 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     fPositionDistribution = fSPS.GetPosDist();
 }
 
-PrimaryGeneratorAction::~PrimaryGeneratorAction() = default;
+PrimaryGeneratorAction::~PrimaryGeneratorAction() {
+    delete fRandom;
+    delete fAngularDistributionCustomFunctionCDF;
+    delete fEnergyDistributionCustomFunctionCDF;
+};
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     spdlog::debug("PrimaryGeneratorAction::GeneratePrimaries");
@@ -227,7 +231,11 @@ void PrimaryGeneratorAction::Initialize() {
         exit(1);
     }
     if (fEnergyDistribution) {
-        spdlog::info("Geant4 energy distribution: {}", fEnergyDistribution->GetEnergyDisType());
+        auto energyDistString = fEnergyDistribution->GetEnergyDisType();
+        if (fEnergyDistribution->GetEnergyDisType() == "Pow") {
+            energyDistString += TString::Format(" (E^%0.2f)", fEnergyDistribution->Getalpha());
+        }
+        spdlog::info("Geant4 energy distribution: {}", energyDistString);
     }
 
     // Position
@@ -299,13 +307,15 @@ void PrimaryGeneratorAction::Initialize() {
         // TODO: NOT WORKING YET
         auto seed = GlobalManager::Instance()->GetSimulationConfig().fSeed;
         if (seed != 0) {
-            fRandom = make_unique<TRandom>(GlobalManager::Instance()->GetSimulationConfig().fSeed + G4Threading::G4GetThreadId());
+            fRandom = new TRandom(GlobalManager::Instance()->GetSimulationConfig().fSeed + G4Threading::G4GetThreadId());
         } else {
-            fRandom = make_unique<TRandom>();
+            fRandom = new TRandom();
         }
+        spdlog::debug("Using TRandom with seed: {}", fRandom->GetSeed());
 
-        fAngularDistributionCustomFunctionCDF =
-            make_unique<TF1>("cos2CDF", "2.0*x/TMath::Pi() + sin(2.0*x)/TMath::Pi()", 0, TMath::Pi() / 2);  // CDF of PDF = cos(x)**2
+        // TODO: fix problem in MT with more than one thread
+        fAngularDistributionCustomFunctionCDF = new TF1("cos2CDF", "2.0*x/TMath::Pi() + TMath::Sin(2.0*x)/TMath::Pi()", 0,
+                                                        TMath::Pi() / 2);  // CDF of PDF = cos(x)**2
     }
 
     fInitialized = true;
