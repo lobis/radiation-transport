@@ -47,6 +47,8 @@ class Visualization {
     void AddEveGUI();
     void DrawEvent(Long64_t);
 
+    Long64_t fCurrentEventIndex;
+
     std::map<Long64_t, Long64_t> fEventIDs;
     void UpdateEventIDsComboBox();
 

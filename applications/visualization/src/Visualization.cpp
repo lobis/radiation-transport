@@ -68,7 +68,7 @@ void Visualization::AddEveGUI() {
 
         b = new TGPictureButton(hf, gClient->GetPicture("GoBack.gif"));
         hf->AddFrame(b, new TGLayoutHints(kLHintsTop | kLHintsLeft));
-        // b->Connect("Clicked()", "EvNavHandler", fh, "Bck()");
+        b->Connect("Clicked()", "Visualization", this, "PreviousEvent()");
 
         b = new TGPictureButton(hf, gClient->GetPicture("refresh.png"));
         hf->AddFrame(b, new TGLayoutHints(kLHintsTop | kLHintsCenterX));
@@ -76,7 +76,8 @@ void Visualization::AddEveGUI() {
 
         b = new TGPictureButton(hf, gClient->GetPicture("GoForward.gif"));
         hf->AddFrame(b, new TGLayoutHints(kLHintsTop | kLHintsRight));
-        // b->Connect("Clicked()", "EvNavHandler", fh, "Fwd()");
+        b->Connect("Clicked()", "Visualization", this, "NextEvent()");
+
         pMainFrame->AddFrame(hf);
     }
 
@@ -156,9 +157,9 @@ void Visualization::OpenFile(const TString& filename) {
 
     fEventTree->SetBranchAddress("fEvent", &fEvent);
 
-    const Int_t initialEntry = 0;
-    fComboBoxEventID->Select(initialEntry);
-    fEventTree->GetEntry(initialEntry);
+    fCurrentEventIndex = 0;
+    fComboBoxEventID->Select(fCurrentEventIndex);
+    fEventTree->GetEntry(fCurrentEventIndex);
 
     auto node = fGeoManager->GetTopNode();
     delete fEveGeoTopNode;
@@ -208,7 +209,8 @@ void Visualization::Update() {
         }
     }
 
-    DrawEvent(fComboBoxEventID->GetSelected());
+    fCurrentEventIndex = fComboBoxEventID->GetSelected();
+    DrawEvent(fCurrentEventIndex);
 
     fEveManager->FullRedraw3D(kFALSE);
 }
@@ -254,4 +256,26 @@ void Visualization::UpdateEventIDsComboBox() {
         fComboBoxEventID->AddEntry(
             TString::Format("%d | EventID: %s", i, fEventIDs.count(i) > 0 ? TString::Format("%d", fEventIDs[i]).Data() : "(?)"), i);
     }
+}
+
+void Visualization::NextEvent() {
+    if (fCurrentEventIndex < fEventTree->GetEntries() - 1) {
+        fCurrentEventIndex += 1;
+        fComboBoxEventID->Select(fCurrentEventIndex, false);
+        Update();
+        return;
+    }
+
+    spdlog::warn("Visualization::NextEvent - Limit reached");
+}
+
+void Visualization::PreviousEvent() {
+    if (fCurrentEventIndex > 0) {
+        fCurrentEventIndex -= 1;
+        fComboBoxEventID->Select(fCurrentEventIndex, false);
+        Update();
+        return;
+    }
+
+    spdlog::warn("Visualization::PreviousEvent - Limit reached");
 }
