@@ -6,6 +6,8 @@
 #define RADIATION_TRANSPORT_PRIMARYGENERATORACTION_H
 
 #include <SourceConfig.h>
+#include <TF1.h>
+#include <TRandom.h>
 
 #include <G4GeneralParticleSource.hh>
 #include <G4ParticleGun.hh>
@@ -47,6 +49,10 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
     G4SPSPosDistribution* fPositionDistribution = nullptr;
 
     bool fInitialized = false;
+
+    std::unique_ptr<TRandom> fRandom = nullptr;
+    std::unique_ptr<TF1> fAngularDistributionCustomFunctionCDF = nullptr;
+    std::unique_ptr<TF1> fEnergyDistributionCustomFunctionCDF = nullptr;
 
     void Initialize();
 };

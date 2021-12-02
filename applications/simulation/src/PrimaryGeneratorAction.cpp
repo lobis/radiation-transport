@@ -1,7 +1,7 @@
 
 #include "PrimaryGeneratorAction.h"
 
-#include <TF1.h>
+#include <TRotation.h>
 #include <spdlog/spdlog.h>
 
 #include <G4Event.hh>
@@ -16,6 +16,7 @@
 #include <G4SDManager.hh>
 #include <G4SPSAngDistribution.hh>
 #include <G4SystemOfUnits.hh>
+#include <G4Threading.hh>
 #include <G4UnitsTable.hh>
 #include <G4VisExtent.hh>
 #include <globals.hh>
@@ -60,12 +61,6 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
 
     auto particleDirection = GetDirection();
     fGun.SetParticleMomentumDirection(particleDirection);
-
-    if (fSourceConfig.fPositionDistributionType == "point" || fSourceConfig.fPositionDistributionType == "plane" ||
-        fSourceConfig.fPositionDistributionType == "disk") {
-        /*fSPS.SetParticlePosition({fSourceConfig.fGeneratorPosition.x(), fSourceConfig.fGeneratorPosition.y(),
-         * fSourceConfig.fGeneratorPosition.z()});*/
-    }
 
     fGun.GeneratePrimaryVertex(event);
 
@@ -154,16 +149,17 @@ G4ThreeVector PrimaryGeneratorAction::GetDirection() const {
     G4ThreeVector direction;
     if (fSourceConfig.fAngularDistributionType == "cos2") {
         // TODO: NOT WORKING YET
-        auto random = G4UniformRand();  // ~U(0,1)
-        auto phi = random * 2 * TMath::Pi();
+        auto phi = G4UniformRand() * 2 * TMath::Pi();
+        auto theta = fAngularDistributionCustomFunctionCDF->GetX(G4UniformRand());
 
-        TF1 cos2("cos2", "cos(x^2)", 0., TMath::Pi() / 2);
-        auto theta = cos2.GetRandom();
-
-        direction = G4ThreeVector({TMath::Cos(phi) * TMath::Sin(theta),  //
-                                   TMath::Sin(phi) * TMath::Sin(theta),  //
-                                   TMath::Cos(theta)})
-                        .unit();
+        auto sampledDirection = TVector3({TMath::Cos(phi) * TMath::Sin(theta),  //
+                                          TMath::Sin(phi) * TMath::Sin(theta),  //
+                                          TMath::Cos(theta)})
+                                    .Unit();
+        TRotation r;
+        r.RotateX(TMath::Pi() / 2);
+        sampledDirection = r * sampledDirection;
+        direction = {sampledDirection.x(), sampledDirection.y(), sampledDirection.z()};
     } else {
         spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
         exit(1);
@@ -270,13 +266,12 @@ void PrimaryGeneratorAction::Initialize() {
 
     if (fSourceConfig.fAngularDistributionType == "flux") {
         fAngularDistribution->SetAngDistType("planar");
-        auto direction = fSourceConfig.fAngularDistributionDirection;
+        const auto& direction = fSourceConfig.fAngularDistributionDirection;
         fAngularDistribution->SetParticleMomentumDirection({direction.x(), direction.y(), direction.z()});
     } else if (fSourceConfig.fAngularDistributionType == "isotropic") {
         fAngularDistribution->SetAngDistType("iso");
     } else if (fSourceConfig.fAngularDistributionType == "cos2") {
         fAngularDistribution = nullptr;
-        spdlog::info("NON Geant4 angular distribution: {}", fSourceConfig.fAngularDistributionType);
     } else {
         fAngularDistribution = nullptr;
         spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
@@ -284,6 +279,18 @@ void PrimaryGeneratorAction::Initialize() {
     }
     if (fAngularDistribution) {
         spdlog::info("Geant4 angular distribution: {}", fAngularDistribution->GetDistType());
+    } else {
+        spdlog::info("NON Geant4 angular distribution: {}", fSourceConfig.fAngularDistributionType);
+        // TODO: NOT WORKING YET
+        auto seed = GlobalManager::Instance()->GetSimulationConfig().fSeed;
+        if (seed != 0) {
+            fRandom = make_unique<TRandom>(GlobalManager::Instance()->GetSimulationConfig().fSeed + G4Threading::G4GetThreadId());
+        } else {
+            fRandom = make_unique<TRandom>();
+        }
+
+        fAngularDistributionCustomFunctionCDF =
+            make_unique<TF1>("cos2CDF", "2.0*x/TMath::Pi() + sin(2.0*x)/TMath::Pi()", 0, TMath::Pi() / 2);  // CDF of PDF = cos(x)**2
     }
 
     fInitialized = true;
