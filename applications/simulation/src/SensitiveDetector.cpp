@@ -9,29 +9,16 @@
 #include <G4Track.hh>
 #include <G4VProcess.hh>
 
-#include "OutputManager.h"
 #include "spdlog/spdlog.h"
 
 using namespace std;
 
-SensitiveDetector::SensitiveDetector(const G4String& name) : G4VSensitiveDetector(name) {
-    output = OutputManager::Instance();
+SensitiveDetector::SensitiveDetector(const G4String& name) : G4VSensitiveDetector(name), fOutput(OutputManager::Instance()) {
     spdlog::info("SensitiveDetector::SensitiveDetector '{}'", name);
 }
 
 G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*) {
     spdlog::debug("SensitiveDetector::ProcessHits");
-
-    /*
-    const auto track = step->GetTrack();
-    const auto particle = track->GetParticleDefinition();
-    const auto& particleName = particle->GetParticleName();
-
-    if (particleName == "opticalphoton") {
-        track->SetTrackStatus(fStopAndKill);
-        output->AddOpticalPhoton(track->GetCreatorProcess()->GetProcessName());
-    }
-    */
 
     auto energy = step->GetTotalEnergyDeposit() / keV;
 
@@ -40,7 +27,8 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*) {
     }
 
     const G4String volumeName = step->GetPreStepPoint()->GetPhysicalVolume()->GetName();
-    output->AddSensitiveEnergy(energy, volumeName);
+    // TODO: Check this, may not work as expected in MT mode
+    fOutput->AddSensitiveEnergy(energy, volumeName);
 
     return true;  // return value will always be ignored
 }
