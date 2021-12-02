@@ -26,36 +26,42 @@
 
 #include "DataEvent.h"
 
-class Visualization : public TGMainFrame {
+class Visualization {
    private:
-    inline Visualization() = default;
-
-    TGCompositeFrame* fCframe;
-    TGTextButton *fTextButtonLoadFile, *fTextButtonUpdate;
-    TGTextEntry* fTextEntryFile;
-    TGComboBox* fComboBoxEventID;
-    TGHSlider* fSliderTransparency;
     TFile* fFile = nullptr;
+    TTree* fEventTree = nullptr;
+
     TGeoManager* fGeoManager = nullptr;
     TEveManager* fEveManager = nullptr;
     TEveGeoTopNode* fEveGeoTopNode = nullptr;
-    TTree* fEventTree = nullptr;
     TGLViewer* fViewer = nullptr;
 
     DataEvent* fEvent = nullptr;
 
-   public:
-    Visualization(const TGWindow* p, UInt_t w, UInt_t h);
-    virtual ~Visualization();
-    // slots
-    void SelectFile();
-    void OpenFile(const TString&);
-    void LoadFile();
-    void Test();
-    void Update();
-    void DrawEvent(Int_t);
+    TGComboBox* fComboBoxEventID;
+    TGHSlider* fSliderTransparency;
 
-    void Initialize();
+    TGTextButton* fTextButtonLoadFile;
+    const TString fTextButtonLoadFileDefaultText = "No File Selected";
+
+    void AddEveGUI();
+    void DrawEvent(Long64_t);
+
+    std::map<Long64_t, Long64_t> fEventIDs;
+    void UpdateEventIDsComboBox();
+
+   public:
+    Visualization();
+    ~Visualization();
+
+    void Start();
+    void OpenFile(const TString&);
+
+    void Update();
+    void SelectFile();
+
+    void NextEvent();
+    void PreviousEvent();
 
     ClassDef(Visualization, 1);
 };
