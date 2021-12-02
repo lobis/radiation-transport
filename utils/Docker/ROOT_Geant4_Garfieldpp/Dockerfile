@@ -46,7 +46,7 @@ ENV LD_LIBRARY_PATH $APPS_DIR/geant4/install/lib:$LD_LIBRARY_PATH
 # ROOT
 RUN git clone https://github.com/root-project/root.git --branch=${ROOT_VERSION} --depth 1 $APPS_DIR/root/source && \
     mkdir -p $APPS_DIR/root/build &&  cd $APPS_DIR/root/build && \
-    cmake $APPS_DIR/root/source -DCMAKE_INSTALL_PREFIX=$APPS_DIR/root/install -DGDML=ON -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
+    cmake $APPS_DIR/root/source -DCMAKE_INSTALL_PREFIX=$APPS_DIR/root/install -Dgdml=ON Dbuiltin_afterimage=ON -DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD && \
     make -j$(nproc) install && \
     rm -rf $APPS_DIR/root/build $APPS_DIR/root/source
 
