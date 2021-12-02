@@ -2,7 +2,7 @@ set(LIBRARY Visualization)
 string(TOLOWER ${LIBRARY} APPLICATION_EXECUTABLE) # application is CamelCase, library is PascalCase
 set(APPLICATION ${APPLICATION_EXECUTABLE}-executable)
 
-find_package(ROOT REQUIRED COMPONENTS RIO Geom Eve Gui)
+find_package(ROOT REQUIRED COMPONENTS RIO Geom Eve Gui RGL)
 
 add_library(${LIBRARY} SHARED)
 

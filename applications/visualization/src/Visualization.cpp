@@ -28,7 +28,6 @@ namespace fs = std::filesystem;
 ClassImp(Visualization);
 
 void Visualization::AddEveGUI() {
-    // Create minimal GUI for event navigation.
     fEveManager->GetBrowser()->GetTabRight()->SetTab(1);
 
     TEveBrowser* browser = fEveManager->GetBrowser();
@@ -109,7 +108,22 @@ void Visualization::Start() {
     fViewer = fEveManager->GetDefaultGLViewer();
     fEveManager->AddEvent(new TEveEventManager("Event", "Event"));
 
+    fEveManager->GetViewers()->SwitchColorSet();
+    fEveManager->GetDefaultGLViewer()->SetStyle(TGLRnrCtx::kOutline);
+
     AddEveGUI();
+
+    auto slot = TEveWindow::CreateWindowInTab(gEve->GetBrowser()->GetTabRight());
+    auto pack = slot->MakePack();
+    pack->SetElementName("Projection");
+    pack->SetHorizontal();
+    pack->SetShowTitleBar(kFALSE);
+    pack->NewSlot()->MakeCurrent();
+    auto f3DView = gEve->SpawnNewViewer("3D View", "");
+    f3DView->AddScene(gEve->GetGlobalScene());
+    f3DView->AddScene(gEve->GetEventScene());
+    f3DView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
+
 }
 
 void Visualization::OpenFile(const TString& filename) {
@@ -245,8 +259,6 @@ void Visualization::DrawEvent(Long64_t index) {
     }
     spdlog::info("Drawing {} tracks", trackCounter);
 
-    // fViewer->GetClipSet()->SetClipType(TGLClip::EType(2));
-
     fEveManager->FullRedraw3D(kTRUE);
 }
 
@@ -254,7 +266,7 @@ void Visualization::UpdateEventIDsComboBox() {
     fComboBoxEventID->RemoveAll();
     for (int i = 0; i < fEventTree->GetEntries(); i++) {
         fComboBoxEventID->AddEntry(
-            TString::Format("%d | EventID: %s", i, fEventIDs.count(i) > 0 ? TString::Format("%d", fEventIDs[i]).Data() : "(?)"), i);
+            TString::Format("%d | EventID: %s", i, fEventIDs.count(i) > 0 ? TString::Format("%lld", fEventIDs[i]).Data() : "(?)"), i);
     }
 }
 
