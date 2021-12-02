@@ -17,7 +17,7 @@ class SensitiveDetector : public G4VSensitiveDetector {
     virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory*);
 
    private:
-    const OutputManager* fOutput;
+    OutputManager* fOutput;
 };
 
 #endif  // RADIATION_TRANSPORT_SENSITIVEDETECTOR_H

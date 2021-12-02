@@ -24,7 +24,6 @@ thread_local OutputManager* OutputManager::pinstance_ = nullptr;
 OutputManager* OutputManager::Instance() {
     if (G4Threading::IsMasterThread() && G4Threading::IsMultithreadedApplication()) {
         spdlog::warn("OutputManager::Instance() - Thread local instance should never be invoked from master thread in a MT application");
-        // exit(1);
     }
     if (pinstance_ == nullptr) {
         pinstance_ = new OutputManager();
