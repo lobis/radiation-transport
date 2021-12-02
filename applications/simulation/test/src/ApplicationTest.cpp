@@ -112,9 +112,7 @@ TEST(Application, FullRunSerial) {
 
     app.PrintConfig();
 
-    app.UserInitialization();
-
-    app.Initialize();
+    app.Run();
 
     TFile file(config.GetOutputFileAbsolutePath().c_str());
 
@@ -152,9 +150,7 @@ TEST(Application, FullRunMT) {
 
     app.PrintConfig();
 
-    app.UserInitialization();
-
-    app.Initialize();
+    app.Run();
 
     TFile file(config.GetOutputFileAbsolutePath().c_str());
 
@@ -186,8 +182,7 @@ TEST(Application, DecayFullChainOff) {
     Application app;
     app.LoadConfigFromFile(config);
     app.PrintConfig();
-    app.UserInitialization();
-    app.Initialize();
+    app.Run();
 
     TFile file(config.GetOutputFileAbsolutePath().c_str());
     TTree* tree = file.Get<TTree>("EventTree");
@@ -206,8 +201,7 @@ TEST(Application, DecayFullChainOn) {
     Application app;
     app.LoadConfigFromFile(config);
     app.PrintConfig();
-    app.UserInitialization();
-    app.Initialize();
+    app.Run();
 
     TFile file(config.GetOutputFileAbsolutePath().c_str());
     TTree* tree = file.Get<TTree>("EventTree");

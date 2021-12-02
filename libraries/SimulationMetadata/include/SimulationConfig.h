@@ -22,6 +22,8 @@ class SimulationConfig : public SerializableConfig {
    public:
     std::string fConfigAbsolutePath;
 
+    int fNumberOfEvents = 1;
+
     std::string fVerboseLevel = "info";
     std::string fRunManagerType = "serial";
     int fThreads = 2;

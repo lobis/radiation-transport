@@ -17,9 +17,7 @@ int main(int argc, char** argv) {
 
     app.PrintConfig();
 
-    app.UserInitialization();
-
-    app.Initialize();
+    app.Run();
 
     spdlog::info("Time elapsed {:0.2f} seconds", timer.RealTime());
 

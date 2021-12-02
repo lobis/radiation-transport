@@ -12,8 +12,7 @@ detector:
     - name: gasVolume
       sensitive: true
 
-commands:
-  - /run/beamOn 10000
+numberOfEvents: 100000
 
 fullChain: true
 

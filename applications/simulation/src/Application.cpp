@@ -118,7 +118,7 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
     LoadConfigFromFile(configFilename);
 
     while (true) {
-        const int option = getopt(argc - 1, argv, "st:v:i");
+        const int option = getopt(argc - 1, argv, "st:v:in:");
         if (option == -1) break;
         switch (option) {
             case 's':
@@ -142,6 +142,11 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
             case 'i':
                 spdlog::info("Command line option (-i): 'interactive'");
                 fConfig.fInteractive = true;
+                break;
+
+            case 'n':
+                spdlog::info("Command line option (-n): 'numberOfEvents'");
+                fConfig.fNumberOfEvents = std::stoi(optarg);
                 break;
 
             default:
@@ -180,6 +185,14 @@ void Application::RunMacro(const vector<string>& macroLines) {
         spdlog::info("Application::RunMacro - \033[1;42m{}\033[0m", command);
         G4UImanager::GetUIpointer()->ApplyCommand(command);
     }
+}
+
+void Application::Run() {
+    UserInitialization();
+    Initialize();
+
+    spdlog::info("Application::Run - numberOfEvents: {}", fConfig.fNumberOfEvents);
+    G4UImanager::GetUIpointer()->ApplyCommand(TString::Format("/run/beamOn %d", fConfig.fNumberOfEvents));
 }
 
 Application::~Application() {

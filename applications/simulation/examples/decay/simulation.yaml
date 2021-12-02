@@ -10,8 +10,7 @@ detector:
     - name: box
       sensitive: true
 
-commands:
-  - /run/beamOn 100
+numberOfEvents: 100
 
 output: decay.root
 

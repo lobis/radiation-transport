@@ -35,6 +35,10 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
         fRunManagerType = node["runManagerType"].as<string>();
     }
 
+    if (node["numberOfEvents"]) {
+        fNumberOfEvents = node["numberOfEvents"].as<int>();
+    }
+
     if (node["threads"]) {
         fThreads = node["threads"].as<int>();
     }
@@ -78,6 +82,7 @@ YAML::Node SimulationConfig::Serialize() const {
 
     configNode["verboseLevel"] = fVerboseLevel;
     configNode["runManagerType"] = fRunManagerType;
+    configNode["numberOfEvents"] = fNumberOfEvents;
     configNode["threads"] = fThreads;
     configNode["seed"] = fSeed;
     configNode["commands"] = fCommands;

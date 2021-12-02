@@ -26,6 +26,10 @@ class Application {
     static std::vector<std::string> fMacroVis;
     static std::vector<std::string> fMacroGUI;
 
+    void Initialize();
+
+    GlobalManager* fGlobalManager;
+
    public:
     inline Application() : fGlobalManager(GlobalManager::Instance()) { spdlog::set_pattern("[%T][%^%l%$]: %v"); };
     explicit Application(const SimulationConfig&);
@@ -35,13 +39,12 @@ class Application {
 
     inline void PrintConfig() const { fConfig.Print(); }
 
+    void UserInitialization();
+
     void LoadConfigFromFile(const SimulationConfig&);
     void InitializeFromCommandLine(int argc, char** argv);
 
-    void UserInitialization();
-    void Initialize();
-
-    GlobalManager* fGlobalManager;
+    void Run();
 };
 
 #endif  // RADIATION_TRANSPORT_APPLICATION_H
