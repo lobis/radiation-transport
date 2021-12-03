@@ -18,6 +18,7 @@ target_link_libraries(
         ${LIBRARY} PUBLIC
         ${ROOT_LIBRARIES}
         stdc++fs # <filesystem>
+        SimulationMetadata
         yaml-cpp
         spdlog
 )

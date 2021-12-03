@@ -1,15 +1,22 @@
 //
-// Created by lobis on 27/11/2021.
+// Created by lobis on 03/12/2021.
 //
 
-#ifndef RADIATION_TRANSPORT_SIMULATIONGEOMETRYINFO_H
-#define RADIATION_TRANSPORT_SIMULATIONGEOMETRYINFO_H
+#ifndef RADIATION_TRANSPORT_DATAEVENTHEADER_H
+#define RADIATION_TRANSPORT_DATAEVENTHEADER_H
 
+#include <SimulationConfig.h>
 #include <TString.h>
-#include <TVector3.h>
 
 #include <map>
-#include <set>
+#include <vector>
+
+class DataEventHeader {
+    ClassDef(DataEventHeader, 1);
+
+   public:
+    SimulationConfig fSimulationConfig;  // configuration used in simulation
+};
 
 class G4VPhysicalVolume;
 
@@ -39,9 +46,6 @@ class SimulationGeometryInfo {
     Int_t GetIDFromVolumeName(const TString&) const;
 
     void PopulateFromGeant4World(const G4VPhysicalVolume*);
-
-   public:
-    ClassDef(SimulationGeometryInfo, 1);
 };
 
-#endif  // RADIATION_TRANSPORT_SIMULATIONGEOMETRYINFO_H
+#endif  // RADIATION_TRANSPORT_DATAEVENTHEADER_H

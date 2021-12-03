@@ -1,15 +1,15 @@
 //
-// Created by lobis on 27/11/2021.
+// Created by lobis on 03/12/2021.
 //
 
-#include "SimulationGeometryInfo.h"
+#include "DataEventHeader.h"
 
 #include <TXMLEngine.h>
 #include <spdlog/spdlog.h>
 
 using namespace std;
 
-ClassImp(SimulationGeometryInfo);
+ClassImp(DataEventHeader);
 
 namespace myXml {
 XMLNodePointer_t FindChildByName(TXMLEngine xml, XMLNodePointer_t node, const TString& name) {

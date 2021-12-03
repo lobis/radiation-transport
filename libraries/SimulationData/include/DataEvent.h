@@ -5,19 +5,22 @@
 #ifndef RADIATION_TRANSPORT_DATAEVENT_H
 #define RADIATION_TRANSPORT_DATAEVENT_H
 
+#include "DataEventHeader.h"
 #include "DataTrack.h"
-#include "SimulationGeometryInfo.h"
 
 class G4Event;
 class G4Track;
 class G4Step;
 
 class DataEvent {
+    ClassDef(DataEvent, 1);
+
    public:
     Int_t fRunID{};
     Int_t fEventID{};
     Int_t fSubEventID{};
-    TString fInfo = "";
+
+    DataEventHeader fEventHeader;  //|| DO NOT SPLIT (https://root.cern.ch/root/htmldoc/guides/users-guide/Trees.html)
 
     Double_t fSensitiveVolumesTotalEnergy{};
     std::vector<Double_t> fSensitiveVolumeEnergy{};
@@ -65,8 +68,6 @@ class DataEvent {
    private:
     static bool IsValid(const G4Track*);  //!
     static bool IsValid(const G4Step*);   //!
-
-    ClassDef(DataEvent, 1);
 
     /* Visualization */
     void Draw();

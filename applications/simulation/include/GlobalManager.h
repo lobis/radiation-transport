@@ -7,7 +7,6 @@
 
 #include <DataEvent.h>
 #include <SimulationConfig.h>
-#include <SimulationGeometryInfo.h>
 #include <TFile.h>
 #include <TTree.h>
 

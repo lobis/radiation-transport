@@ -17,6 +17,8 @@ class G4Step;
 class TEvePointSet;
 
 class DataSteps {
+    ClassDef(DataSteps, 1);
+
    public:
     Int_t fN = 0;
     std::vector<Int_t> fStepID;
@@ -39,8 +41,6 @@ class DataSteps {
     inline DataSteps() = default;
 
     void Print() const;
-
-    ClassDef(DataSteps, 1);
 
     /* Geant4 */
    public:

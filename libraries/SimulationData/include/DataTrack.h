@@ -13,6 +13,8 @@ class G4Step;
 class TEveStraightLineSet;
 
 class DataTrack {
+    ClassDef(DataTrack, 1);
+
    public:
     Int_t fTrackID{};
     Int_t fParentID{};
@@ -35,8 +37,6 @@ class DataTrack {
     inline DataTrack() = default;
 
     void Print() const;
-
-    ClassDef(DataTrack, 1);
 
     /* Geant4 */
    public:

@@ -15,17 +15,17 @@ endif ()
 
 add_library(${LIBRARY} SHARED)
 
+FILE(GLOB SOURCES src/*.cpp)
+target_sources(
+        ${LIBRARY} PUBLIC
+        ${SOURCES}
+)
+
 target_include_directories(
         ${LIBRARY} SYSTEM PUBLIC
         ${ROOT_INCLUDE_DIRS}
         ${Geant4_INCLUDE_DIR}
         include
-)
-
-FILE(GLOB SOURCES src/*.cpp)
-target_sources(
-        ${LIBRARY} PUBLIC
-        ${SOURCES}
 )
 
 target_link_libraries(

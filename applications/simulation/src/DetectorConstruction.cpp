@@ -4,10 +4,10 @@
 
 #include "DetectorConstruction.h"
 
+#include <DataEventHeader.h>
 #include <DetectorConstructionConfig.h>
 #include <GlobalManager.h>
 #include <SensitiveDetector.h>
-#include <SimulationGeometryInfo.h>
 #include <TString.h>
 
 #include <G4GDMLParser.hh>
