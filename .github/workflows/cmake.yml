@@ -1,4 +1,4 @@
-name: CMake
+name: Build and Test
 
 on:
   push:
@@ -28,24 +28,28 @@ jobs:
 
       - name: Debug Environment
         run: |
-          printenv
           source entry-point.sh
-          which root-config
+          root-config --prefix
           root-config --version
-          which geant4-config
+          geant4-config --prefix
           geant4-config --version
-          printenv
+          echo "GARFIELD: $GARFIELD_INSTALL"
 
       - name: Configure CMake without testing
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        run: |
+          source entry-point.sh
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Configure CMake with testing
         run: |
+          source entry-point.sh
           rm -rf ${{github.workspace}}/build
           cmake -B ${{github.workspace}}/build -DTEST=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        run: |
+          source entry-point.sh
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Test
         run: |
