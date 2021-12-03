@@ -1,4 +1,4 @@
-macro(MY_GENERATE_ROOT_DICTIONARIES)
+macro(THIS_GENERATE_ROOT_DICTIONARIES)
     # Create LinkDef.h file
     file(WRITE LinkDef.h)
     file(APPEND LinkDef.h "#ifdef __CLING__\n")

@@ -1,5 +1,5 @@
 
-message("--> External dependencies:")
+message(STATUS "External dependencies:")
 
 set(FETCHCONTENT_QUIET ON)
 
@@ -7,7 +7,7 @@ include(FetchContent)
 
 # Google Test
 if (TEST)
-    message("--> --> Google Test")
+    message(STATUS "- Google Test")
     FetchContent_Declare(
             googletest
             URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
@@ -17,7 +17,7 @@ if (TEST)
 endif ()
 
 # YAML parser
-message("--> --> yaml-cpp")
+message(STATUS "- yaml-cpp")
 FetchContent_Declare(
         yaml-cpp
         GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
@@ -26,7 +26,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(yaml-cpp)
 
 # Logging library
-message("--> --> spdlog")
+message(STATUS "- spdlog")
 FetchContent_Declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
