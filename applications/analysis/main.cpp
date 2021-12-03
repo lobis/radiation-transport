@@ -3,7 +3,6 @@
 //
 
 #include <DataEvent.h>
-#include <SimulationGeometryInfo.h>
 #include <TApplication.h>
 #include <TBrowser.h>
 #include <TFile.h>
