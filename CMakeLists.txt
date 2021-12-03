@@ -23,7 +23,7 @@ endif ()
 include(ThisGenerateRootDictionaries)
 include(ThisAddTest)
 include(ThisInstallHeaders)
-include(MySource)
+include(ThisSource)
 
 find_package(ROOT REQUIRED COMPONENTS RIO Geom XMLIO)
 
