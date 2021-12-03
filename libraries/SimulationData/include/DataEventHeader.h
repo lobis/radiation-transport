@@ -11,13 +11,6 @@
 #include <map>
 #include <vector>
 
-class DataEventHeader {
-    ClassDef(DataEventHeader, 1);
-
-   public:
-    SimulationConfig fSimulationConfig;  // configuration used in simulation
-};
-
 class G4VPhysicalVolume;
 
 class SimulationGeometryInfo {
@@ -46,6 +39,14 @@ class SimulationGeometryInfo {
     Int_t GetIDFromVolumeName(const TString&) const;
 
     void PopulateFromGeant4World(const G4VPhysicalVolume*);
+};
+
+class DataEventHeader {
+    ClassDef(DataEventHeader, 1);
+
+   public:
+    SimulationConfig fSimulationConfig;  // configuration used in simulation
+    SimulationGeometryInfo fSimulationGeometryInfo;
 };
 
 #endif  // RADIATION_TRANSPORT_DATAEVENTHEADER_H

@@ -39,11 +39,6 @@ class DataEvent {
 
     std::vector<DataTrack> fTracks{};
 
-    SimulationGeometryInfo* fSimulationGeometryInfo = nullptr;  // std::shared_ptr<SimulationGeometryInfo>
-                                                                /*
-                                                                 * Shared pointer here would be better (IMHO) but root gives wierd warnings...
-                                                                 */
-
    public:
     inline DataEvent() = default;
 

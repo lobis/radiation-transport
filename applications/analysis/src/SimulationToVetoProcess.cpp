@@ -16,7 +16,7 @@ using namespace std;
 
 VetoEvent SimulationToVetoProcess::Process(const DataEvent& input) {
     VetoEvent output;
-    SimulationGeometryInfo geometryInfo = *input.fSimulationGeometryInfo;
+    SimulationGeometryInfo geometryInfo = input.fEventHeader.fSimulationGeometryInfo;
 
     if (fVetoNameToIDMap.empty()) {
         AddGeometryInfo(geometryInfo);

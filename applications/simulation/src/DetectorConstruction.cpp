@@ -57,8 +57,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     spdlog::debug("DetectorConstruction::Construct");
     spdlog::info("DetectorConstruction::Construct - Reading geometry from '{}'", fGeometryFilename.c_str());
 
-    GlobalManager::Instance()->fGeometryInfo = new SimulationGeometryInfo();  // make_shared<SimulationGeometryInfo>();
-    auto geometryInfo = GlobalManager::Instance()->fGeometryInfo;
+    auto geometryInfo = new SimulationGeometryInfo();
+    GlobalManager::Instance()->fGeometryInfo = geometryInfo;
     if (!geometryInfo) {
         spdlog::error("geometry info not init yet");
         exit(1);
