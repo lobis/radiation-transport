@@ -27,7 +27,6 @@ jobs:
 
       - name: Debug Environment
         run: |
-          source entry-point.sh
           root-config --prefix
           root-config --version
           geant4-config --prefix
