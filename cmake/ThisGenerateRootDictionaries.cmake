@@ -17,4 +17,8 @@ macro(THIS_GENERATE_ROOT_DICTIONARIES)
     file(APPEND LinkDef.h "#endif\n")
 
     ROOT_GENERATE_DICTIONARY(${LIBRARY}RootDict ${HEADERS} LINKDEF LinkDef.h MODULE ${LIBRARY})
+
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${LIBRARY}_rdict.pcm DESTINATION lib)
+    # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${LIBRARY}.rootmap DESTINATION lib)
+
 endmacro()
