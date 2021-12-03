@@ -15,10 +15,7 @@ defaults:
 
 jobs:
   build:
-    runs-on: ${{ matrix.runs-on }}
-    strategy:
-      matrix:
-        runs-on: [ ubuntu-latest, self-hosted ]
+    runs-on: ubuntu-latest
     container:
       image: ghcr.io/lobis/root-geant4-garfieldpp:cxx17_ROOTv6-25-01_Geant4v10.7.3
 
