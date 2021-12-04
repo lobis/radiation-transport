@@ -20,8 +20,7 @@ target_sources(
 
 target_link_libraries(
         ${LIBRARY} PUBLIC
-        SimulationData
-        SimulationMetadata
+        Simulation
         ${ROOT_LIBRARIES}
         yaml-cpp
         spdlog

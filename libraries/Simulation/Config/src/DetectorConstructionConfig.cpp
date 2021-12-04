@@ -68,14 +68,4 @@ YAML::Node DetectorConstructionConfig::Serialize() const {
     return node;
 }
 
-string DetectorConstructionConfig::GetGeometryAbsolutePath() const {
-    if (fGeometryFilename.empty()) {
-        return "";
-    }
-    /*
-    if (fs::path(fGeometryFilename).is_absolute()) {
-        return fGeometryFilename;
-    }
-    return fs::path(fConfigAbsolutePath).parent_path() / fGeometryFilename;
-     */
-}
+string DetectorConstructionConfig::GetGeometryAbsolutePath() const { return GetAbsolutePathFromConfig(fGeometryFilename, fConfigAbsolutePath); }

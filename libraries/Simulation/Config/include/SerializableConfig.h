@@ -21,6 +21,9 @@ class SerializableConfig {
     virtual YAML::Node Serialize() const = 0;
 
     virtual void Print() const;
+
+    static std::string GetAbsolutePath(const std::string&);
+    static std::string GetAbsolutePathFromConfig(const std::string& input, const std::string& configFilepath);
 };
 
 #endif  // RADIATION_TRANSPORT_SERIALIZABLECONFIG_H

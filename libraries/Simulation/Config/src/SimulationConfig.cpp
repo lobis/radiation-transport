@@ -4,6 +4,7 @@
 
 #include "SimulationConfig.h"
 
+#include <TSystem.h>
 #include <spdlog/spdlog.h>
 
 #include <filesystem>
@@ -98,14 +99,13 @@ YAML::Node SimulationConfig::Serialize() const {
 }
 
 SimulationConfig::SimulationConfig(const string& filename) {
-    /*
-    if (!fs::exists(filename)) {
-        spdlog::error("config file '{}' does not exist", filename);
+    if (gSystem->AccessPathName(filename.c_str(), kFileExists)) {
+        spdlog::error("SimulationConfig::SimulationConfig - config file '{}' does not exist", filename);
         exit(1);
     }
 
-    fConfigAbsolutePath = fs::absolute(filename);
-    */
+    fConfigAbsolutePath = GetAbsolutePath(filename);
+
     Deserialize(YAML::LoadFile(filename));
 }
 
@@ -114,15 +114,4 @@ void SimulationConfig::Print() const {
     cout << Serialize() << endl;
 }
 
-std::string SimulationConfig::GetOutputFileAbsolutePath() const {
-    if (fOutputFilename.empty()) {
-        return "";
-    }
-    return "";
-    /*
-    if (fs::path(fOutputFilename).is_absolute()) {
-        return fOutputFilename;
-    }
-    return fs::path(fConfigAbsolutePath).parent_path() / fOutputFilename;
-     */
-}
+std::string SimulationConfig::GetOutputFileAbsolutePath() const { return GetAbsolutePath(fOutputFilename); }
