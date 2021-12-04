@@ -4,7 +4,7 @@
 
 #include "DetectorConstruction.h"
 
-#include <DataEventHeader.h>
+#include <Geant4EventHeader.h>
 #include <DetectorConstructionConfig.h>
 #include <GlobalManager.h>
 #include <SensitiveDetector.h>
@@ -57,7 +57,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     spdlog::debug("DetectorConstruction::Construct");
     spdlog::info("DetectorConstruction::Construct - Reading geometry from '{}'", fGeometryFilename.c_str());
 
-    auto geometryInfo = new SimulationGeometryInfo();
+    auto geometryInfo = new Geant4GeometryInfo();
     GlobalManager::Instance()->fGeometryInfo = geometryInfo;
     if (!geometryInfo) {
         spdlog::error("geometry info not init yet");
@@ -172,7 +172,7 @@ bool DetectorConstruction::CheckOverlaps() const {
     return fWorld->CheckOverlaps();
 }
 
-void SimulationGeometryInfo::PopulateFromGeant4World(const G4VPhysicalVolume* world) {
+void Geant4GeometryInfo::PopulateFromGeant4World(const G4VPhysicalVolume* world) {
     const int n = int(world->GetLogicalVolume()->GetNoDaughters());
     for (int i = 0; i < n + 1; i++) {  // world is the + 1
         G4VPhysicalVolume* volume;
@@ -192,7 +192,7 @@ void SimulationGeometryInfo::PopulateFromGeant4World(const G4VPhysicalVolume* wo
         auto position = volume->GetTranslation();
 
         spdlog::info(
-            "SimulationGeometryInfo::PopulateFromGeant4World - {} - physical: {} ({}) - logical: {} - material: {} - position: ({:0.2f}, {:0.2f}, "
+            "Geant4GeometryInfo::PopulateFromGeant4World - {} - physical: {} ({}) - logical: {} - material: {} - position: ({:0.2f}, {:0.2f}, "
             "{:0.2f})",
             i, namePhysical.Data(), physicalNewName.Data(), nameLogical.Data(), nameMaterial.Data(), position.x(), position.y(), position.z());
 

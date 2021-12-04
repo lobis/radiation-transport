@@ -2,7 +2,7 @@ set(MODULEMAP_FILENAME ${CMAKE_BINARY_DIR}/module.modulemap)
 file(WRITE ${MODULEMAP_FILENAME})
 install(FILES ${MODULEMAP_FILENAME} DESTINATION lib)
 
-macro(THIS_GENERATE_ROOT_DICTIONARIES)
+macro(THIS_GENERATE_ROOT_DICTIONARIES HEADERS)
     # Create LinkDef.h file
     file(WRITE LinkDef.h)
     file(APPEND LinkDef.h "#ifdef __CLING__\n")
@@ -10,8 +10,6 @@ macro(THIS_GENERATE_ROOT_DICTIONARIES)
     file(APPEND LinkDef.h "#pragma link off all classes;\n")
     file(APPEND LinkDef.h "#pragma link off all functions;\n")
     file(APPEND LinkDef.h "#pragma link C++ nestedclasses;\n")
-
-    FILE(GLOB HEADERS "include/*.h")
 
     foreach (header ${HEADERS})
         get_filename_component(class ${header} NAME_WE)

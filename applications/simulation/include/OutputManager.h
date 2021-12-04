@@ -2,7 +2,7 @@
 #ifndef RADIATION_TRANSPORT_OUTPUTMANAGER_H
 #define RADIATION_TRANSPORT_OUTPUTMANAGER_H
 
-#include <DataEvent.h>
+#include <Geant4Event.h>
 #include <TFile.h>
 #include <TString.h>
 #include <TTree.h>
@@ -45,7 +45,7 @@ class OutputManager {
     inline OutputManager() = default;
     static thread_local OutputManager* pinstance_;
 
-    std::unique_ptr<DataEvent> fEvent{};
+    std::unique_ptr<Geant4Event> fEvent{};
 
     bool IsEmptyEvent() const;
     bool IsValidEvent() const;

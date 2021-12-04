@@ -180,7 +180,7 @@ Long64_t GlobalManager::GetEntries() {
     return fEventTree->GetEntries();
 }
 
-size_t GlobalManager::InsertEvent(std::unique_ptr<DataEvent>& event) {
+size_t GlobalManager::InsertEvent(std::unique_ptr<Geant4Event>& event) {
     fEventContainerMutex.lock();
     fEventContainer.push(std::move(event));
     auto size = fEventContainer.size();

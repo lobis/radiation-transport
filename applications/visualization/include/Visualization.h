@@ -24,7 +24,7 @@
 #include <TGeoManager.h>
 #include <TTree.h>
 
-#include "DataEvent.h"
+#include "Geant4Event.h"
 
 class Visualization {
    private:
@@ -36,7 +36,7 @@ class Visualization {
     TEveGeoTopNode* fEveGeoTopNode = nullptr;
     TGLViewer* fViewer = nullptr;
 
-    DataEvent* fEvent = nullptr;
+    Geant4Event* fEvent = nullptr;
 
     TGComboBox* fComboBoxEventID;
     TGHSlider* fSliderTransparency;

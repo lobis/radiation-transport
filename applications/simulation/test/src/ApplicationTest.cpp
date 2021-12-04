@@ -127,7 +127,7 @@ TEST(Application, FullRunSerial) {
     tree->Print();
 
     Double_t averageEnergy = 0;
-    DataEvent* event = nullptr;
+    Geant4Event* event = nullptr;
     tree->SetBranchAddress("fEvent", &event);
     for (int i = 0; i < tree->GetEntries(); i++) {
         tree->GetEntry(i);
@@ -160,7 +160,7 @@ TEST(Application, FullRunMT) {
 
     spdlog::info("Tree entries: {}", tree->GetEntries());
     Double_t totalEnergy = 0;
-    DataEvent* event = nullptr;
+    Geant4Event* event = nullptr;
     tree->SetBranchAddress("fEvent", &event);
     for (int i = 0; i < tree->GetEntries(); i++) {
         tree->GetEntry(i);
@@ -235,7 +235,7 @@ TEST(Application, SerialVsMTSameResults) {
         TFile file(config.fOutputFilename.c_str());
 
         TTree* tree = file.Get<TTree>("EventTree");
-        DataEvent* event = nullptr;
+        Geant4Event* event = nullptr;
         tree->SetBranchAddress("fEvent", &event);
         for (int i = 0; i < tree->GetEntries(); i++) {
             tree->GetEntry(i);

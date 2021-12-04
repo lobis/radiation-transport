@@ -1,5 +1,6 @@
-set(LIBRARY Simulation)
-string(TOLOWER ${LIBRARY} APPLICATION_EXECUTABLE) # application is CamelCase, library is PascalCase
+set(LIBRARY SimulationGeant4)
+# string(TOLOWER ${LIBRARY} APPLICATION_EXECUTABLE) # application is CamelCase, library is PascalCase
+set(APPLICATION_EXECUTABLE "simulation")
 set(APPLICATION ${APPLICATION_EXECUTABLE}-executable)
 
 find_package(ROOT REQUIRED COMPONENTS RIO Geom)
@@ -30,8 +31,7 @@ target_include_directories(
 
 target_link_libraries(
         ${LIBRARY} PUBLIC
-        SimulationData
-        SimulationMetadata
+        Simulation
         ${ROOT_LIBRARIES}
         ${Geant4_LIBRARIES}
         yaml-cpp

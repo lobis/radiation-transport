@@ -1,7 +1,7 @@
 
 #include "OutputManager.h"
 
-#include <DataEvent.h>
+#include <Geant4Event.h>
 
 #include <G4RunManager.hh>
 #include <G4Threading.hh>
@@ -39,8 +39,8 @@ OutputManager* OutputManager::Instance() {
  */
 void OutputManager::UpdateEvent() {
     auto event = G4EventManager::GetEventManager()->GetConstCurrentEvent();
-    fEvent = make_unique<DataEvent>(event);
-    fEvent->fEventHeader.fSimulationGeometryInfo = GlobalManager::Instance()->fGeometryInfo;
+    fEvent = make_unique<Geant4Event>(event);
+    fEvent->fEventHeader.fGeant4GeometryInfo = GlobalManager::Instance()->fGeometryInfo;
 }
 
 /*!
@@ -99,7 +99,7 @@ bool OutputManager::IsValidEvent() const {
 void OutputManager::AddSensitiveEnergy(Double_t energy, const TString& physicalVolumeName) {
     fEvent->fSensitiveVolumesTotalEnergy += energy;
 
-    const TString physicalVolumeNameNew = fEvent->fEventHeader.fSimulationGeometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName);
+    const TString physicalVolumeNameNew = fEvent->fEventHeader.fGeant4GeometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName);
 
     bool sensitiveVolumeFound = false;
     for (int i = 0; i < fEvent->fSensitiveVolumeEnergy.size(); i++) {
@@ -111,7 +111,7 @@ void OutputManager::AddSensitiveEnergy(Double_t energy, const TString& physicalV
     }
     if (!sensitiveVolumeFound) {
         fEvent->fSensitiveVolumeName.emplace_back(physicalVolumeNameNew);
-        auto ID = fEvent->fEventHeader.fSimulationGeometryInfo->GetIDFromVolumeName(physicalVolumeName);
+        auto ID = fEvent->fEventHeader.fGeant4GeometryInfo->GetIDFromVolumeName(physicalVolumeName);
         fEvent->fSensitiveVolumeID.emplace_back(ID);
         fEvent->fSensitiveVolumeEnergy.emplace_back(energy);
     }

@@ -5,7 +5,7 @@
 #ifndef RADIATION_TRANSPORT_GLOBALMANAGER_H
 #define RADIATION_TRANSPORT_GLOBALMANAGER_H
 
-#include <DataEvent.h>
+#include <Geant4Event.h>
 #include <SimulationConfig.h>
 #include <TFile.h>
 #include <TTree.h>
@@ -24,7 +24,7 @@ class GlobalManager {
     static GlobalManager* Instance();
     ~GlobalManager();
 
-    size_t InsertEvent(std::unique_ptr<DataEvent>& event);
+    size_t InsertEvent(std::unique_ptr<Geant4Event>& event);
 
     void WriteEvents();
     void WriteEventsAndCloseFile();
@@ -40,7 +40,7 @@ class GlobalManager {
     inline void SetSimulationConfig(const SimulationConfig& simulationConfig) { fSimulationConfig = simulationConfig; }
     inline SimulationConfig GetSimulationConfig() const { return fSimulationConfig; }
 
-    SimulationGeometryInfo* fGeometryInfo = nullptr;  // std::shared_ptr<SimulationGeometryInfo>
+    Geant4GeometryInfo* fGeometryInfo = nullptr;  // std::shared_ptr<Geant4GeometryInfo>
 
    private:
     GlobalManager();
@@ -57,9 +57,9 @@ class GlobalManager {
 
     const TString fEventTreeName = "EventTree";
 
-    DataEvent fEvent;
+    Geant4Event fEvent;
 
-    std::queue<std::unique_ptr<DataEvent> > fEventContainer;
+    std::queue<std::unique_ptr<Geant4Event> > fEventContainer;
 };
 
 #endif  // RADIATION_TRANSPORT_GLOBALMANAGER_H
