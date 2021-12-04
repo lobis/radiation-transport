@@ -7,3 +7,5 @@
 using namespace std;
 
 ClassImp(DataEventHeader);
+
+void DataEventHeader::Print() const {}

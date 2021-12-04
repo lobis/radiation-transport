@@ -5,7 +5,6 @@
 #ifndef RADIATION_TRANSPORT_DATAEVENTHEADER_H
 #define RADIATION_TRANSPORT_DATAEVENTHEADER_H
 
-#include <SimulationConfig.h>
 #include <TString.h>
 
 #include <map>
@@ -19,8 +18,11 @@ class DataEventHeader {
    public:
     inline DataEventHeader() = default;
 
-    SimulationConfig fSimulationConfig;  // configuration used in simulation
-    SimulationGeometryInfo fSimulationGeometryInfo;
+    void Print() const;
+
+    SimulationGeometryInfo* fSimulationGeometryInfo;
+
+    inline SimulationGeometryInfo* GetSimulationGeometryInfo() const { return fSimulationGeometryInfo; }
 };
 
 #endif  // RADIATION_TRANSPORT_DATAEVENTHEADER_H

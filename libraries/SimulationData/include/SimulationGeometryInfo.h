@@ -5,10 +5,11 @@
 #ifndef RADIATION_TRANSPORT_SIMULATIONGEOMETRYINFO_H
 #define RADIATION_TRANSPORT_SIMULATIONGEOMETRYINFO_H
 
-#include <SimulationConfig.h>
 #include <TString.h>
+#include <TVector3.h>
 
 #include <map>
+#include <set>
 #include <vector>
 
 #include "SimulationGeometryInfo.h"
