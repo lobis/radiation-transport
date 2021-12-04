@@ -17,6 +17,8 @@ class DataEventHeader {
     ClassDef(DataEventHeader, 1);
 
    public:
+    inline DataEventHeader() = default;
+
     SimulationConfig fSimulationConfig;  // configuration used in simulation
     SimulationGeometryInfo fSimulationGeometryInfo;
 };

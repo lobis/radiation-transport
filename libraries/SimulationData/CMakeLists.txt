@@ -1,6 +1,7 @@
 set(LIBRARY SimulationData)
 
 add_library(${LIBRARY} SHARED)
+install(TARGETS ${LIBRARY} DESTINATION lib)
 
 FILE(GLOB SOURCES src/*.cpp)
 target_sources(
@@ -23,11 +24,7 @@ target_link_libraries(
         spdlog
 )
 
-FILE(GLOB HEADERS include/*.h)
-
 THIS_GENERATE_ROOT_DICTIONARIES()
-
-install(TARGETS ${LIBRARY} DESTINATION lib)
 
 THIS_INSTALL_HEADERS()
 
