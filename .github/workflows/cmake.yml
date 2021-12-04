@@ -44,12 +44,12 @@ jobs:
         run: |
           source entry-point.sh
           rm -rf ${{github.workspace}}/build
-          cmake -B ${{github.workspace}}/build -DTEST=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          cmake -B ${{github.workspace}}/build -DTEST=ON -DCMAKE_INSTALL_PREFIX=/home/user/install -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-      - name: Build
+      - name: Build and Install
         run: |
           source entry-point.sh
-          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --install
 
       - name: Test
         run: |

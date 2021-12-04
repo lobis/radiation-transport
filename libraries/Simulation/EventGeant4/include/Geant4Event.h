@@ -21,7 +21,7 @@ class Geant4Event {
     Int_t fSubEventID{};
 
     Geant4EventHeader* fEventHeader = nullptr;  //!
-                                                // || DO NOT SPLIT (https://root.cern.ch/root/htmldoc/guides/users-guide/Trees.html)
+
     Double_t fSensitiveVolumesTotalEnergy{};
     std::vector<Double_t> fSensitiveVolumeEnergy{};
     std::vector<Int_t> fSensitiveVolumeID{};
