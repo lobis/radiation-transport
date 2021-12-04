@@ -63,8 +63,8 @@ void Geant4Hits::InsertStep(const G4Step* step) {
     }
     const auto volumeID = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
 
-    volumeNamePre = GlobalManager::Instance()->fGeometryInfo->GetAlternativeNameFromGeant4PhysicalName(volumeNamePre);
-    volumeNamePost = GlobalManager::Instance()->fGeometryInfo->GetAlternativeNameFromGeant4PhysicalName(volumeNamePost);
+    volumeNamePre = GlobalManager::GetGeometryInfo()->GetAlternativeNameFromGeant4PhysicalName(volumeNamePre);
+    volumeNamePost = GlobalManager::GetGeometryInfo()->GetAlternativeNameFromGeant4PhysicalName(volumeNamePost);
 
     const auto& volumeName = volumeNamePre;
 
@@ -90,8 +90,8 @@ void Geant4Hits::InsertStep(const G4Step* step) {
     G4String energyWithUnits = G4BestUnit(fEnergy.back() * CLHEP::keV, "Energy");
     spdlog::debug(
         "Geant4Hits::InsertStep - Step ID {} - process {} - energy deposited {} - volume {}{} - position (mm) ({:03.2f}, {:03.2f}, {:03.2f})",  //
-        fStepID.back(), fProcessName.back(), energyWithUnits, fVolumeName.back(),                                                              //
-        (fVolumeNamePost.back().IsNull() ? "" : "->" + fVolumeNamePost.back()),                                                                //
-        fPosition.back().x(), fPosition.back().y(), fPosition.back().z()                                                                       //
+        fStepID.back(), fProcessName.back(), energyWithUnits, fVolumeName.back(),                                                               //
+        (fVolumeNamePost.back().IsNull() ? "" : "->" + fVolumeNamePost.back()),                                                                 //
+        fPosition.back().x(), fPosition.back().y(), fPosition.back().z()                                                                        //
     );
 }

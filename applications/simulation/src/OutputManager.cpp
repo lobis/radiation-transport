@@ -40,7 +40,7 @@ OutputManager* OutputManager::Instance() {
 void OutputManager::UpdateEvent() {
     auto event = G4EventManager::GetEventManager()->GetConstCurrentEvent();
     fEvent = make_unique<Geant4Event>(event);
-    fEvent->fEventHeader.fGeant4GeometryInfo = GlobalManager::Instance()->fGeometryInfo;
+    fEvent->fEventHeader = GlobalManager::fEventHeader;
 }
 
 /*!
@@ -99,7 +99,7 @@ bool OutputManager::IsValidEvent() const {
 void OutputManager::AddSensitiveEnergy(Double_t energy, const TString& physicalVolumeName) {
     fEvent->fSensitiveVolumesTotalEnergy += energy;
 
-    const TString physicalVolumeNameNew = fEvent->fEventHeader.fGeant4GeometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName);
+    const TString physicalVolumeNameNew = fEvent->fEventHeader->fGeant4GeometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName);
 
     bool sensitiveVolumeFound = false;
     for (int i = 0; i < fEvent->fSensitiveVolumeEnergy.size(); i++) {
@@ -111,7 +111,7 @@ void OutputManager::AddSensitiveEnergy(Double_t energy, const TString& physicalV
     }
     if (!sensitiveVolumeFound) {
         fEvent->fSensitiveVolumeName.emplace_back(physicalVolumeNameNew);
-        auto ID = fEvent->fEventHeader.fGeant4GeometryInfo->GetIDFromVolumeName(physicalVolumeName);
+        auto ID = fEvent->fEventHeader->fGeant4GeometryInfo->GetIDFromVolumeName(physicalVolumeName);
         fEvent->fSensitiveVolumeID.emplace_back(ID);
         fEvent->fSensitiveVolumeEnergy.emplace_back(energy);
     }

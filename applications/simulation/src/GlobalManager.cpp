@@ -37,6 +37,8 @@ GlobalManager::GlobalManager() {
         spdlog::error("GlobalManager: GlobalManager should never be created by worker thread");
         exit(1);
     }
+
+    fEventHeader = new Geant4EventHeader();
 }
 
 GlobalManager::~GlobalManager() = default;

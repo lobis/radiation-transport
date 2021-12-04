@@ -21,7 +21,9 @@ source:
 
   particle:
     name: mu-
-    energy: 1E6
+    energy:
+      mono:
+        value: 1E6
 
 physics:
   physicsLists:

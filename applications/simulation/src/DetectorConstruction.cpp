@@ -4,8 +4,8 @@
 
 #include "DetectorConstruction.h"
 
-#include <Geant4EventHeader.h>
 #include <DetectorConstructionConfig.h>
+#include <Geant4EventHeader.h>
 #include <GlobalManager.h>
 #include <SensitiveDetector.h>
 #include <TString.h>
@@ -58,7 +58,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     spdlog::info("DetectorConstruction::Construct - Reading geometry from '{}'", fGeometryFilename.c_str());
 
     auto geometryInfo = new Geant4GeometryInfo();
-    GlobalManager::Instance()->fGeometryInfo = geometryInfo;
+    GlobalManager::Instance()->fEventHeader->fGeant4GeometryInfo = geometryInfo;
     if (!geometryInfo) {
         spdlog::error("geometry info not init yet");
         exit(1);

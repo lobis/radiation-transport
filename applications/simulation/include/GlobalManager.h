@@ -40,7 +40,9 @@ class GlobalManager {
     inline void SetSimulationConfig(const SimulationConfig& simulationConfig) { fSimulationConfig = simulationConfig; }
     inline SimulationConfig GetSimulationConfig() const { return fSimulationConfig; }
 
-    Geant4GeometryInfo* fGeometryInfo = nullptr;  // std::shared_ptr<Geant4GeometryInfo>
+    static inline Geant4EventHeader* fEventHeader = nullptr;  // should not change for events in the same run
+
+    static inline Geant4GeometryInfo* GetGeometryInfo() { return fEventHeader->fGeant4GeometryInfo; }
 
    private:
     GlobalManager();
