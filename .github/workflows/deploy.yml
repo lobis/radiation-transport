@@ -6,7 +6,7 @@ on:
   workflow_run:
     workflows: [ "Build and Test" ]
     branches: [ main ]
-    types: [ completed ]
+    types: [ completed ] # this does not mean success!
 
 env:
   BUILD_TYPE: Release
