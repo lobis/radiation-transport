@@ -10,6 +10,7 @@ on:
 
 env:
   BUILD_TYPE: Release
+  CMAKE_INSTALL_PREFIX: ~/radiation-transport/install
 
 defaults:
   run:
@@ -35,12 +36,13 @@ jobs:
           echo "GARFIELD: $GARFIELD_INSTALL"
 
       - name: Configure CMake without testing
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=~/radiation-transport/install
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INSTALL_PREFIX=${{env.CMAKE_INSTALL_PREFIX}}
 
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Install
         run: |
+          rm -rf ${{env.CMAKE_INSTALL_PREFIX}}
           cd ${{github.workspace}}/build
           make install
