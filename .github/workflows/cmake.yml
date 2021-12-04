@@ -66,4 +66,4 @@ jobs:
       - name: Check Install Dictionary
         run: |
           source ${{env.CMAKE_INSTALL_PREFIX}}/env.sh
-          root -e 'new Geant4Event()' -q
+          root -e 'new Geant4Event(); return 0;' -q
