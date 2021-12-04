@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+<?xml version='1.0'?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
     <define/>
     <materials>
         <isotope Z="29.0" N="63" name="Cu63">
@@ -165,9 +164,11 @@
             <D value="1.0E-22" unit="kg/m3"/>
             <fraction n="1.0" ref="H"/>
         </material>
-        <material state="gas" name="G4_Ar">
-            <D value="1.66201" unit="kg/m3"/>
-            <fraction n="1.0" ref="Ar"/>
+        <material state="gas" name="GasMixture-Argon2%Isobutane1.4Bar">
+            <D value="2.319820104" unit="kg/m3"/>
+            <fraction n="0.98" ref="Ar"/>
+            <fraction n="0.016532" ref="C"/>
+            <fraction n="0.003468" ref="H"/>
         </material>
         <material state="solid" name="G4_Pb">
             <D value="11.35" unit="g/cm3"/>
@@ -210,12 +211,10 @@
             <second ref="chamberBodyHoleSolid"/>
         </subtraction>
         <box name="chamberBackplateSolid" x="134.0" y="134.0" z="15.0"/>
-        <tube name="chamberTeflonWallSolid" rmax="51.0" z="30.0" rmin="50.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
+        <tube name="chamberTeflonWallSolid" rmax="51.0" z="30.0" rmin="50.0" startphi="0.0" deltaphi="6.283185307179586"/>
         <box name="kaptonReadoutSolid" x="134.0" y="134.0" z="0.5"/>
         <box name="copperReadoutSolid" x="60.0" y="60.0" z="0.2"/>
-        <tube name="cathodeTeflonDiskBaseSolid" rmax="67.0" z="5.0" rmin="15.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
+        <tube name="cathodeTeflonDiskBaseSolid" rmax="67.0" z="5.0" rmin="15.0" startphi="0.0" deltaphi="6.283185307179586"/>
         <tube name="cathodeCopperDiskSolid" rmax="45.0" z="1.0" rmin="8.5" startphi="0.0" deltaphi="6.283185307179586"/>
         <subtraction name="cathodeTeflonDiskSolid">
             <position name="cathodeTeflonDiskSolid.position" z="-2.0"/>
@@ -224,8 +223,7 @@
         </subtraction>
         <tube name="cathodeWindowSolid" rmax="15.0" z="0.004" rmin="0.0" startphi="0.0" deltaphi="6.283185307179586"/>
         <box name="cathodePatternLineAux" x="0.3" y="17.0" z="1.0"/>
-        <tube name="cathodePatternCentralHole" rmax="4.25" z="1.1" rmin="0.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
+        <tube name="cathodePatternCentralHole" rmax="4.25" z="1.1" rmin="0.0" startphi="0.0" deltaphi="6.283185307179586"/>
         <subtraction name="cathodePatternLine">
             <first ref="cathodePatternLineAux"/>
             <second ref="cathodePatternCentralHole"/>
@@ -255,8 +253,7 @@
             <first ref="cathodeCopperDiskSolidAux3"/>
             <second ref="cathodePatternDisk"/>
         </union>
-        <tube name="cathodeFillingBaseSolid" rmax="15.0" z="5.0" rmin="0.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
+        <tube name="cathodeFillingBaseSolid" rmax="15.0" z="5.0" rmin="0.0" startphi="0.0" deltaphi="6.283185307179586"/>
         <subtraction name="cathodeFillingSolid">
             <position name="cathodeFillingSolid.position" z="-2.0"/>
             <first ref="cathodeFillingBaseSolid"/>
@@ -274,14 +271,10 @@
             <first ref="gasSolidAux"/>
             <second ref="cathodeWindowSolid"/>
         </subtraction>
-        <tube name="detectorPipeChamberFlangeSolid" rmax="67.0" z="14.0" rmin="0.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
-        <tube name="detectorPipeTelescopeFlangeSolid" rmax="75.0" z="18.0" rmin="0.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
-        <tube name="detectorPipeSection1of2Solid" rmax="46.0" z="327.0" rmin="0.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
-        <tube name="detectorPipeSection2of2Solid" rmax="54.0" z="132.0" rmin="0.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
+        <tube name="detectorPipeChamberFlangeSolid" rmax="67.0" z="14.0" rmin="0.0" startphi="0.0" deltaphi="6.283185307179586"/>
+        <tube name="detectorPipeTelescopeFlangeSolid" rmax="75.0" z="18.0" rmin="0.0" startphi="0.0" deltaphi="6.283185307179586"/>
+        <tube name="detectorPipeSection1of2Solid" rmax="46.0" z="327.0" rmin="0.0" startphi="0.0" deltaphi="6.283185307179586"/>
+        <tube name="detectorPipeSection2of2Solid" rmax="54.0" z="132.0" rmin="0.0" startphi="0.0" deltaphi="6.283185307179586"/>
         <union name="detectorPipeAux1">
             <position name="detectorPipeAux1.position" z="170.5"/>
             <first ref="detectorPipeChamberFlangeSolid"/>
@@ -297,12 +290,9 @@
             <first ref="detectorPipeAux2"/>
             <second ref="detectorPipeTelescopeFlangeSolid"/>
         </union>
-        <tube name="detectorPipeInside1of3Solid" rmax="21.5" z="179.35" rmin="0.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
-        <tube name="detectorPipeInside2of3Solid" rmax="34.0" z="160.28" rmin="0.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
-        <tube name="detectorPipeInside3of3Solid" rmax="42.5" z="106.0" rmin="0.0" startphi="0.0"
-              deltaphi="6.283185307179586"/>
+        <tube name="detectorPipeInside1of3Solid" rmax="21.5" z="179.35" rmin="0.0" startphi="0.0" deltaphi="6.283185307179586"/>
+        <tube name="detectorPipeInside2of3Solid" rmax="34.0" z="160.28" rmin="0.0" startphi="0.0" deltaphi="6.283185307179586"/>
+        <tube name="detectorPipeInside3of3Solid" rmax="42.5" z="106.0" rmin="0.0" startphi="0.0" deltaphi="6.283185307179586"/>
         <cone name="detectorPipeInsideCone1of3Solid" z="21.65" rmax1="21.5" rmax2="34.0" deltaphi="6.283185307179586"/>
         <cone name="detectorPipeInsideCone2of3Solid" z="14.72" rmax1="34.0" rmax2="42.5" deltaphi="6.283185307179586"/>
         <cone name="detectorPipeInsideCone3of3Solid" z="9.0" rmax1="42.5" rmax2="54.0" deltaphi="6.283185307179586"/>
@@ -424,7 +414,7 @@
             <solidref ref="cathodeFillingSolid"/>
         </volume>
         <volume name="gasVolume">
-            <materialref ref="G4_Ar"/>
+            <materialref ref="GasMixture-Argon2%Isobutane1.4Bar"/>
             <solidref ref="gasSolid"/>
         </volume>
         <assembly name="Chamber">
