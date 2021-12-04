@@ -2,10 +2,11 @@ name: Deploy
 
 on:
   workflow_dispatch:
-  push:
+
+  workflow_run:
+    workflows: [ "Build and Test" ]
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    types: [ completed ]
 
 env:
   BUILD_TYPE: Release
