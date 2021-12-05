@@ -2,11 +2,11 @@ name: Deploy
 
 on:
   workflow_dispatch:
-
-  workflow_run:
-    workflows: [ "Build and Test" ]
-    branches: [ main ]
-    types: [ completed ] # this does not mean success!
+    inputs:
+      targets:
+        required: true
+        description: name of the target to deploy on. Must be a valid runner.
+        default: naf-iaxo
 
 env:
   BUILD_TYPE: Release
@@ -18,11 +18,7 @@ defaults:
 
 jobs:
   build:
-    runs-on: ${{ matrix.runs-on }}
-    strategy:
-      fail-fast: false
-      matrix:
-        runs-on: [ naf-iaxo, sultan, sultan2 ]
+    runs-on: ${{ github.event.inputs.GEANT4_VERSION }}
 
     steps:
       - uses: actions/checkout@v2
