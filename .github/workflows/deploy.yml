@@ -3,7 +3,7 @@ name: Deploy
 on:
   workflow_dispatch:
     inputs:
-      targets:
+      target:
         required: true
         description: name of the target to deploy on. Must be a valid runner.
         default: naf-iaxo
@@ -18,7 +18,7 @@ defaults:
 
 jobs:
   build:
-    runs-on: ${{ github.event.inputs.GEANT4_VERSION }}
+    runs-on: ${{ github.event.inputs.target }}
 
     steps:
       - uses: actions/checkout@v2
