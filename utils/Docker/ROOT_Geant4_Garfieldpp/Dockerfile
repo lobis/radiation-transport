@@ -43,6 +43,15 @@ RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --
 ENV PATH $APPS_DIR/geant4/install/bin:$PATH
 ENV LD_LIBRARY_PATH $APPS_DIR/geant4/install/lib:$LD_LIBRARY_PATH
 
+# Anaconda3
+RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh -O ~/anaconda.sh && \
+    /bin/bash ~/anaconda.sh -b -p $APPS_DIR/conda && \
+    rm ~/anaconda.sh && \
+    ln -s $APPS_DIR/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh
+
+ENV PATH $APPS_DIR/conda/bin:$PATH
+ENV LD_LIBRARY_PATH $APPS_DIR/conda/lib:$LD_LIBRARY_PATH
+
 # ROOT
 RUN git clone https://github.com/root-project/root.git --branch=${ROOT_VERSION} --depth 1 $APPS_DIR/root/source && \
     mkdir -p $APPS_DIR/root/build &&  cd $APPS_DIR/root/build && \
@@ -65,6 +74,8 @@ RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELD
 ENV LD_LIBRARY_PATH $APPS_DIR/garfieldpp/install/lib:$LD_LIBRARY_PATH
 
 RUN echo "#!/bin/bash" >> /entry-point.sh
+RUN echo ". $APPS_DIR/conda/etc/profile.d/conda.sh" >> ~/.bashrc
+RUN echo "conda activate base" >> ~/.bashrc
 RUN echo "source $APPS_DIR/root/install/bin/thisroot.sh" >> /entry-point.sh
 RUN echo "source $APPS_DIR/garfieldpp/install/share/Garfield/setupGarfield.sh" >> /entry-point.sh
 RUN echo "source $APPS_DIR/geant4/install/bin/geant4.sh" >> /entry-point.sh
