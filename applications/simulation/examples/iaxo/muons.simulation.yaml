@@ -29,11 +29,11 @@ source:
   particle:
     name: mu-
 
-    energy:
-      unit: GeV
-      min: 0.2
-      max: 328
-      cosmicMuonsSeaLevel:
+  energy:
+    unit: GeV
+    min: 0.2
+    max: 328
+    cosmicMuonsSeaLevel:
 
   angular:
     cos2:
