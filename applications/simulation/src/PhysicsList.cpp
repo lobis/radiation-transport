@@ -50,7 +50,7 @@ PhysicsList::PhysicsList(const PhysicsListConfig& config) : G4VModularPhysicsLis
 
     SetVerboseLevel(fConfig.fVerbosity);
 
-    SetDefaultCutValue(config.fLengthProductionCutsGlobal / mm);
+    SetDefaultCutValue(config.fLengthProductionCutsGlobal * mm);
 
     for (const auto& physicsListName : fConfig.fPhysicsLists) {
         if (physicsListName == "G4EmLivermorePhysics") {
@@ -93,7 +93,7 @@ PhysicsList::PhysicsList(const PhysicsListConfig& config) : G4VModularPhysicsLis
 void PhysicsList::SetCuts() {
     SetCutsWithDefault();
 
-    G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(fConfig.fEnergyProductionCutsMin * eV, fConfig.fEnergyProductionCutsMax * TeV);
+    G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(fConfig.fEnergyProductionCutsMin * keV, fConfig.fEnergyProductionCutsMax * keV);
 
     /*
     G4Region* region = G4RegionStore::GetInstance()->GetRegion("Garfield");

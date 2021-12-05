@@ -6,6 +6,7 @@
 #include <G4RunManager.hh>
 #include <G4Threading.hh>
 #include <G4Track.hh>
+#include <G4UnitsTable.hh>
 #include <G4UserEventAction.hh>
 
 #include "GlobalManager.h"
@@ -52,10 +53,17 @@ void OutputManager::FinishAndSubmitEvent() {
 
     spdlog::debug("OutputManager::FinishAndSubmitEvent");
     // print useful end of event info
-    spdlog::debug("OutputManager::FinishAndSubmitEvent - EventID {} - SubEventID {} - Sensitive volume energy: {:03.2f}", fEvent->fEventID,
-                  fEvent->fSubEventID, fEvent->fSensitiveVolumesTotalEnergy);
 
     if (IsValidEvent()) {
+        G4String energyWithUnits = G4BestUnit(fEvent->fSensitiveVolumesTotalEnergy * CLHEP::keV, "Energy");
+        size_t numberOfSteps = 0;
+        for (const auto& track : fEvent->fTracks) {
+            numberOfSteps += track.fSteps.fN;
+        }
+        spdlog::info(
+            "OutputManager::FinishAndSubmitEvent - EventID {} - SubEventID {} - Sensitive volume energy: {} - Number of tracks: {} - Number of "
+            "steps: {}",
+            fEvent->fEventID, fEvent->fSubEventID, energyWithUnits, fEvent->fTracks.size(), numberOfSteps);
         size_t numberOfInsertedEvents = GlobalManager::Instance()->InsertEvent(fEvent);
         spdlog::debug("OutputManager::FinishAndSubmitEvent - Added valid event");
     }

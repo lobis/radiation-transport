@@ -137,6 +137,7 @@ void GlobalManager::SetupFile() {
 
     fEventTree = new TTree("tmp", "Event Tree");
     fEventTree->Branch("fEvent", &fEvent);
+    // fEventTree->Branch("fEventHeader", &fEventHeader);
 }
 
 void GlobalManager::WriteEventsAndCloseFile() {

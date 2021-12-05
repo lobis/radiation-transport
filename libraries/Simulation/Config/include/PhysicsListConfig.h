@@ -20,7 +20,7 @@ class PhysicsListConfig : public SerializableConfig {
     int fVerbosity = 0;
     double fLengthProductionCutsGlobal = 0.5 /* mm */;
 
-    double fEnergyProductionCutsMin = 100 /* keV */;
+    double fEnergyProductionCutsMin = 0.1 /* keV */;
     double fEnergyProductionCutsMax = 100 * 1E6 /* keV */;
 
     std::vector<std::string> fPhysicsLists;
