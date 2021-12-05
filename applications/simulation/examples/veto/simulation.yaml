@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=http://raw.githubusercontent.com/lobis/radiation-transport/main/libraries/Simulation/Config/schemas/simulationConfig.schema.json
+
 verboseLevel: info
 
 runManagerType: serial
@@ -34,6 +36,7 @@ source:
     cos2:
 
 physics:
+
   physicsLists:
     - G4EmLivermorePhysics
     - G4DecayPhysics
