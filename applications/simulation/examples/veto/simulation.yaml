@@ -36,7 +36,7 @@ source:
     cos2:
 
 physics:
-
+  productionCutsEnergyMin: 100 # keV
   physicsLists:
     - G4EmLivermorePhysics
     - G4DecayPhysics
