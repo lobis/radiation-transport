@@ -17,8 +17,8 @@ void VetoEvent::Print() const {
 }
 
 Int_t VetoEvent::IsVetoAdded(const TString& volume) const {
-    for (int i = 0; i < fVetoName.size(); i++) {
-        if (fVetoName[i].EqualTo(volume)) {
+    for (const auto& name : fVetoName) {
+        if (name.EqualTo(volume)) {
             return true;
         }
     }

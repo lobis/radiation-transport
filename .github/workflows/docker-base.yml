@@ -32,7 +32,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Log in to the Container registry
+      - name: Log in to the GitHub Container registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
@@ -45,7 +45,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push base Docker image
+      - name: Build and Push base Docker image
         uses: docker/build-push-action@v2
         with:
           context: utils/Docker/ROOT_Geant4_Garfieldpp
@@ -58,7 +58,7 @@ jobs:
             ${{ env.IMAGE_NAME }}:cxx${{ github.event.inputs.CMAKE_CXX_STANDARD }}_ROOT${{ github.event.inputs.ROOT_VERSION }}_Geant4${{ github.event.inputs.GEANT4_VERSION }}
             ghcr.io/${{ env.IMAGE_NAME }}:cxx${{ github.event.inputs.CMAKE_CXX_STANDARD }}_ROOT${{ github.event.inputs.ROOT_VERSION }}_Geant4${{ github.event.inputs.GEANT4_VERSION }}
 
-      - name: Build and push base clion Docker image
+      - name: Build and Push base clion Docker image
         uses: docker/build-push-action@v2
         with:
           context: utils/Docker/ROOT_Geant4_Garfieldpp/clion

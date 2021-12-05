@@ -10,7 +10,7 @@
 
 #include <vector>
 
-#include "../../EventGeant4/include/Geant4Event.h"
+#include <Geant4Event.h>
 
 class VetoEvent {
    public:
