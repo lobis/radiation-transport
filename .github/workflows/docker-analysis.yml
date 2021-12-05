@@ -1,4 +1,4 @@
-name: Create and publish base Docker image
+name: Analysis Docker Image
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Create and publish base Docker image
+name: Base Docker Image
 
 on:
   workflow_dispatch:
