@@ -4,20 +4,11 @@ FROM ghcr.io/lobis/root-geant4-garfieldpp:cxx17_ROOTv6-25-01_Geant4v10.7.3
 
 SHELL ["/bin/bash", "-c"]
 
-# Install Anaconda3
-
-RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh -O ~/anaconda.sh && \
-    /bin/bash ~/anaconda.sh -b -p /conda && \
-    rm ~/anaconda.sh && \
-    ln -s /conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
-
 # Jupyter
 
 RUN source ~/.bashrc && \
     pip3 -q install pip --upgrade && \
-    pip3 -q install uproot awkward jupyter
+    pip3 -q install uproot awkward matplotlib pandas mplhep boost_histogram jupyterlab
 
 # Add Tini
 ENV TINI_VERSION v0.19.0

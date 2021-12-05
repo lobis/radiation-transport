@@ -19,12 +19,12 @@ ARG APPS_DIR=/usr/local
 ENV DEBIAN_FRONTEND="noninteractive"
 RUN apt-get update && \
     apt-get install -y \
-    apt-utils binutils build-essential ca-certificates cmake ntp curl davix-dev dcap-dev dpkg-dev fonts-freefont-ttf g++ gcc gfortran \
+    apt-utils binutils build-essential ca-certificates cmake wget curl davix-dev dcap-dev dpkg-dev fonts-freefont-ttf g++ gcc gfortran \
     git libafterimage-dev libcfitsio-dev libexpat-dev libfcgi-dev libfftw3-dev libfreetype6-dev libftgl-dev libgfal2-dev libgif-dev \
     libgl2ps-dev libglew-dev libglu-dev libgraphviz-dev libgsl-dev libjpeg-dev liblz4-dev liblzma-dev libmpc-dev libmysqlclient-dev  \
     libpcre++-dev libpng-dev libpq-dev libpythia8-dev libspdlog-dev libsqlite3-dev libssl-dev libtbb-dev libtiff-dev libx11-dev \
     libxerces-c-dev libxext-dev libxft-dev libxml2-dev libxmu-dev libxpm-dev libxxhash-dev libz-dev libzstd-dev locales make openssl \
-    qt5-default software-properties-common srm-ifce-dev unixodbc-dev wget \
+    python3-dev python3-pip ntp qt5-default software-properties-common srm-ifce-dev unixodbc-dev \
     libpq-dev postgresql-server-dev-all libboost-all-dev && \
     apt-get autoremove -y && \
     apt-get clean -y && \
@@ -42,15 +42,6 @@ RUN git clone https://github.com/Geant4/geant4.git --branch=${GEANT4_VERSION} --
 
 ENV PATH $APPS_DIR/geant4/install/bin:$PATH
 ENV LD_LIBRARY_PATH $APPS_DIR/geant4/install/lib:$LD_LIBRARY_PATH
-
-# Anaconda3
-RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh -O ~/anaconda.sh && \
-    /bin/bash ~/anaconda.sh -b -p $APPS_DIR/conda && \
-    rm ~/anaconda.sh && \
-    ln -s $APPS_DIR/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh
-
-ENV PATH $APPS_DIR/conda/bin:$PATH
-ENV LD_LIBRARY_PATH $APPS_DIR/conda/lib:$LD_LIBRARY_PATH
 
 # ROOT
 RUN git clone https://github.com/root-project/root.git --branch=${ROOT_VERSION} --depth 1 $APPS_DIR/root/source && \
@@ -74,8 +65,6 @@ RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELD
 ENV LD_LIBRARY_PATH $APPS_DIR/garfieldpp/install/lib:$LD_LIBRARY_PATH
 
 RUN echo "#!/bin/bash" >> /entry-point.sh
-RUN echo ". $APPS_DIR/conda/etc/profile.d/conda.sh" >> ~/.bashrc
-RUN echo "conda activate base" >> ~/.bashrc
 RUN echo "source $APPS_DIR/root/install/bin/thisroot.sh" >> /entry-point.sh
 RUN echo "source $APPS_DIR/garfieldpp/install/share/Garfield/setupGarfield.sh" >> /entry-point.sh
 RUN echo "source $APPS_DIR/geant4/install/bin/geant4.sh" >> /entry-point.sh
