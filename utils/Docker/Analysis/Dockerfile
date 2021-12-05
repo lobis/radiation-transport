@@ -11,13 +11,13 @@ RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_6
     rm ~/anaconda.sh && \
     ln -s /conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc \
+    echo "conda activate base" >> ~/.bashrc
 
 # Jupyter
 
 RUN source ~/.bashrc && \
     pip3 -q install pip --upgrade && \
-    pip3 install uproot awkward jupyter
+    pip3 -q install uproot awkward jupyter
 
 # Add Tini
 ENV TINI_VERSION v0.19.0
