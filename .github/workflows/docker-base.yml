@@ -18,8 +18,9 @@ on:
 
       target:
         required: true
-        description: name of the runner to build the image on
+        description: Name of the runner to build the image on
         default: sultan2
+
 env:
   IMAGE_NAME: lobis/root-geant4-garfieldpp
 
