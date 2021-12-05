@@ -5,7 +5,6 @@ FROM ghcr.io/lobis/root-geant4-garfieldpp:cxx17_ROOTv6-25-01_Geant4v10.7.3
 SHELL ["/bin/bash", "-c"]
 
 # Jupyter
-
 RUN source ~/.bashrc && \
     pip3 -q install pip --upgrade && \
     pip3 -q install uproot awkward matplotlib pandas mplhep boost_histogram jupyterlab

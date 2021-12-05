@@ -18,13 +18,13 @@ numberOfEvents: 100000
 
 fullChain: true
 
-output: babyIAXO.root
+output: neutrons.babyIAXO.root
 
 source:
   generator:
     disk:
       position: [ 0, 1250, 0 ]
-      diameter: 100
+      diameter: 2500
 
   particle:
     name: neutron
@@ -32,13 +32,14 @@ source:
   energy:
     unit: MeV
     min: 10
-    max: 1000
+    max: 10000
     cosmicNeutronsSeaLevel:
 
   angular:
     cos2:
 
 physics:
+  productionCutsEnergyMin: 1 # keV
   physicsLists:
     - G4EmLivermorePhysics
     - G4DecayPhysics
