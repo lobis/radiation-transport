@@ -1,4 +1,4 @@
-set(TESTING_EXECUTABLE testSimulationMetadata)
+set(TESTING_EXECUTABLE testSimulationConfig)
 
 enable_testing()
 

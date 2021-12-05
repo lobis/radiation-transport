@@ -4,26 +4,34 @@ runManagerType: serial
 
 seed: 137
 
+numberOfEvents: 5000
+
 detector:
   geometry: geometry/veto.gdml
   volumes:
-    - name: av_1_impr_1_scintillatorVolume-800.0mm_pv_0
+    - name: scintillatorVolume-800.0mm
       sensitive: true
 
-commands:
-  - /run/beamOn 100
 
-output: test.root
+output: exampleSingleVetoMuonsFromDisk.root
 
 source:
   generator:
-    point:
-      position: [ 0,-500,0 ]
-      direction: [ 0,1,0 ]
+    disk:
+      position: [ 0, 100, 0 ]
+      diameter: 50
 
   particle:
     name: mu-
-    energy: 1E6
+
+    energy:
+      unit: GeV
+      min: 0.2
+      max: 328
+      cosmicMuonsSeaLevel:
+
+  angular:
+    cos2:
 
 physics:
   physicsLists:
