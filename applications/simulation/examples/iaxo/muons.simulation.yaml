@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=http://raw.githubusercontent.com/lobis/radiation-transport/main/libraries/Simulation/Config/schemas/simulationConfig.schema.json
+
+verboseLevel: info
+
+runManagerType: multithreading
+
+threads: 6
+
+seed: 137
+
+detector:
+  geometry: geometry/babyIAXO.gdml
+  volumes:
+    - name: gasVolume
+      sensitive: true
+
+numberOfEvents: 1000000
+
+fullChain: true
+
+output: babyIAXO.root
+
+source:
+  generator:
+    disk:
+      position: [ 0, 1250, 0 ]
+      diameter: 2500
+
+  particle:
+    name: mu-
+
+    energy:
+      unit: GeV
+      min: 0.2
+      max: 328
+      cosmicMuonsSeaLevel:
+
+  angular:
+    cos2:
+
+physics:
+  productionCutsEnergyMin: 1 # keV
+  physicsLists:
+    - G4EmLivermorePhysics
+    - G4DecayPhysics
+    - G4RadioactiveDecayPhysics
+    - G4HadronElasticPhysicsHP
+    - G4IonBinaryCascadePhysics
+    - G4HadronPhysicsQGSP_BIC_HP
+    - G4NeutronTrackingCut
+    - G4EmExtraPhysics
