@@ -15,15 +15,17 @@ on:
         description: "Geant4 Version"
         required: true
         default: "v10.7.3"
+
+      target:
+        required: true
+        description: name of the runner to build the image on
+        default: sultan2
 env:
   IMAGE_NAME: lobis/root-geant4-garfieldpp
 
 jobs:
   build-and-push-image:
-    runs-on: ${{ matrix.runs-on }}
-    strategy:
-      matrix:
-        runs-on: [ self-hosted ]
+    runs-on: ${{ github.event.inputs.target }}
     permissions:
       contents: read
       packages: write
