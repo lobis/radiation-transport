@@ -37,7 +37,6 @@ RUN ( \
 RUN ( \
     echo 'ForwardAgent yes'; \
     echo 'ForwardX11 yes'; \
-    echo 'X11Forwarding yes'; \
     echo 'ForwardX11Trusted yes'; \
     echo 'PasswordAuthentication yes'; \
     echo 'Port 22'; \
@@ -46,8 +45,7 @@ RUN ( \
     echo 'XauthLocation /usr/bin/xauth'; \
     ) >> /etc/ssh/ssh_config
 
-RUN useradd -m user \
-    && yes password | passwd user
+RUN useradd -m user && yes password | passwd user
 
 RUN cp /root/.bashrc /home/user/.bashrc
 
