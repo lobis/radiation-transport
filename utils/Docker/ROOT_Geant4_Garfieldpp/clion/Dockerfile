@@ -55,7 +55,7 @@ RUN usermod -s /bin/bash user
 
 # Jupyter
 RUN pip3 -q install pip --upgrade && \
-    pip3 -q install uproot awkward matplotlib pandas mplhep boost_histogram jupyterlab
+    pip3 -q install uproot awkward matplotlib scipy pandas mplhep boost_histogram jupyterlab
 
 # Add Tini
 ENV TINI_VERSION v0.19.0
