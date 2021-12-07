@@ -2,7 +2,7 @@
 // Created by lobis on 30/11/2021.
 //
 
-#include <GasGenerator.h>
+#include <GasManager.h>
 #include <gtest/gtest.h>
 #include <spdlog/spdlog.h>
 
@@ -15,38 +15,32 @@ namespace fs = std::filesystem;
 
 using namespace Garfield;
 
+#define REPOSITORY_ROOT string(std::filesystem::path(__FILE__).parent_path().parent_path().parent_path().parent_path().parent_path().parent_path())
+#define SIMULATION_EXAMPLES string(REPOSITORY_ROOT + "/applications/simulation/examples/")
 #define FILES_PATH string(std::filesystem::path(__FILE__).parent_path().parent_path()) + "/files/"
 
-TEST(GasGenerator, Generate) {
-    // Based on Garfield example (https://gitlab.cern.ch/garfield/garfieldpp/-/blob/master/Examples/GasFile/generate.C)
+TEST(GasManager, GenerateSetup) {
+    GasManager gasManager;
 
-    spdlog::info("GasGenerator::Generate");
+    auto gas = gasManager.fGas;
 
-    GasGenerator gasGenerator;
+    gasManager.SetGasPressureInBar(1.4);
 
-    auto gas = gasGenerator.fGas;
+    gas->SetComposition("Ar", 98.0, "isobutane", 2.0);
 
-    const double pressure = 1.4 * AtmosphericPressure;
+    gasManager.Print();
 
-    gas->SetComposition("Ar", 93., "CO2", 7.);
-    gas->SetPressure(pressure);
+    gas->PrintGas();
 
-    gasGenerator.Print();
+    // gasManager.GenerateGas();
+}
 
-    return;
-    // Set the field range to be covered by the gas table.
-    const size_t nE = 20;
-    const double emin = 100.;
-    const double emax = 100000.;
+TEST(GasManager, GasParameters) {
+    GasManager gasManager;
+    gasManager.ReadGasFromFile(FILES_PATH + "test.gas");
+    gasManager.Print();
 
-    constexpr bool useLog = true;  // Flag to request logarithmic spacing.
-    gas->SetFieldGrid(emin, emax, nE, useLog);
+    auto v = gasManager.GetDriftVelocity(100);
 
-    const int ncoll = 10;
-    // Run Magboltz to generate the gas table.
-    gas->GenerateGasTable(ncoll);
-    // Save the table.
-    gas->WriteGasFile("ar_93_co2_7.gas");
-
-    spdlog::info("DONE!");
+    spdlog::info("velocity: {:0.2f} cm/ns", v);
 }

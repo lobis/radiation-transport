@@ -1,5 +1,7 @@
 
-find_package(Garfield REQUIRED)
+if (NOT TARGET Garfield::Garfield)
+    find_package(Garfield REQUIRED)
+endif ()
 
 target_link_libraries(
         ${LIBRARY} PUBLIC
@@ -9,5 +11,3 @@ target_link_libraries(
 THIS_INSTALL_HEADERS()
 
 THIS_ADD_TEST()
-
-# TODO: fix cling error
