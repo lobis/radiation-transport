@@ -39,7 +39,7 @@ source:
     cos2:
 
 physics:
-  productionCutsEnergyMin: 1 # keV
+  productionCutsEnergyMin: 100 # keV
   physicsLists:
     - G4EmLivermorePhysics
     - G4DecayPhysics
