@@ -19,11 +19,7 @@ string SerializableConfig::GetAbsolutePath(const string& input) {
         return input;
     }
 
-    char* cwd;
-    cwd = (char*)malloc(FILENAME_MAX * sizeof(char));
-    getcwd(cwd, FILENAME_MAX);
-
-    return string(cwd) + "/" + input;
+    return string(get_current_dir_name()) + "/" + input;
 }
 
 string SerializableConfig::GetAbsolutePathFromConfig(const string& input, const string& configFilepath) {
@@ -35,7 +31,7 @@ string SerializableConfig::GetAbsolutePathFromConfig(const string& input, const 
         return input;
     }
 
-    size_t slash = configFilepath.find_last_of("/");
+    size_t slash = configFilepath.find_last_of('/');
     string parentPath = (slash != std::string::npos) ? configFilepath.substr(0, slash) : configFilepath;
 
     return parentPath + "/" + input;
