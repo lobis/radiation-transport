@@ -11,9 +11,9 @@ target_sources(
 
 set(EXTERN_HEADERS)
 FetchContent_GetProperties(yaml-cpp)
-set(EXTERN_HEADERS "${yaml-cpp_SOURCE_DIR}/include;${EXTERNAL_HEADER}")
+set(EXTERN_HEADERS "${yaml-cpp_SOURCE_DIR}/include;${EXTERN_HEADERS}")
 FetchContent_GetProperties(spdlog)
-set(EXTERN_HEADERS "${spdlog_SOURCE_DIR}/include;${EXTERNAL_HEADER}")
+set(EXTERN_HEADERS "${spdlog_SOURCE_DIR}/include;${EXTERN_HEADERS}")
 message(STATUS "Extern headers: ${EXTERN_HEADERS}")
 
 target_include_directories(
