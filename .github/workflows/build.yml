@@ -21,8 +21,8 @@ jobs:
       image: ghcr.io/lobis/root-geant4-garfieldpp:cxx17_ROOTv6-25-01_Geant4v10.7.3
 
       credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.CONTAINER_REGISTRY_GITHUB_TOKEN}}
+        username: ${{github.actor}}
+        password: ${{secrets.CONTAINER_REGISTRY_GITHUB_TOKEN}}
 
     steps:
       - uses: actions/checkout@v2
@@ -59,9 +59,8 @@ jobs:
           cd ${{github.workspace}}/build
           ctest -C ${{env.BUILD_TYPE}} --output-on-failure
 
-      # currently, headers from external libraries are not installed correctly
-      #- name: Remove Build
-      #  run: rm -rf ${{github.workspace}}/build
+      - name: Remove Build Directory
+        run: rm -rf ${{github.workspace}}/build
 
       - name: Check Install Dictionary
         run: |

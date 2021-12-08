@@ -24,6 +24,7 @@ FetchContent_Declare(
         GIT_TAG yaml-cpp-0.7.0
 )
 FetchContent_MakeAvailable(yaml-cpp)
+install(TARGETS yaml-cpp DESTINATION lib)
 
 # Logging library
 message(STATUS "- spdlog")
@@ -33,3 +34,4 @@ FetchContent_Declare(
         GIT_TAG v1.9.2
 )
 FetchContent_MakeAvailable(spdlog)
+install(TARGETS spdlog DESTINATION lib)
