@@ -59,8 +59,8 @@ jobs:
           cd ${{github.workspace}}/build
           ctest -C ${{env.BUILD_TYPE}} --output-on-failure
 
-      - name: Remove Build Directory
-        run: rm -rf ${{github.workspace}}/build
+      # - name: Remove Build Directory
+      #   run: rm -rf ${{github.workspace}}/build
 
       - name: Check Install Dictionary
         run: |
