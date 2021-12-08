@@ -14,7 +14,6 @@ execute_process(COMMAND geant4-config --prefix OUTPUT_VARIABLE GEANT4_PREFIX)
 string(REGEX REPLACE "\n$" "" GEANT4_PREFIX ${GEANT4_PREFIX})
 file(APPEND ${FILENAME} "source ${GEANT4_PREFIX}/bin/geant4.sh\n")
 
-
 if (DEFINED ENV{GARFIELD_INSTALL})
     file(APPEND ${FILENAME} "source $ENV{GARFIELD_INSTALL}/share/Garfield/setupGarfield.sh\n")
 else ()
@@ -25,7 +24,9 @@ file(APPEND ${FILENAME} "\n")
 
 file(APPEND ${FILENAME} "export PATH=${CMAKE_INSTALL_PREFIX}/bin:$PATH\n")
 file(APPEND ${FILENAME} "export LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:$LD_LIBRARY_PATH\n")
-
+if (DEFINED ENV{GARFIELD_INSTALL})
+    file(APPEND ${FILENAME} "export ROOT_INCLUDE_PATH=$ENV{GARFIELD_INSTALL}/include\n")
+endif ()
 file(APPEND ${FILENAME} "\n")
 
 install(FILES ${FILENAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
