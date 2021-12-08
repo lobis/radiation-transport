@@ -1,4 +1,4 @@
-set(FILENAME env.sh)
+set(FILENAME ${CMAKE_BINARY_DIR}/env.sh)
 
 message(STATUS "Project will be installed in '${CMAKE_INSTALL_PREFIX}'")
 message(STATUS "source ${CMAKE_INSTALL_PREFIX}/${FILENAME} to load all required environment variables")
@@ -14,8 +14,11 @@ execute_process(COMMAND geant4-config --prefix OUTPUT_VARIABLE GEANT4_PREFIX)
 string(REGEX REPLACE "\n$" "" GEANT4_PREFIX ${GEANT4_PREFIX})
 file(APPEND ${FILENAME} "source ${GEANT4_PREFIX}/bin/geant4.sh\n")
 
-if ($ENV{GARFIELD_INSTALL})
+
+if (DEFINED ENV{GARFIELD_INSTALL})
     file(APPEND ${FILENAME} "source $ENV{GARFIELD_INSTALL}/share/Garfield/setupGarfield.sh\n")
+else ()
+    message(WARNING "Garfield not found, environment variable 'GARFIELD_INSTALL' not set.")
 endif ()
 
 file(APPEND ${FILENAME} "\n")
