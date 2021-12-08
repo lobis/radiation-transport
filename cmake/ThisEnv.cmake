@@ -1,7 +1,7 @@
 set(FILENAME ${CMAKE_BINARY_DIR}/env.sh)
 
 message(STATUS "Project will be installed in '${CMAKE_INSTALL_PREFIX}'")
-message(STATUS "source ${CMAKE_INSTALL_PREFIX}/${FILENAME} to load all required environment variables")
+message(STATUS "source ${CMAKE_INSTALL_PREFIX}/env.sh to load all required environment variables")
 
 file(WRITE ${FILENAME})
 file(APPEND ${FILENAME} "#!/bin/bash\n\n")
