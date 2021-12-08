@@ -9,8 +9,16 @@ target_sources(
         ${SOURCES}
 )
 
+set(EXTERN_HEADERS)
+FetchContent_GetProperties(yaml-cpp)
+set(EXTERN_HEADERS "${yaml-cpp_SOURCE_DIR}/include;${EXTERNAL_HEADER}")
+FetchContent_GetProperties(spdlog)
+set(EXTERN_HEADERS "${spdlog_SOURCE_DIR}/include;${EXTERNAL_HEADER}")
+message(STATUS "Extern headers: ${EXTERN_HEADERS}")
+
 target_include_directories(
         ${LIBRARY} SYSTEM PUBLIC
+        ${EXTERN_HEADERS}
         EventGeant4/include
         EventAnalysis/include
         Config/include
