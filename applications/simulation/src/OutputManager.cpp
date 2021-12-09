@@ -64,6 +64,7 @@ void OutputManager::FinishAndSubmitEvent() {
             "OutputManager::FinishAndSubmitEvent - EventID {} - SubEventID {} - Sensitive volume energy: {} - Number of tracks: {} - Number of "
             "steps: {}",
             fEvent->fEventID, fEvent->fSubEventID, energyWithUnits, fEvent->fTracks.size(), numberOfSteps);
+        RemoveUnwantedTracks();
         size_t numberOfInsertedEvents = GlobalManager::Instance()->InsertEvent(fEvent);
         spdlog::debug("OutputManager::FinishAndSubmitEvent - Added valid event");
     }
@@ -123,4 +124,72 @@ void OutputManager::AddSensitiveEnergy(Double_t energy, const TString& physicalV
         fEvent->fSensitiveVolumeID.emplace_back(ID);
         fEvent->fSensitiveVolumeEnergy.emplace_back(energy);
     }
+}
+
+void OutputManager::RemoveUnwantedTracks() {
+    const auto& config = GlobalManager::Instance()->GetSimulationConfig();
+    if (!config.fKeepOnlyTracksInTheseVolumes) {
+        return;
+    }
+    auto volumesNotVerified = config.fKeepOnlyTracksInTheseVolumesList;
+    set<TString> volumes;
+    // Check volumes are OK
+    const auto& geometryInfo = GlobalManager::Instance()->GetGeometryInfo();
+    for (const auto& volume : volumesNotVerified) {
+        if (geometryInfo->IsValidPhysicalVolume(volume)) {
+            volumes.insert(geometryInfo->GetAlternativeNameFromGeant4PhysicalName(volume));
+        } else if (geometryInfo->IsValidLogicalVolume(volume)) {
+            for (const auto& physicalVolumeName : geometryInfo->GetAllPhysicalVolumesFromLogical(volume)) {
+                volumes.insert(geometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName));
+            }
+        } else {
+            spdlog::error("OutputManager::RemoveUnwantedTracks - Volume name '{}' not found in physical or logical store", volume);
+            exit(1);
+        }
+    }
+
+    set<int> trackIDsToKeep;
+    for (const auto& track : fEvent->fTracks) {
+        if (trackIDsToKeep.count(track.fTrackID) > 0) {
+            continue;
+        }
+        // energy deposited in important volumes
+        bool keep = false;
+        for (int i = 0; i < track.fSteps.fN; i++) {
+            double energy = track.fSteps.fEnergy[i];
+            if (energy > 0) {
+                TString volume = track.fSteps.fVolumeName[i];
+                if (volumes.count(volume) > 0) {
+                    keep = true;
+                    break;
+                }
+            }
+        }
+        if (keep) {
+            Geant4Track trackIter = track;
+            while (true) {
+                trackIDsToKeep.insert(trackIter.fTrackID);
+                if (trackIter.IsPrimaryTrack() || trackIDsToKeep.count(trackIter.fParentID) > 0) {
+                    break;
+                }
+                trackIter = fEvent->GetTrackByID(trackIter.fParentID);
+            }
+        }
+    }
+
+    spdlog::info("OutputManager::RemoveUnwantedTracks - Tracks before removal: {} -> Tracks after removal: {}", fEvent->fTracks.size(),
+                 trackIDsToKeep.size());
+
+    // TODO: there should be a faster way to do this without having to deep copy the tracks
+    std::vector<Geant4Track> tracksAfterRemoval;
+    for (const auto& track : fEvent->fTracks) {
+        // we do this to preserver original order
+        if (trackIDsToKeep.count(track.fTrackID) > 0) {
+            tracksAfterRemoval.push_back(*(&fEvent->GetTrackByID(track.fTrackID)));
+        }
+    }
+
+    fEvent->fTracks = tracksAfterRemoval;
+
+    spdlog::warn("OutputManager::RemoveUnwantedTracks - Final tracks: {}", fEvent->fTracks.size());
 }

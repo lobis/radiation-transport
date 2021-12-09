@@ -197,8 +197,10 @@ void Geant4GeometryInfo::PopulateFromGeant4World(const G4VPhysicalVolume* world)
             i, namePhysical.Data(), physicalNewName.Data(), nameLogical.Data(), nameMaterial.Data(), position.x(), position.y(), position.z());
 
         fPhysicalVolumes.emplace_back(namePhysical);
+        fLogicalVolumes.emplace_back(nameLogical);  // TODO: fix counting twice
         fPhysicalToLogicalVolumeMap[namePhysical] = nameLogical;
         fLogicalToMaterialMap[nameLogical] = nameMaterial;
+        fLogicalToPhysicalMap[nameLogical].emplace_back(namePhysical);
         fPhysicalToPositionInWorldMap[namePhysical] = {position.x(), position.y(), position.z()};
     }
 }

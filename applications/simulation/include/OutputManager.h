@@ -49,6 +49,8 @@ class OutputManager {
 
     bool IsEmptyEvent() const;
     bool IsValidEvent() const;
+
+    void RemoveUnwantedTracks();
 };
 
 #endif  // RADIATION_TRANSPORT_OUTPUTMANAGER_H

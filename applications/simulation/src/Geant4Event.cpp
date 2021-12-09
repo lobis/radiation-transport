@@ -37,6 +37,14 @@ void Geant4Event::InsertTrack(const G4Track* track) {
     if (!IsValid(track)) {
         return;
     }
+    if (fInitialStep.fN != 1) {
+        spdlog::error("fInitialStep does not have exactly one step! Problem with stepping verbose");
+        exit(1);
+    }
+    fTracks.emplace_back(track);
+    fTracks.back().fSteps = fInitialStep;
+
+    fTrackIDToTrackIndex[track->GetTrackID()] = fTracks.size() - 1;
 
     if (fTracks.empty()) {
         // primary for the subevent
@@ -47,12 +55,6 @@ void Geant4Event::InsertTrack(const G4Track* track) {
         const auto& momentum = track->GetMomentumDirection();
         fSubEventPrimaryMomentum = TVector3(momentum.x() / CLHEP::mm, momentum.y() / CLHEP::mm, momentum.z() / CLHEP::mm);
     }
-    fTracks.emplace_back(track);
-    if (fInitialStep.fN != 1) {
-        spdlog::error("fInitialStep does not have exactly one step! Problem with stepping verbose");
-        exit(1);
-    }
-    fTracks.back().fSteps = fInitialStep;
 }
 
 void Geant4Event::UpdateTrack(const G4Track* track) {

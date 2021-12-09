@@ -49,8 +49,14 @@ class Geant4Event {
 
     void PrintSensitiveInfo() const;
 
+    const Geant4Track& GetTrackByID(int trackID);
+    double GetEnergyInVolume(const TString&);
+    void InitializeEnergyInVolumeMap();
+
    private:
-    Geant4Hits fInitialStep;  //!
+    std::map<int, int> fTrackIDToTrackIndex = {};      //!
+    Geant4Hits fInitialStep;                           //!
+    std::map<std::string, double> fEnergyInVolumeMap;  //!
 
     /* Geant4 */
    public:

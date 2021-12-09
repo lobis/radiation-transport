@@ -41,6 +41,8 @@ class SimulationConfig : public SerializableConfig {
     bool fSaveAllEvents = false;
     bool fSave = true;
     bool fInteractive = false;
+    bool fKeepOnlyTracksInTheseVolumes = false;
+    std::vector<std::string> fKeepOnlyTracksInTheseVolumesList = {};
 
    public:
     inline SimulationConfig() = default;

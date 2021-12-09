@@ -64,6 +64,11 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
         fSaveAllEvents = node["saveAllEvents"].as<bool>();
     }
 
+    if (node["keepOnlyTracksInTheseVolumes"]) {
+        fKeepOnlyTracksInTheseVolumes = true;
+        fKeepOnlyTracksInTheseVolumesList = node["keepOnlyTracksInTheseVolumes"].as<vector<string>>();
+    }
+
     if (node["detector"]) {
         fDetectorConfig.Deserialize(node["detector"]);
         fDetectorConfig.fConfigAbsolutePath = fConfigAbsolutePath;
@@ -90,6 +95,10 @@ YAML::Node SimulationConfig::Serialize() const {
     configNode["output"] = fOutputFilename;
     configNode["fullChain"] = fFullChain;
     configNode["saveAllEvents"] = fSaveAllEvents;
+
+    if (fKeepOnlyTracksInTheseVolumes || !fKeepOnlyTracksInTheseVolumesList.empty()) {
+        configNode["keepOnlyTracksInTheseVolumes"] = fKeepOnlyTracksInTheseVolumesList;
+    }
 
     configNode["detector"] = fDetectorConfig.Serialize();
     configNode["physics"] = fPhysicsListConfig.Serialize();

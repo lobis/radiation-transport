@@ -44,6 +44,15 @@ class Geant4GeometryInfo {
     Int_t GetIDFromVolumeName(const TString&) const;
 
     void PopulateFromGeant4World(const G4VPhysicalVolume*);
+
+    inline std::vector<TString> GetAllPhysicalVolumes() const { return fPhysicalVolumes; }
+    inline std::vector<TString> GetAllLogicalVolumes() const { return fLogicalVolumes; }
+
+    inline bool IsValidPhysicalVolume(const TString& volume) const { return fPhysicalToLogicalVolumeMap.count(volume) > 0; }
+    inline bool IsValidLogicalVolume(const TString& volume) const { return fLogicalToPhysicalMap.count(volume) > 0; }
+    inline std::vector<TString> GetAllPhysicalVolumesFromLogical(const TString& logicalVolume) const {
+        return fLogicalToPhysicalMap.at(logicalVolume);
+    }
 };
 
 #endif  // RADIATION_TRANSPORT_Geant4GeometryInfo_H

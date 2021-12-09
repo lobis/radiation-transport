@@ -208,49 +208,32 @@ TEST(Application, DecayFullChainOn) {
 
     EXPECT_EQ(300, tree->GetEntries());
 }
-/*
-TEST(Application, SerialVsMTSameResults) {
-    const string configFile = EXAMPLES_PATH + "basic/simulation.yaml";
 
-    auto configOriginal = SimulationConfig(configFile);
+TEST(Application, RemoveUnwantedTracks) {
+    const string configFile = EXAMPLES_PATH + "iaxo/neutrons.simulation.yaml";
 
-    auto configSerial = configOriginal;
-    configSerial.fRunManagerType = "serial";
-    configSerial.fOutputFilename = "/tmp/test.serial.root";
+    auto config = SimulationConfig(configFile);
 
-    auto configMT = configOriginal;
-    configSerial.fRunManagerType = "multithreading";
-    configSerial.fOutputFilename = "/tmp/test.mt.root";
+    config.fSeed = 100;
+    config.fRunManagerType = "serial";
+    config.fFullChain = false;
+    config.fNumberOfEvents = 200;
 
-    vector<Double_t> energySerial;
-    vector<Double_t> energyMT;
+    config.fSourceConfig.fPositionDistributionType = "point";
+    config.fSourceConfig.fPositionDistributionCenter = {0, 1500, 0};
+    config.fSourceConfig.fAngularDistributionType = "flux";
+    config.fSourceConfig.fAngularDistributionDirection = {0, -1, 0};
 
-    for (const auto& config : {configSerial, configMT}) {
-        Application app;
+    config.fKeepOnlyTracksInTheseVolumes = true;
+    config.fKeepOnlyTracksInTheseVolumesList = {"gasVolume"};
 
-        app.LoadConfigFromFile(config);
-        app.UserInitialization();
-        app.Initialize();
+    Application app;
+    app.LoadConfigFromFile(config);
+    app.PrintConfig();
+    app.Run();
 
-        TFile file(config.fOutputFilename.c_str());
+    TFile file(config.GetOutputFileAbsolutePath().c_str());
+    auto filenameNoReduction = config.GetOutputFileAbsolutePath();
 
-        TTree* tree = file.Get<TTree>("EventTree");
-        Geant4Event* event = nullptr;
-        tree->SetBranchAddress("fEvent", &event);
-        for (int i = 0; i < tree->GetEntries(); i++) {
-            tree->GetEntry(i);
-            if (config.fRunManagerType == "serial") {
-                energySerial.emplace_back(event->fSensitiveVolumesTotalEnergy);
-            } else {
-                energyMT.emplace_back(event->fSensitiveVolumesTotalEnergy);
-            }
-            event->PrintSensitiveInfo();
-        }
-    }
-
-    sort(energySerial.begin(), energySerial.end());
-    sort(energyMT.begin(), energyMT.end());
-
-    EXPECT_EQ(energySerial, energyMT);
+    spdlog::info("The size of {} is {:0.2f} MB", filenameNoReduction, std::filesystem::file_size(filenameNoReduction) / 1E6);
 }
- */
