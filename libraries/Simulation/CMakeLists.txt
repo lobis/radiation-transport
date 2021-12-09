@@ -9,16 +9,10 @@ target_sources(
         ${SOURCES}
 )
 
-set(EXTERN_HEADERS)
-FetchContent_GetProperties(yaml-cpp)
-set(EXTERN_HEADERS "${yaml-cpp_SOURCE_DIR}/include;${EXTERN_HEADERS}")
-FetchContent_GetProperties(spdlog)
-set(EXTERN_HEADERS "${spdlog_SOURCE_DIR}/include;${EXTERN_HEADERS}")
-message(STATUS "Extern headers: ${EXTERN_HEADERS}")
-
 target_include_directories(
         ${LIBRARY} SYSTEM PUBLIC
         ${EXTERN_HEADERS}
+        ${CMAKE_INSTALL_PREFIX}/include # Need to include yaml-cpp headers explicitly here
         EventGeant4/include
         EventAnalysis/include
         Config/include

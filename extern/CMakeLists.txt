@@ -24,6 +24,7 @@ FetchContent_Declare(
         GIT_TAG yaml-cpp-0.7.0
 )
 FetchContent_MakeAvailable(yaml-cpp)
+install(DIRECTORY ${yaml-cpp_SOURCE_DIR}/include DESTINATION .)
 install(TARGETS yaml-cpp DESTINATION lib)
 
 # Logging library
@@ -34,4 +35,5 @@ FetchContent_Declare(
         GIT_TAG v1.9.2
 )
 FetchContent_MakeAvailable(spdlog)
+install(DIRECTORY ${spdlog_SOURCE_DIR}/include DESTINATION .)
 install(TARGETS spdlog DESTINATION lib)
