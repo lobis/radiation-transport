@@ -27,6 +27,12 @@ RUN apt-get update \
     nodejs \
     && apt-get clean
 
+# Add Tini
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
+
 RUN ( \
     echo 'LogLevel DEBUG2'; \
     echo 'PermitRootLogin yes'; \
@@ -65,12 +71,6 @@ RUN echo 'export DISPLAY=localhost:0' >> /home/user/.bashrc
 
 RUN mkdir -p /home/user/Notebooks
 RUN echo "alias start-jupyter='cd /home/user/Notebooks && jupyter lab --ip=0.0.0.0 --no-browser'" >> /home/user/.bashrc
-
-# Add Tini
-ENV TINI_VERSION v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
-ENTRYPOINT ["/tini", "--"]
 
 EXPOSE 2222
 EXPOSE 8888
