@@ -1,5 +1,10 @@
 set(FILENAME ${CMAKE_BINARY_DIR}/env.sh)
 
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install"
+            CACHE PATH "default install path" FORCE)
+endif ()
+
 message(STATUS "Project will be installed in '${CMAKE_INSTALL_PREFIX}'")
 message(STATUS "source ${CMAKE_INSTALL_PREFIX}/env.sh to load all required environment variables")
 
