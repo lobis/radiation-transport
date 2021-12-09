@@ -210,6 +210,8 @@ TEST(Application, DecayFullChainOn) {
 }
 
 TEST(Application, RemoveUnwantedTracks) {
+    // TODO: NOT FINISHED YET! compare energies with standard simulation
+
     const string configFile = EXAMPLES_PATH + "iaxo/neutrons.simulation.yaml";
 
     auto config = SimulationConfig(configFile);
@@ -225,7 +227,7 @@ TEST(Application, RemoveUnwantedTracks) {
     config.fSourceConfig.fAngularDistributionDirection = {0, -1, 0};
 
     config.fKeepOnlyTracksInTheseVolumes = true;
-    config.fKeepOnlyTracksInTheseVolumesList = {"gasVolume"};
+    config.fKeepOnlyTracksInTheseVolumesList = {"gasVolume", "scintillatorVolume-800.0mm"};
 
     Application app;
     app.LoadConfigFromFile(config);
@@ -236,4 +238,11 @@ TEST(Application, RemoveUnwantedTracks) {
     auto filenameNoReduction = config.GetOutputFileAbsolutePath();
 
     spdlog::info("The size of {} is {:0.2f} MB", filenameNoReduction, std::filesystem::file_size(filenameNoReduction) / 1E6);
+
+    TTree* tree = file.Get<TTree>("EventTree");
+    Geant4Event* event = nullptr;
+    tree->SetBranchAddress("fEvent", &event);
+    for (int i = 0; i < tree->GetEntries(); i++) {
+        event->PrintSensitiveInfo();
+    }
 }
