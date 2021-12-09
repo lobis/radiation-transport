@@ -24,6 +24,7 @@ RUN apt-get update \
     python \
     nano \
     x11-apps \
+    nodejs \
     && apt-get clean
 
 RUN ( \
@@ -47,15 +48,23 @@ RUN ( \
 
 RUN useradd -m user && yes password | passwd user
 
-RUN cp /root/.bashrc /home/user/.bashrc
+# Jupyter
+RUN pip3 -q install pip --upgrade && \
+    pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 -q install && \
+    pip3 -q install uproot awkward matplotlib scipy pandas mplhep boost_histogram jupyterlab
 
-RUN echo 'export DISPLAY=localhost:0' >> /home/user/.bashrc
+RUN cp /root/.bashrc /home/user/.bashrc
 
 RUN usermod -s /bin/bash user
 
-# Jupyter
-RUN pip3 -q install pip --upgrade && \
-    pip3 -q install uproot awkward matplotlib scipy pandas mplhep boost_histogram jupyterlab
+USER user
+
+WORKDIR /home/user
+
+RUN echo 'export DISPLAY=localhost:0' >> /home/user/.bashrc
+
+RUN mkdir -p /home/user/Notebooks
+RUN echo "alias start-jupyter='cd /home/user/Notebooks && jupyter lab --ip=0.0.0.0 --no-browser'" >> /home/user/.bashrc
 
 # Add Tini
 ENV TINI_VERSION v0.19.0
