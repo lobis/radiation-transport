@@ -4,6 +4,8 @@
 
 #include "StackingAction.h"
 
+#include <spdlog/spdlog.h>
+
 #include <G4ParticleTable.hh>
 #include <G4ParticleTypes.hh>
 #include <G4SystemOfUnits.hh>
@@ -13,7 +15,6 @@
 
 #include "GlobalManager.h"
 #include "OutputManager.h"
-#include "spdlog/spdlog.h"
 
 StackingAction::StackingAction()
     : G4UserStackingAction(), fMaxAllowedLifetime(100 / nanosecond), fFullChain(GlobalManager::Instance()->GetSimulationConfig().fFullChain) {
@@ -84,6 +85,6 @@ void StackingAction::NewStage() {
     const Int_t subEventID = output->GetSubEventID();
     output->FinishAndSubmitEvent();
     output->SetSubEventID(subEventID + 1);
-}
+ }
 
 StackingAction::~StackingAction() = default;

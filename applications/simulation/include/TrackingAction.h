@@ -21,7 +21,7 @@ class TrackingAction : public G4UserTrackingAction {
     virtual void PostUserTrackingAction(const G4Track*);
 
    private:
-    OutputManager* output;
+    OutputManager* fOutput;
 };
 
 #endif  // SIMULATION_TRACKINGACTION_H

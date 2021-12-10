@@ -16,7 +16,7 @@ class RunAction : public G4UserRunAction {
     virtual ~RunAction();
 
    private:
-    OutputManager* output;
+    OutputManager* fOutput;
 };
 
 #endif  // RADIATION_TRANSPORT_RUNACTION_H

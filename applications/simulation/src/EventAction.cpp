@@ -1,6 +1,8 @@
 
 #include "EventAction.h"
 
+#include <spdlog/spdlog.h>
+
 #include <G4Event.hh>
 #include <G4EventManager.hh>
 #include <G4Run.hh>
@@ -11,7 +13,6 @@
 
 #include "GlobalManager.h"
 #include "OutputManager.h"
-#include "spdlog/spdlog.h"
 
 using namespace std;
 

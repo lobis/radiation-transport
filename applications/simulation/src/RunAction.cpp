@@ -19,15 +19,15 @@
 #include "GlobalManager.h"
 #include "OutputManager.h"
 #include "SteppingVerbose.h"
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 
 using namespace std;
 
 RunAction::RunAction() {
     if (G4Threading::IsMasterThread() && G4Threading::IsMultithreadedApplication()) {
-        output = nullptr;  // no need for output, helps prevent bugs
+        fOutput = nullptr;  // no need for output, helps prevent bugs
     } else {
-        output = OutputManager::Instance();
+        fOutput = OutputManager::Instance();
     }
 }
 
@@ -38,6 +38,7 @@ void RunAction::BeginOfRunAction(const G4Run* aRun) {
 
     if (G4Threading::IsMasterThread()) {
         GlobalManager::Instance()->SetupFile();
+        GlobalManager::Instance()->SetRunTimestamp();
     }
 
     auto steppingVerbose = ((SteppingVerbose*)G4VSteppingVerbose::GetInstance());

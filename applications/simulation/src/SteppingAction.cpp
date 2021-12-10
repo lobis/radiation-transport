@@ -3,6 +3,8 @@
 //
 #include "SteppingAction.h"
 
+#include <spdlog/spdlog.h>
+
 #include <G4OpticalPhoton.hh>
 #include <G4RunManager.hh>
 #include <G4Step.hh>
@@ -14,7 +16,6 @@
 #include "DetectorConstruction.h"
 #include "EventAction.h"
 #include "OutputManager.h"
-#include "spdlog/spdlog.h"
 
 SteppingAction::SteppingAction() { output = OutputManager::Instance(); }
 

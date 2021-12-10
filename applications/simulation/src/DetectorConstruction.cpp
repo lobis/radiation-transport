@@ -9,6 +9,7 @@
 #include <GlobalManager.h>
 #include <SensitiveDetector.h>
 #include <TString.h>
+#include <spdlog/spdlog.h>
 
 #include <G4GDMLParser.hh>
 #include <G4LogicalVolume.hh>
@@ -30,7 +31,6 @@
 #include <fstream>
 
 #include "Exceptions.h"
-#include "spdlog/spdlog.h"
 
 using namespace std;
 
@@ -58,11 +58,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     spdlog::info("DetectorConstruction::Construct - Reading geometry from '{}'", fGeometryFilename.c_str());
 
     auto geometryInfo = new Geant4GeometryInfo();
-    GlobalManager::Instance()->fEventHeader->fGeant4GeometryInfo = geometryInfo;
-    if (!geometryInfo) {
-        spdlog::error("geometry info not init yet");
-        exit(1);
-    }
+    GlobalManager::fEventHeader.fGeant4GeometryInfo = geometryInfo;
+    GlobalManager::fEventHeader.fSimulationConfig = &GlobalManager::Instance()->GetSimulationConfig();
     // read extension
     if (fGeometryFilename.extension() == ".gdml") {
         spdlog::debug("Reading geometry as GDML");

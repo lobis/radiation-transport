@@ -219,7 +219,7 @@ TEST(Application, RemoveUnwantedTracks) {
     config.fSeed = 100;
     config.fRunManagerType = "serial";
     config.fFullChain = false;
-    config.fNumberOfEvents = 200;
+    config.fNumberOfEvents = 100;
 
     config.fSourceConfig.fPositionDistributionType = "point";
     config.fSourceConfig.fPositionDistributionCenter = {0, 1500, 0};
@@ -243,6 +243,7 @@ TEST(Application, RemoveUnwantedTracks) {
     Geant4Event* event = nullptr;
     tree->SetBranchAddress("fEvent", &event);
     for (int i = 0; i < tree->GetEntries(); i++) {
+        tree->GetEntry(i);
         event->PrintSensitiveInfo();
     }
 }

@@ -2,6 +2,7 @@
 #include "OutputManager.h"
 
 #include <Geant4Event.h>
+#include <spdlog/spdlog.h>
 
 #include <G4RunManager.hh>
 #include <G4Threading.hh>
@@ -10,7 +11,6 @@
 #include <G4UserEventAction.hh>
 
 #include "GlobalManager.h"
-#include "spdlog/spdlog.h"
 
 using namespace std;
 
@@ -41,7 +41,7 @@ OutputManager* OutputManager::Instance() {
 void OutputManager::UpdateEvent() {
     auto event = G4EventManager::GetEventManager()->GetConstCurrentEvent();
     fEvent = make_unique<Geant4Event>(event);
-    fEvent->fEventHeader = GlobalManager::fEventHeader;
+    fEvent->fEventHeader = &GlobalManager::fEventHeader;
 }
 
 /*!
@@ -134,7 +134,7 @@ void OutputManager::RemoveUnwantedTracks() {
     auto volumesNotVerified = config.fKeepOnlyTracksInTheseVolumesList;
     set<TString> volumes;
     // Check volumes are OK
-    const auto& geometryInfo = GlobalManager::Instance()->GetGeometryInfo();
+    const auto& geometryInfo = fEvent->fEventHeader->GetGeant4GeometryInfo();
     for (const auto& volume : volumesNotVerified) {
         if (geometryInfo->IsValidPhysicalVolume(volume)) {
             volumes.insert(geometryInfo->GetAlternativeNameFromGeant4PhysicalName(volume));

@@ -4,6 +4,8 @@
 
 #include "PhysicsList.h"
 
+#include <spdlog/spdlog.h>
+
 #include <G4DecayPhysics.hh>
 #include <G4EmConfigurator.hh>
 #include <G4EmExtraPhysics.hh>
@@ -43,7 +45,6 @@
 #include <globals.hh>
 
 #include "Exceptions.h"
-#include "spdlog/spdlog.h"
 
 PhysicsList::PhysicsList(const PhysicsListConfig& config) : G4VModularPhysicsList(), fConfig(config) {
     spdlog::debug("PhysicsList::PhysicsList");

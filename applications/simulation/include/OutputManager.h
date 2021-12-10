@@ -30,6 +30,7 @@ class OutputManager {
     inline int GetSubEventID() const {
         if (fEvent) return fEvent->GetSubEventID();
     }
+
     inline void SetSubEventID(Int_t subEventID) {
         if (fEvent) fEvent->SetSubEventID(subEventID);
     }

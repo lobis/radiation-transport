@@ -9,15 +9,15 @@
 #include <SimulationConfig.h>
 #include <TFile.h>
 #include <TTree.h>
+#include <spdlog/spdlog.h>
 
+#include <ctime>
 #include <globals.hh>
 #include <memory>
 #include <mutex>
 #include <queue>
 #include <string>
 #include <vector>
-
-#include "spdlog/spdlog.h"
 
 class GlobalManager {
    public:
@@ -38,11 +38,9 @@ class GlobalManager {
     inline TString GetEventTreeName() const { return fEventTreeName; }
 
     inline void SetSimulationConfig(const SimulationConfig& simulationConfig) { fSimulationConfig = simulationConfig; }
-    inline SimulationConfig GetSimulationConfig() const { return fSimulationConfig; }
-
-    static inline Geant4EventHeader* fEventHeader = nullptr;  // should not change for events in the same run
-
-    static inline Geant4GeometryInfo* GetGeometryInfo() { return fEventHeader->fGeant4GeometryInfo; }
+    inline const SimulationConfig& GetSimulationConfig() const { return fSimulationConfig; }
+    static inline void SetRunTimestamp() { fEventHeader.fTimestamp = std::time(nullptr); }
+    static inline Geant4EventHeader fEventHeader;
 
    private:
     GlobalManager();
@@ -50,12 +48,15 @@ class GlobalManager {
 
     SimulationConfig fSimulationConfig;
 
+    std::time_t fRunTimestamp;
+
     bool fInitialized = false;
 
     std::mutex fEventContainerMutex;
 
     TFile* fFile = nullptr;
     TTree* fEventTree = nullptr;
+    TTree* fConfigTree = nullptr;
 
     const TString fEventTreeName = "EventTree";
 

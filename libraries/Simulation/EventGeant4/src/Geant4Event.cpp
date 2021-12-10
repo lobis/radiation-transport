@@ -14,9 +14,9 @@ void Geant4Event::Print() const { spdlog::info("Not implemented yet!"); }
 
 void Geant4Event::PrintSensitiveInfo() const {
     spdlog::info("Geant4Event::PrintSensitiveInfo - EventID: {} - SubEventID: {}", fEventID, fSubEventID);
-    spdlog::info("\tTotal energy in sensitive detectors: {} keV", fSensitiveVolumesTotalEnergy);
+    spdlog::info("\tTotal energy in sensitive detectors: {:0.2f} keV", fSensitiveVolumesTotalEnergy);
     for (int i = 0; i < fSensitiveVolumeEnergy.size(); i++) {
-        spdlog::info("\t - Sensitive Detector: {} (ID {}) E = {} keV", fSensitiveVolumeName[i], fSensitiveVolumeID[i], fSensitiveVolumeEnergy[i]);
+        spdlog::info("\t - Sensitive Detector: {} (ID {}) E = {:0.2} keV", fSensitiveVolumeName[i], fSensitiveVolumeID[i], fSensitiveVolumeEnergy[i]);
     }
 }
 

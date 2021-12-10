@@ -16,6 +16,7 @@
 #include <G4VProcess.hh>
 
 #include "GlobalManager.h"
+#include "OutputManager.h"
 
 using namespace std;
 
@@ -63,8 +64,8 @@ void Geant4Hits::InsertStep(const G4Step* step) {
     }
     const auto volumeID = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
 
-    volumeNamePre = GlobalManager::GetGeometryInfo()->GetAlternativeNameFromGeant4PhysicalName(volumeNamePre);
-    volumeNamePost = GlobalManager::GetGeometryInfo()->GetAlternativeNameFromGeant4PhysicalName(volumeNamePost);
+    volumeNamePre = GlobalManager::fEventHeader.GetGeant4GeometryInfo()->GetAlternativeNameFromGeant4PhysicalName(volumeNamePre);
+    volumeNamePost = GlobalManager::fEventHeader.GetGeant4GeometryInfo()->GetAlternativeNameFromGeant4PhysicalName(volumeNamePost);
 
     const auto& volumeName = volumeNamePre;
 

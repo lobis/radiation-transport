@@ -53,6 +53,8 @@ class Geant4GeometryInfo {
     inline std::vector<TString> GetAllPhysicalVolumesFromLogical(const TString& logicalVolume) const {
         return fLogicalToPhysicalMap.at(logicalVolume);
     }
+
+    void Print() const;
 };
 
 #endif  // RADIATION_TRANSPORT_Geant4GeometryInfo_H

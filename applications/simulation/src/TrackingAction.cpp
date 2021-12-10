@@ -4,6 +4,8 @@
 
 #include "TrackingAction.h"
 
+#include <spdlog/spdlog.h>
+
 #include <G4EventManager.hh>
 #include <G4ParticleDefinition.hh>
 #include <G4ParticleTypes.hh>
@@ -17,14 +19,13 @@
 #include "GlobalManager.h"
 #include "OutputManager.h"
 #include "SteppingAction.h"
-#include "spdlog/spdlog.h"
 
 TrackingAction::TrackingAction() : G4UserTrackingAction() {
     spdlog::debug("TrackingAction::TrackingAction");
-    output = OutputManager::Instance();
+    fOutput = OutputManager::Instance();
 }
 
-void TrackingAction::PreUserTrackingAction(const G4Track* track) { output->RecordTrack(track); }
+void TrackingAction::PreUserTrackingAction(const G4Track* track) { fOutput->RecordTrack(track); }
 
 void TrackingAction::PostUserTrackingAction(const G4Track* track) {
     auto particle = track->GetParticleDefinition();
@@ -43,5 +44,5 @@ void TrackingAction::PostUserTrackingAction(const G4Track* track) {
                       G4VProcess::GetProcessTypeName(creatorProcess->GetProcessType()));
     }
 
-    output->UpdateTrack(track);
+    fOutput->UpdateTrack(track);
 }

@@ -128,3 +128,8 @@ Int_t Geant4GeometryInfo::GetIDFromVolumeName(const TString& volumeName) const {
     spdlog::error("Geant4GeometryInfo::GetIDFromPhysicalName - ID not found for '{}'", volumeName);
     exit(1);
 }
+
+void Geant4GeometryInfo::Print() const {
+    spdlog::info("Geant4GeometryInfo::Print");
+    // TODO: PRINT STUFF
+}

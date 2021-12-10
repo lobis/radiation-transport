@@ -5,8 +5,10 @@
 #ifndef RADIATION_TRANSPORT_Geant4EventHEADER_H
 #define RADIATION_TRANSPORT_Geant4EventHEADER_H
 
+#include <SimulationConfig.h>
 #include <TString.h>
 
+#include <ctime>
 #include <map>
 #include <vector>
 
@@ -18,9 +20,12 @@ class Geant4EventHeader {
    public:
     inline Geant4EventHeader() = default;
 
-    void Print() const;
+    std::time_t fTimestamp;
 
     Geant4GeometryInfo* fGeant4GeometryInfo;
+    const SimulationConfig* fSimulationConfig;
+
+    void Print() const;
 
     inline Geant4GeometryInfo* GetGeant4GeometryInfo() const { return fGeant4GeometryInfo; }
 };

@@ -4,8 +4,6 @@
 
 #include "GlobalManager.h"
 
-#include <DetectorConstructionConfig.h>
-#include <SimulationConfig.h>
 #include <TF1.h>
 #include <TGeoManager.h>
 #include <spdlog/spdlog.h>
@@ -37,8 +35,6 @@ GlobalManager::GlobalManager() {
         spdlog::error("GlobalManager: GlobalManager should never be created by worker thread");
         exit(1);
     }
-
-    fEventHeader = new Geant4EventHeader();
 }
 
 GlobalManager::~GlobalManager() = default;
@@ -60,6 +56,8 @@ void GlobalManager::WriteEvents() {
         fEvent = *fEventContainer.front();
         fEventTree->Fill();
         fEventContainer.pop();
+
+        fConfigTree->Fill();
     }
 
     // fEventTree->Write();
@@ -137,7 +135,9 @@ void GlobalManager::SetupFile() {
 
     fEventTree = new TTree("tmp", "Event Tree");
     fEventTree->Branch("fEvent", &fEvent);
-    // fEventTree->Branch("fEventHeader", &fEventHeader);
+
+    fConfigTree = new TTree("ConfigTree", "Config Tree");
+    fConfigTree->Branch("fEventHeader", &fEventHeader);
 }
 
 void GlobalManager::WriteEventsAndCloseFile() {
@@ -166,6 +166,8 @@ void GlobalManager::WriteEventsAndCloseFile() {
                          fFile->GetName());
         }
     }
+
+    fConfigTree->Write();
 
     spdlog::info("Output file: '{}'", fFile->GetName());
 
