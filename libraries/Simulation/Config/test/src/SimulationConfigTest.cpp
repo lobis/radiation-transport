@@ -2,7 +2,9 @@
 // Created by lobis on 11/22/2021.
 //
 
+#include <TROOT.h>
 #include <gtest/gtest.h>
+#include <spdlog/spdlog.h>
 
 #include <filesystem>
 
@@ -11,6 +13,14 @@
 using namespace std;
 
 #define BASE_PATH string(std::filesystem::path(__FILE__).parent_path().parent_path()) + "/"
+
+TEST(Config, Dictionary) {
+    EXPECT_TRUE(TClass::GetClass("ThisClassDoesNotExist") == nullptr);
+    for (const auto& className : {"SimulationConfig", "SourceConfig", "PhysicsListsConfig", "DetectorConstructionConfig"}) {
+        spdlog::info("Checking existence of dictionary for: {}", className);
+        EXPECT_TRUE(TClass::GetClass(className) != nullptr);
+    }
+}
 
 TEST(SimulationConfig, LoadFromFile) {
     const auto config = SimulationConfig(BASE_PATH + "files/simulation.yaml");

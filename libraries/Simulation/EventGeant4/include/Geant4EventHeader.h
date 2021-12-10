@@ -22,8 +22,8 @@ class Geant4EventHeader {
 
     std::time_t fTimestamp;
 
-    Geant4GeometryInfo* fGeant4GeometryInfo;
-    const SimulationConfig* fSimulationConfig;
+    Geant4GeometryInfo* fGeant4GeometryInfo;    //!
+    const SimulationConfig* fSimulationConfig;  //!
 
     void Print() const;
 

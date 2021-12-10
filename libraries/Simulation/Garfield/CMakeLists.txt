@@ -1,7 +1,5 @@
 
-if (NOT TARGET Garfield::Garfield)
-    find_package(Garfield REQUIRED)
-endif ()
+find_package(Garfield REQUIRED)
 
 message(STATUS "Found Garfield++ version: ${Garfield_VERSION}")
 

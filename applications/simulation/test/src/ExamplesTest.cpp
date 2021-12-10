@@ -77,6 +77,8 @@ TEST(Application, ExampleIAXO) {
 
     spdlog::info("The size of {} is {:0.2f} MB", filenameNoReduction, std::filesystem::file_size(filenameNoReduction) / 1E6);
 
+    file.ls();
+
     TTree* tree = file.Get<TTree>("EventTree");
     Geant4Event* event = nullptr;
     tree->SetBranchAddress("fEvent", &event);
@@ -87,10 +89,13 @@ TEST(Application, ExampleIAXO) {
     }
 
     TTree* configTree = file.Get<TTree>("ConfigTree");
+
+    configTree->Print();
+
     Geant4EventHeader* eventHeader = nullptr;
     configTree->SetBranchAddress("fEventHeader", &eventHeader);
 
-    // configTree->GetEntry(0);
+    configTree->GetEntry(0);
 
-    // eventHeader->Print();
+    eventHeader->Print();
 }
