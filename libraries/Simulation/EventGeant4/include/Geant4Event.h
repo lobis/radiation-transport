@@ -20,7 +20,7 @@ class Geant4Event {
     Int_t fEventID{};
     Int_t fSubEventID{};
 
-    Geant4EventHeader* fEventHeader = nullptr;  //!
+    Geant4EventHeader* fEventHeader = nullptr;  //|
 
     Double_t fSensitiveVolumesTotalEnergy{};
     std::vector<Double_t> fSensitiveVolumeEnergy{};

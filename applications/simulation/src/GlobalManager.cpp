@@ -57,7 +57,7 @@ void GlobalManager::WriteEvents() {
         fEventTree->Fill();
         fEventContainer.pop();
 
-        fConfigTree->Fill();
+        // fConfigTree->Fill();
     }
 
     // fEventTree->Write();
@@ -136,8 +136,8 @@ void GlobalManager::SetupFile() {
     fEventTree = new TTree("tmp", "Event Tree");
     fEventTree->Branch("fEvent", &fEvent);
 
-    fConfigTree = new TTree("ConfigTree", "Config Tree");
-    fConfigTree->Branch("fEventHeader", &fEventHeader);
+    // fConfigTree = new TTree("ConfigTree", "Config Tree");
+    // fConfigTree->Branch("fEventHeader", &fEventHeader);
 }
 
 void GlobalManager::WriteEventsAndCloseFile() {
@@ -167,7 +167,7 @@ void GlobalManager::WriteEventsAndCloseFile() {
         }
     }
 
-    fConfigTree->Write();
+    // fConfigTree->Write();
 
     spdlog::info("Output file: '{}'", fFile->GetName());
 

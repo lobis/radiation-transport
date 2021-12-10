@@ -88,14 +88,5 @@ TEST(Application, ExampleIAXO) {
         event->PrintSensitiveInfo();
     }
 
-    TTree* configTree = file.Get<TTree>("ConfigTree");
-
-    configTree->Print();
-
-    Geant4EventHeader* eventHeader = nullptr;
-    configTree->SetBranchAddress("fEventHeader", &eventHeader);
-
-    configTree->GetEntry(0);
-
-    eventHeader->Print();
+    event->fEventHeader->Print();
 }

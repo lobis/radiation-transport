@@ -48,15 +48,13 @@ class GlobalManager {
 
     SimulationConfig fSimulationConfig;
 
-    std::time_t fRunTimestamp;
-
     bool fInitialized = false;
 
     std::mutex fEventContainerMutex;
 
     TFile* fFile = nullptr;
     TTree* fEventTree = nullptr;
-    TTree* fConfigTree = nullptr;
+    // TTree* fConfigTree = nullptr;
 
     const TString fEventTreeName = "EventTree";
 
