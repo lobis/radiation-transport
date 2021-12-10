@@ -52,6 +52,8 @@ class OutputManager {
     bool IsValidEvent() const;
 
     void RemoveUnwantedTracks();
+
+    std::set<TString> fKeepOnlyTracksInTheseVolumesListAfterProcessing = {};
 };
 
 #endif  // RADIATION_TRANSPORT_OUTPUTMANAGER_H

@@ -24,9 +24,6 @@ class Geant4GeometryInfo {
     std::map<TString, TString> fGeant4PhysicalNameToNewPhysicalNameMap; /*
                                                                          * only makes sense when using assembly
                                                                          */
-    std::vector<TString> fPhysicalVolumes;                              /* Geant4 physical names */
-    std::vector<TString> fLogicalVolumes;
-    std::vector<TString> fMaterials;
 
     std::map<TString, TString> fPhysicalToLogicalVolumeMap;
     std::map<TString, std::vector<TString> > fLogicalToPhysicalMap;
@@ -45,8 +42,11 @@ class Geant4GeometryInfo {
 
     void PopulateFromGeant4World(const G4VPhysicalVolume*);
 
-    inline std::vector<TString> GetAllPhysicalVolumes() const { return fPhysicalVolumes; }
-    inline std::vector<TString> GetAllLogicalVolumes() const { return fLogicalVolumes; }
+    std::vector<TString> GetAllPhysicalVolumes() const;
+    std::vector<TString> GetAllLogicalVolumes() const;
+
+    std::vector<TString> GetAllLogicalVolumesMatchingExpression(const TString&) const;
+    std::vector<TString> GetAllPhysicalVolumesMatchingExpression(const TString&) const;
 
     inline bool IsValidPhysicalVolume(const TString& volume) const { return fPhysicalToLogicalVolumeMap.count(volume) > 0; }
     inline bool IsValidLogicalVolume(const TString& volume) const { return fLogicalToPhysicalMap.count(volume) > 0; }

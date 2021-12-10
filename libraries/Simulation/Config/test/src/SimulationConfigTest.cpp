@@ -18,11 +18,7 @@ using namespace std;
 
 TEST(Config, Dictionary) {
     EXPECT_TRUE(TClass::GetClass("ThisClassDoesNotExist") == nullptr);
-    for (const auto& className : {"SimulationConfig", "SourceConfig", "PhysicsListsConfig", "DetectorConstructionConfig"}) {
-        if (className == "DetectorConstructionConfig") {
-            // TODO: why doesn't this work?
-            continue;
-        }
+    for (const auto& className : {"SimulationConfig", "SourceConfig"}) {
         spdlog::info("Checking existence of dictionary for: {}", className);
         EXPECT_TRUE(TClass::GetClass(className) != nullptr);
     }

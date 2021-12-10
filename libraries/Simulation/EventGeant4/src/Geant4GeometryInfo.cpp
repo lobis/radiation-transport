@@ -4,6 +4,7 @@
 
 #include "Geant4GeometryInfo.h"
 
+#include <TPRegexp.h>
 #include <TXMLEngine.h>
 #include <spdlog/spdlog.h>
 
@@ -119,10 +120,12 @@ Int_t Geant4GeometryInfo::GetIDFromVolumeName(const TString& volumeName) const {
         }
     }
 
-    for (int i = 0; i < fPhysicalVolumes.size(); i++) {
-        if (volumeName.EqualTo(fPhysicalVolumes[i])) {
+    int i = 0;
+    for (const auto& physical : GetAllPhysicalVolumes()) {
+        if (volumeName.EqualTo(physical)) {
             return i;
         }
+        i++;
     }
 
     spdlog::error("Geant4GeometryInfo::GetIDFromPhysicalName - ID not found for '{}'", volumeName);
@@ -131,5 +134,62 @@ Int_t Geant4GeometryInfo::GetIDFromVolumeName(const TString& volumeName) const {
 
 void Geant4GeometryInfo::Print() const {
     spdlog::info("Geant4GeometryInfo::Print");
-    // TODO: PRINT STUFF
+
+    spdlog::info("Physical volumes:");
+    for (const auto& physical : GetAllPhysicalVolumes()) {
+        spdlog::info("\t- {}", physical.Data());
+    }
+
+    spdlog::info("Logical volumes:");
+    for (const auto& logical : GetAllLogicalVolumes()) {
+        spdlog::info("\t- {}", logical.Data());
+    }
+}
+
+std::vector<TString> Geant4GeometryInfo::GetAllPhysicalVolumes() const {
+    auto volumes = std::vector<TString>();
+
+    for (const auto& [physical, _] : fPhysicalToLogicalVolumeMap) {
+        volumes.emplace_back(physical);
+    }
+
+    return volumes;
+}
+
+std::vector<TString> Geant4GeometryInfo::GetAllLogicalVolumes() const {
+    auto volumes = std::vector<TString>();
+
+    for (const auto& [logical, _] : fLogicalToPhysicalMap) {
+        volumes.emplace_back(logical);
+    }
+
+    return volumes;
+}
+
+std::vector<TString> Geant4GeometryInfo::GetAllPhysicalVolumesMatchingExpression(const TString& regularExpression) const {
+    auto volumes = std::vector<TString>();
+
+    TPRegexp regex(regularExpression);
+
+    for (const auto& volume : GetAllPhysicalVolumes()) {
+        if (regex.Match(volume)) {
+            volumes.emplace_back(volume);
+        }
+    }
+
+    return volumes;
+}
+
+std::vector<TString> Geant4GeometryInfo::GetAllLogicalVolumesMatchingExpression(const TString& regularExpression) const {
+    auto volumes = std::vector<TString>();
+
+    TPRegexp regex(regularExpression);
+
+    for (const auto& volume : GetAllLogicalVolumes()) {
+        if (regex.Match(volume)) {
+            volumes.emplace_back(volume);
+        }
+    }
+
+    return volumes;
 }

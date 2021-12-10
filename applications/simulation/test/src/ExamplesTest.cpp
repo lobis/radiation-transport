@@ -65,7 +65,7 @@ TEST(Application, ExampleIAXO) {
     config.fSourceConfig.fAngularDistributionDirection = {0, -1, 0};
 
     config.fKeepOnlyTracksInTheseVolumes = true;
-    config.fKeepOnlyTracksInTheseVolumesList = {"gasVolume", "scintillatorVolume-800.0mm"};
+    config.fKeepOnlyTracksInTheseVolumesList = {"gasVolume", "^scintillatorVolume"};
 
     Application app;
     app.LoadConfigFromFile(config);

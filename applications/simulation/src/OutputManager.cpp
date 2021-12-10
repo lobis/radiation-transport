@@ -131,20 +131,49 @@ void OutputManager::RemoveUnwantedTracks() {
     if (!config.fKeepOnlyTracksInTheseVolumes) {
         return;
     }
-    auto volumesNotVerified = config.fKeepOnlyTracksInTheseVolumesList;
-    set<TString> volumes;
-    // Check volumes are OK
-    const auto& geometryInfo = fEvent->fEventHeader->GetGeant4GeometryInfo();
-    for (const auto& volume : volumesNotVerified) {
-        if (geometryInfo->IsValidPhysicalVolume(volume)) {
-            volumes.insert(geometryInfo->GetAlternativeNameFromGeant4PhysicalName(volume));
-        } else if (geometryInfo->IsValidLogicalVolume(volume)) {
-            for (const auto& physicalVolumeName : geometryInfo->GetAllPhysicalVolumesFromLogical(volume)) {
-                volumes.insert(geometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName));
+    if (fKeepOnlyTracksInTheseVolumesListAfterProcessing.empty()) {
+        // Check volumes are OK
+        const auto& geometryInfo = fEvent->fEventHeader->GetGeant4GeometryInfo();
+        for (const auto& volumeString : config.fKeepOnlyTracksInTheseVolumesList) {
+            if (geometryInfo->IsValidPhysicalVolume(volumeString)) {
+                fKeepOnlyTracksInTheseVolumesListAfterProcessing.insert(geometryInfo->GetAlternativeNameFromGeant4PhysicalName(volumeString));
+            } else if (geometryInfo->IsValidLogicalVolume(volumeString)) {
+                for (const auto& physicalVolumeName : geometryInfo->GetAllPhysicalVolumesFromLogical(volumeString)) {
+                    fKeepOnlyTracksInTheseVolumesListAfterProcessing.insert(
+                        geometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName));
+                }
+            } else if (!geometryInfo->GetAllPhysicalVolumesMatchingExpression(volumeString).empty()) {
+                spdlog::warn("OutputManager::RemoveUnwantedTracks - Using regex '{}' for physical volumes", volumeString);
+                for (const auto& physicalVolumeName : geometryInfo->GetAllPhysicalVolumesMatchingExpression(volumeString)) {
+                    fKeepOnlyTracksInTheseVolumesListAfterProcessing.insert(
+                        geometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName));
+                }
+            } else if (!geometryInfo->GetAllLogicalVolumesMatchingExpression(volumeString).empty()) {
+                spdlog::warn("OutputManager::RemoveUnwantedTracks - Using regex '{}' for logical volumes", volumeString);
+                for (const auto& logicalVolumeName : geometryInfo->GetAllLogicalVolumesMatchingExpression(volumeString)) {
+                    for (const auto& physicalVolumeName : geometryInfo->GetAllPhysicalVolumesFromLogical(logicalVolumeName)) {
+                        fKeepOnlyTracksInTheseVolumesListAfterProcessing.insert(
+                            geometryInfo->GetAlternativeNameFromGeant4PhysicalName(physicalVolumeName));
+                    }
+                }
             }
-        } else {
-            spdlog::error("OutputManager::RemoveUnwantedTracks - Volume name '{}' not found in physical or logical store", volume);
+
+            else {
+                spdlog::error("OutputManager::RemoveUnwantedTracks - Volume name '{}' not found in physical or logical store", volumeString);
+                exit(1);
+            }
+        }
+        if (fKeepOnlyTracksInTheseVolumesListAfterProcessing.empty()) {
+            spdlog::error("OutputManager::RemoveUnwantedTracks - Called but user supplied volume strings did not match any volume in geometry");
             exit(1);
+        }
+        spdlog::info("OutputManager::RemoveUnwantedTracks - User requested volume strings:");
+        for (const auto& volumeString : config.fKeepOnlyTracksInTheseVolumesList) {
+            spdlog::info("\t- {}", volumeString);
+        }
+        spdlog::info("OutputManager::RemoveUnwantedTracks - Resolved physical volumes:");
+        for (const auto& physical : fKeepOnlyTracksInTheseVolumesListAfterProcessing) {
+            spdlog::info("\t- {}", physical);
         }
     }
 
@@ -159,7 +188,7 @@ void OutputManager::RemoveUnwantedTracks() {
             double energy = track.fSteps.fEnergy[i];
             if (energy > 0) {
                 TString volume = track.fSteps.fVolumeName[i];
-                if (volumes.count(volume) > 0) {
+                if (fKeepOnlyTracksInTheseVolumesListAfterProcessing.count(volume) > 0) {
                     keep = true;
                     break;
                 }

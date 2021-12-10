@@ -2,7 +2,9 @@
 // Created by lobis on 25/11/2021.
 //
 
+#include <Geant4GeometryInfo.h>
 #include <gtest/gtest.h>
+#include <spdlog/spdlog.h>
 
 #include <G4LogicalVolume.hh>
 #include <G4Material.hh>
@@ -53,4 +55,34 @@ TEST(DetectorConstruction, CheckGdmlGeometry) {
     EXPECT_EQ(nameMaterial, "G4_WATER");
     const auto& position = volume->GetTranslation();
     EXPECT_EQ(position, CLHEP::Hep3Vector(0, 0, 0));
+}
+
+TEST(DetectorConstruction, Geant4GeometryInfo) {
+    SimulationConfig config(EXAMPLES_PATH + "iaxo/neutrons.simulation.yaml");
+
+    DetectorConstruction detectorConstruction(config.fDetectorConfig);
+
+    auto world = detectorConstruction.Construct();
+
+    Geant4GeometryInfo geometryInfo;
+
+    geometryInfo.PopulateFromGeant4World(world);
+
+    geometryInfo.Print();
+
+    auto expression = "^scintillatorVolume";
+
+    auto logicalVolumes = geometryInfo.GetAllLogicalVolumesMatchingExpression(expression);
+    auto physicalVolumes = std::vector<TString>();
+    for (const auto& logical : logicalVolumes) {
+        for (const auto& physical : geometryInfo.GetAllPhysicalVolumesFromLogical(logical)) {
+            physicalVolumes.push_back(physical);
+        }
+    }
+    spdlog::info("number of physical volumes matching logical volume expression '{}' is {}", expression, physicalVolumes.size());
+    for (const auto& physical : physicalVolumes) {
+        spdlog::info("\t- {}", physical);
+    }
+
+    EXPECT_EQ(physicalVolumes.size(), 72);  // number of vetoes
 }
