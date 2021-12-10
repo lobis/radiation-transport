@@ -20,6 +20,10 @@ fullChain: true
 
 output: muons.babyIAXO.root
 
+keepOnlyTracksInTheseVolumes:
+  gasVolume
+  ^scintillatorVolume
+
 source:
   generator:
     disk:

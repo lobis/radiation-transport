@@ -9,7 +9,7 @@ threads: 6
 seed: 137
 
 detector:
-  geometry: geometry/babyIAXO.gdml
+  geometry: geometry/iaxo-d1.gdml
   volumes:
     - name: gasVolume
       sensitive: true
