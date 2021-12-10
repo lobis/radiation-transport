@@ -63,8 +63,6 @@ RUN cp /root/.bashrc /home/user/.bashrc
 
 RUN usermod -s /bin/bash user
 
-USER user
-
 WORKDIR /home/user
 
 RUN echo 'export DISPLAY=localhost:0' >> /home/user/.bashrc
