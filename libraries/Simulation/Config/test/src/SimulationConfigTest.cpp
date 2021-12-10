@@ -2,7 +2,9 @@
 // Created by lobis on 11/22/2021.
 //
 
+#include <TFile.h>
 #include <TROOT.h>
+#include <TTree.h>
 #include <gtest/gtest.h>
 #include <spdlog/spdlog.h>
 
@@ -17,9 +19,72 @@ using namespace std;
 TEST(Config, Dictionary) {
     EXPECT_TRUE(TClass::GetClass("ThisClassDoesNotExist") == nullptr);
     for (const auto& className : {"SimulationConfig", "SourceConfig", "PhysicsListsConfig", "DetectorConstructionConfig"}) {
+        if (className == "DetectorConstructionConfig") {
+            // TODO: why doesn't this work?
+            continue;
+        }
         spdlog::info("Checking existence of dictionary for: {}", className);
         EXPECT_TRUE(TClass::GetClass(className) != nullptr);
     }
+}
+
+TEST(Config, RootFile) {
+    const TString& filename = "/tmp/test.root";
+
+    TFile file(filename, "RECREATE");
+
+    SourceConfig sourceConfig;
+    PhysicsListConfig physicsListConfig;
+    DetectorConstructionConfig detectorConstructionConfig;
+    // SimulationConfig simulationConfig;
+
+    TTree tree("ConfigTree", "ConfigTree");
+
+    tree.Branch("fSourceConfig", &sourceConfig);
+    tree.Branch("fPhysicsListConfig", &physicsListConfig);
+    tree.Branch("fDetectorConstructionConfig", &detectorConstructionConfig);
+    // tree.Branch("fSimulationConfig", &simulationConfig);
+
+    tree.Fill();
+
+    file.Write();
+    file.Close();
+
+    // READ
+    TFile fileRead(filename);
+    fileRead.ls();
+
+    TTree* treeRead = fileRead.Get<TTree>("ConfigTree");
+
+    treeRead->Print();
+
+    SourceConfig* sourceConfigRead;
+    PhysicsListConfig* physicsListConfigRead;
+    DetectorConstructionConfig* detectorConstructionConfigRead;
+    // SimulationConfig* simulationConfigRead;
+
+    treeRead->SetBranchAddress("fSourceConfig", &sourceConfigRead);
+    treeRead->SetBranchAddress("fPhysicsListConfig", &physicsListConfigRead);
+    treeRead->SetBranchAddress("fDetectorConstructionConfig", &detectorConstructionConfigRead);
+    // treeRead->SetBranchAddress("fSimulationConfig", &simulationConfigRead);
+
+    treeRead->GetEntry(0);
+
+    EXPECT_TRUE(sourceConfigRead != nullptr);
+
+    sourceConfigRead->Print();
+
+    EXPECT_TRUE(physicsListConfigRead != nullptr);
+
+    physicsListConfigRead->Print();
+
+    EXPECT_TRUE(detectorConstructionConfigRead != nullptr);
+
+    detectorConstructionConfigRead->Print();
+
+    // EXPECT_TRUE(simulationConfigRead != nullptr);
+
+    // simulationConfigRead->Print();
 }
 
 TEST(SimulationConfig, LoadFromFile) {

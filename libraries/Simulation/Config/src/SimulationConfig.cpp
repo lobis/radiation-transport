@@ -7,7 +7,6 @@
 #include <TSystem.h>
 #include <spdlog/spdlog.h>
 
-#include <filesystem>
 #include <iostream>
 
 ClassImp(SimulationConfig);

@@ -4,7 +4,6 @@
 
 #include "DetectorConstructionConfig.h"
 
-#include <filesystem>
 #include <iostream>
 
 ClassImp(DetectorConstructionConfig);
@@ -13,8 +12,8 @@ using namespace std;
 
 namespace YAML {
 template <>
-struct convert<DetectorVolume> {
-    static Node encode(const DetectorVolume& rhs) {
+struct convert<DetectorConstructionConfig::DetectorVolume> {
+    static Node encode(const DetectorConstructionConfig::DetectorVolume& rhs) {
         Node node;
         node["name"] = rhs.fName;
         if (rhs.fIsSensitive) {
@@ -23,7 +22,7 @@ struct convert<DetectorVolume> {
         return node;
     }
 
-    static bool decode(const Node& node, DetectorVolume& rhs) {
+    static bool decode(const Node& node, DetectorConstructionConfig::DetectorVolume& rhs) {
         if (!node["name"]) {
             return false;
         }

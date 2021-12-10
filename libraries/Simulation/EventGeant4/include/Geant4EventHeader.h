@@ -20,10 +20,10 @@ class Geant4EventHeader {
    public:
     inline Geant4EventHeader() = default;
 
-    std::time_t fTimestamp;
+    std::time_t fTimestamp = std::time_t(nullptr);
 
-    Geant4GeometryInfo* fGeant4GeometryInfo;    //!
-    const SimulationConfig* fSimulationConfig;  //!
+    Geant4GeometryInfo* fGeant4GeometryInfo = nullptr;
+    const SimulationConfig* fSimulationConfig = nullptr;
 
     void Print() const;
 

@@ -13,7 +13,15 @@ ClassImp(Geant4EventHeader);
 void Geant4EventHeader::Print() const {
     spdlog::info("Geant4EventHeader::Print - Header timestamp: {}", fTimestamp);
 
-    fSimulationConfig->Print();
+    if (fSimulationConfig) {
+        fSimulationConfig->Print();
+    } else {
+        spdlog::info("No SimulationConfig stored");
+    }
 
-    fGeant4GeometryInfo->Print();
+    if (fGeant4GeometryInfo) {
+        fGeant4GeometryInfo->Print();
+    } else {
+        spdlog::info("No Geant4GeometryInfo stored");
+    }
 }

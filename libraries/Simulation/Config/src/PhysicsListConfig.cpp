@@ -4,7 +4,6 @@
 
 #include "PhysicsListConfig.h"
 
-#include <filesystem>
 #include <iostream>
 
 ClassImp(PhysicsListConfig);
