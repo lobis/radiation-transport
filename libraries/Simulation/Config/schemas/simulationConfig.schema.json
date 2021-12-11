@@ -16,6 +16,11 @@
       ],
       "default": "info"
     },
+    "numberOfEvents": {
+      "type": "integer",
+      "description": "Number of primaries to launch (argument of '/run/beamOn' Geant4 command)",
+      "default": 1
+    },
     "output": {
       "type": "string",
       "description": "Output file name (root file). Relative path respect to the config file",
@@ -114,6 +119,14 @@
               "sensitive": false
             }
           ]
+        },
+        "keepOnlyTracksInTheseVolumes": {
+          "type": "array",
+          "description": "List of volume names (physical, logical, or regex for physical or logical (first match in this order)",
+          "items": {
+            "type": "string"
+          },
+          "default": []
         }
       }
     },
@@ -358,12 +371,30 @@
                   "default": 100
                 }
               }
+            },
+            "cosmicMuonsSeaLevel": {
+              "nullable": true,
+              "description": "Cosmic muons at sea level"
+            },
+            "cosmicNeutronsSeaLevel": {
+              "nullable": true,
+              "description": "Cosmic neutrons at sea level"
             }
           },
           "oneOf": [
             {
               "required": [
                 "mono"
+              ]
+            },
+            {
+              "required": [
+                "cosmicMuonsSeaLevel"
+              ]
+            },
+            {
+              "required": [
+                "cosmicNeutronsSeaLevel"
               ]
             }
           ]
