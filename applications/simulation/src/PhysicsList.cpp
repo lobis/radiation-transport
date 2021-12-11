@@ -40,6 +40,7 @@
 #include <G4RegionStore.hh>
 #include <G4RunManager.hh>
 #include <G4Scintillation.hh>
+#include <G4StepLimiterPhysics.hh>
 #include <G4StoppingPhysics.hh>
 #include <G4SystemOfUnits.hh>
 #include <G4UnitsTable.hh>
@@ -92,6 +93,8 @@ PhysicsList::PhysicsList(const PhysicsListConfig& config) : G4VModularPhysicsLis
     for (auto& fHadronPhy : fHadronPhys) {
         RegisterPhysics(fHadronPhy);
     }
+
+    // RegisterPhysics(new G4StepLimiterPhysics()); // TOOD: this does nothing apparently
 }
 
 void PhysicsList::SetCuts() {
@@ -120,4 +123,7 @@ void PhysicsList::SetCuts() {
 
 void PhysicsList::ConstructParticle() { G4VModularPhysicsList::ConstructParticle(); }
 
-void PhysicsList::ConstructProcess() { G4VModularPhysicsList::ConstructProcess(); }
+void PhysicsList::ConstructProcess() {
+    G4VModularPhysicsList::ConstructProcess();
+    // TODO: add 'G4StepLimiter' to sensitive detector
+}

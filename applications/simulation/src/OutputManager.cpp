@@ -208,8 +208,7 @@ void OutputManager::RemoveUnwantedTracks() {
         }
     }
 
-    spdlog::info("OutputManager::RemoveUnwantedTracks - Tracks before removal: {} -> Tracks after removal: {}", fEvent->fTracks.size(),
-                 trackIDsToKeep.size());
+    const size_t numberOfTracksBefore = fEvent->fTracks.size();
 
     // TODO: there should be a faster way to do this without having to deep copy the tracks
     std::vector<Geant4Track> tracksAfterRemoval;
@@ -222,5 +221,10 @@ void OutputManager::RemoveUnwantedTracks() {
 
     fEvent->fTracks = tracksAfterRemoval;
 
-    spdlog::debug("OutputManager::RemoveUnwantedTracks - Final tracks: {}", fEvent->fTracks.size());
+    size_t numberOfSteps = 0;
+    for (const auto& track : fEvent->fTracks) {
+        numberOfSteps += track.fSteps.fN;
+    }
+    spdlog::info("OutputManager::RemoveUnwantedTracks - Tracks before removal: {} -> Tracks after removal: {} ({} steps)", numberOfTracksBefore,
+                 fEvent->fTracks.size(), numberOfSteps);
 }
