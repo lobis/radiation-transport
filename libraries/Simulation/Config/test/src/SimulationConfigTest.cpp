@@ -23,23 +23,18 @@ TEST(Config, Dictionary) {
         EXPECT_TRUE(TClass::GetClass(className) != nullptr);
     }
 }
-
+/*
 TEST(Config, RootFile) {
     const TString& filename = "/tmp/test.root";
+    std::filesystem::remove(filename.Data());
 
-    TFile file(filename, "RECREATE");
+    TFile file(filename, "CREATE");
 
-    SourceConfig sourceConfig;
-    PhysicsListConfig physicsListConfig;
-    DetectorConstructionConfig detectorConstructionConfig;
-    // SimulationConfig simulationConfig;
+    auto simulationConfig = new SimulationConfig();
 
     TTree tree("ConfigTree", "ConfigTree");
 
-    tree.Branch("fSourceConfig", &sourceConfig);
-    tree.Branch("fPhysicsListConfig", &physicsListConfig);
-    tree.Branch("fDetectorConstructionConfig", &detectorConstructionConfig);
-    // tree.Branch("fSimulationConfig", &simulationConfig);
+    tree.Branch("fSimulationConfig", &simulationConfig);
 
     tree.Fill();
 
@@ -52,36 +47,21 @@ TEST(Config, RootFile) {
 
     TTree* treeRead = fileRead.Get<TTree>("ConfigTree");
 
+    spdlog::info("Config Tree entries: {}", treeRead->GetEntries());
+
     treeRead->Print();
 
-    SourceConfig* sourceConfigRead;
-    PhysicsListConfig* physicsListConfigRead;
-    DetectorConstructionConfig* detectorConstructionConfigRead;
-    // SimulationConfig* simulationConfigRead;
+    SimulationConfig* simulationConfigRead;
 
-    treeRead->SetBranchAddress("fSourceConfig", &sourceConfigRead);
-    treeRead->SetBranchAddress("fPhysicsListConfig", &physicsListConfigRead);
-    treeRead->SetBranchAddress("fDetectorConstructionConfig", &detectorConstructionConfigRead);
-    // treeRead->SetBranchAddress("fSimulationConfig", &simulationConfigRead);
+    treeRead->SetBranchAddress("fSimulationConfig", &simulationConfigRead);
 
     treeRead->GetEntry(0);
 
-    EXPECT_TRUE(sourceConfigRead != nullptr);
+    EXPECT_TRUE(simulationConfigRead != nullptr);
 
-    sourceConfigRead->Print();
-
-    EXPECT_TRUE(physicsListConfigRead != nullptr);
-
-    physicsListConfigRead->Print();
-
-    EXPECT_TRUE(detectorConstructionConfigRead != nullptr);
-
-    detectorConstructionConfigRead->Print();
-
-    // EXPECT_TRUE(simulationConfigRead != nullptr);
-
-    // simulationConfigRead->Print();
+    simulationConfigRead->Print();
 }
+*/
 
 TEST(SimulationConfig, LoadFromFile) {
     const auto config = SimulationConfig(BASE_PATH + "files/simulation.yaml");

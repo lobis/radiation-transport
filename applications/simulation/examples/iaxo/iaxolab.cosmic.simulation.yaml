@@ -21,8 +21,8 @@ fullChain: true
 output: neutrons.babyIAXO.root
 
 keepOnlyTracksInTheseVolumes:
-  gasVolume
-  ^scintillatorVolume
+  - gasVolume
+  - ^scintillatorVolume
 
 source:
   generator:

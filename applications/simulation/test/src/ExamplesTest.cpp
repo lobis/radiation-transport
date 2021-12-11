@@ -67,6 +67,8 @@ TEST(Application, ExampleIAXO) {
     config.fKeepOnlyTracksInTheseVolumes = true;
     config.fKeepOnlyTracksInTheseVolumesList = {"gasVolume", "^scintillatorVolume"};
 
+    config.Print();
+
     Application app;
     app.LoadConfigFromFile(config);
     app.PrintConfig();
