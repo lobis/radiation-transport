@@ -17,7 +17,7 @@ defaults:
     shell: bash
 
 jobs:
-  build:
+  deploy:
     runs-on: ${{ github.event.inputs.target }}
 
     steps:
