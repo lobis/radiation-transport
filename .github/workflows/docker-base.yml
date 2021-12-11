@@ -14,7 +14,7 @@ on:
       GEANT4_VERSION:
         description: "Geant4 Version"
         required: true
-        default: "v10.7.3"
+        default: "v11.0.0"
 
       target:
         required: true
