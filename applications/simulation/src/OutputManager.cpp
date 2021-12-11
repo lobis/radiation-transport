@@ -178,7 +178,9 @@ void OutputManager::RemoveUnwantedTracks() {
     }
 
     set<int> trackIDsToKeep;
-    for (const auto& track : fEvent->fTracks) {
+    for (int i = 0; i < fEvent->fTracks.size(); i++) {
+        // We iterate in reverse order to reduce time
+        const auto& track = fEvent->fTracks[fEvent->fTracks.size() - 1 - i];
         if (trackIDsToKeep.count(track.fTrackID) > 0) {
             continue;
         }
@@ -220,5 +222,5 @@ void OutputManager::RemoveUnwantedTracks() {
 
     fEvent->fTracks = tracksAfterRemoval;
 
-    spdlog::warn("OutputManager::RemoveUnwantedTracks - Final tracks: {}", fEvent->fTracks.size());
+    spdlog::debug("OutputManager::RemoveUnwantedTracks - Final tracks: {}", fEvent->fTracks.size());
 }

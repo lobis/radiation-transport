@@ -141,7 +141,33 @@ void DetectorConstruction::ConstructSDandField() {
         G4VSensitiveDetector* sensitiveDetector = new SensitiveDetector(logicalVolume->GetName());
         SDManager->AddNewDetector(sensitiveDetector);
         logicalVolume->SetSensitiveDetector(sensitiveDetector);
+
+        auto region = new G4Region(logicalVolume->GetName());
+        logicalVolume->SetRegion(region);
     }
+}
+
+std::vector<G4LogicalVolume*> DetectorConstruction::GetAllLogicalVolumes() const {
+    auto logicalVolumes = std::vector<G4LogicalVolume*>();
+
+    for (int i = 0; i < fWorld->GetLogicalVolume()->GetNoDaughters(); i++) {
+        auto logical = fWorld->GetLogicalVolume()->GetDaughter(i)->GetLogicalVolume();
+
+        bool inserted = false;
+        for (const auto& insertedLogical : logicalVolumes) {
+            if (insertedLogical == logical) {
+                inserted = true;
+                break;
+            }
+        }
+        if (inserted) {
+            continue;
+        }
+
+        logicalVolumes.push_back(logical);
+    }
+
+    return logicalVolumes;
 }
 
 void DetectorConstruction::PrintGeometryInfo() {

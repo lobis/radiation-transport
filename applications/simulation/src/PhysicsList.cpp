@@ -22,6 +22,7 @@
 #include <G4HadronPhysicsQGSP_BIC_HP.hh>
 #include <G4IonBinaryCascadePhysics.hh>
 #include <G4IonPhysics.hh>
+#include <G4LogicalVolumeStore.hh>
 #include <G4LossTableManager.hh>
 #include <G4Material.hh>
 #include <G4MaterialTable.hh>
@@ -37,6 +38,7 @@
 #include <G4ProcessVector.hh>
 #include <G4RadioactiveDecayPhysics.hh>
 #include <G4RegionStore.hh>
+#include <G4RunManager.hh>
 #include <G4Scintillation.hh>
 #include <G4StoppingPhysics.hh>
 #include <G4SystemOfUnits.hh>
@@ -44,6 +46,7 @@
 #include <G4ios.hh>
 #include <globals.hh>
 
+#include "DetectorConstruction.h"
 #include "Exceptions.h"
 
 PhysicsList::PhysicsList(const PhysicsListConfig& config) : G4VModularPhysicsList(), fConfig(config) {
@@ -96,17 +99,23 @@ void PhysicsList::SetCuts() {
 
     G4ProductionCutsTable::GetProductionCutsTable()->SetEnergyRange(fConfig.fEnergyProductionCutsMin * keV, fConfig.fEnergyProductionCutsMax * keV);
 
-    /*
-    G4Region* region = G4RegionStore::GetInstance()->GetRegion("Garfield");
-    if (region) {
-        auto cuts = new G4ProductionCuts();
-        cuts->SetProductionCut(1 * um, G4ProductionCuts::GetIndex("gamma"));
-        cuts->SetProductionCut(1 * um, G4ProductionCuts::GetIndex("e-"));
-        cuts->SetProductionCut(1 * um, G4ProductionCuts::GetIndex("e+"));
-        region->SetProductionCuts(cuts);
+    auto detector = (const DetectorConstruction*)G4RunManager::GetRunManager()->GetUserDetectorConstruction();
+    for (const auto& logical : detector->GetAllLogicalVolumes()) {
+        if (logical->GetSensitiveDetector()) {
+            auto region = G4RegionStore::GetInstance()->GetRegion(logical->GetName());  // should never be null
+            if (!region) {
+                spdlog::error("PhysicsList::SetCuts - Logical volume '{}' with sensitive detector has no region", logical->GetName());
+                exit(1);
+            }
+            spdlog::info("PhysicsList::SetCuts - Setting cuts for logical volume '{}' which has sensitive detector", logical->GetName());
+
+            auto cuts = new G4ProductionCuts();
+            cuts->SetProductionCut(0.01 * mm, G4ProductionCuts::GetIndex("gamma"));
+            cuts->SetProductionCut(0.1 * mm, G4ProductionCuts::GetIndex("e-"));
+            cuts->SetProductionCut(0.1 * mm, G4ProductionCuts::GetIndex("e+"));
+            region->SetProductionCuts(cuts);
+        }
     }
-    DumpCutValuesTable();
-    */
 }
 
 void PhysicsList::ConstructParticle() { G4VModularPhysicsList::ConstructParticle(); }

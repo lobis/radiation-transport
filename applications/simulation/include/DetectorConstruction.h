@@ -28,6 +28,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
 
     bool CheckOverlaps() const;
 
+    std::vector<G4LogicalVolume*> GetAllLogicalVolumes() const;
+
    private:
     DetectorConstruction();
 
