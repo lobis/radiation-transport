@@ -65,9 +65,10 @@ RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git --branch=${GARFIELD
 ENV LD_LIBRARY_PATH $APPS_DIR/garfieldpp/install/lib:$LD_LIBRARY_PATH
 
 RUN echo "#!/bin/bash" >> /entry-point.sh
+RUN echo "source $APPS_DIR/geant4/install/bin/geant4.sh" >> /entry-point.sh
 RUN echo "source $APPS_DIR/root/install/bin/thisroot.sh" >> /entry-point.sh
 RUN echo "source $APPS_DIR/garfieldpp/install/share/Garfield/setupGarfield.sh" >> /entry-point.sh
-RUN echo "source $APPS_DIR/geant4/install/bin/geant4.sh" >> /entry-point.sh
+RUN echo "export ROOT_INCLUDE_PATH=$APPS_DIR/garfieldpp/install/include" >> /entry-point.sh
 RUN echo "exec \"\$@\"" >> /entry-point.sh
 RUN chmod +x /entry-point.sh
 RUN mv /entry-point.sh /usr/local/bin/entry-point.sh
