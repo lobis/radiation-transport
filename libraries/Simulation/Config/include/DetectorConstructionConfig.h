@@ -34,6 +34,9 @@ class DetectorConstructionConfig : public SerializableConfig {
    public:
     std::string fConfigAbsolutePath;
     std::string GetGeometryAbsolutePath() const;
+
+    bool fKeepOnlyTracksInTheseVolumes = false;
+    std::vector<std::string> fKeepOnlyTracksInTheseVolumesList = {};
 };
 
 #endif  // RADIATION_TRANSPORT_DETECTORCONSTRUCTIONCONFIG_H

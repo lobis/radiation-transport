@@ -13,16 +13,15 @@ detector:
   volumes:
     - name: gasVolume
       sensitive: true
+  keepOnlyTracksInTheseVolumes:
+    - gasVolume
+    - ^scintillatorVolume
 
 numberOfEvents: 100000
 
 fullChain: true
 
 output: neutrons.babyIAXO.root
-
-keepOnlyTracksInTheseVolumes:
-  - gasVolume
-  - ^scintillatorVolume
 
 source:
   generator:

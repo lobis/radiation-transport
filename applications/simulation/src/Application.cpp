@@ -6,6 +6,7 @@
 
 #include <SteppingVerbose.h>
 #include <TROOT.h>
+#include <TStopwatch.h>
 #include <TSystem.h>
 #include <spdlog/spdlog.h>
 #include <unistd.h>
@@ -188,11 +189,18 @@ void Application::RunMacro(const vector<string>& macroLines) {
 }
 
 void Application::Run() {
+    TStopwatch timer;
+    timer.Start();
+
     UserInitialization();
     Initialize();
 
     spdlog::info("Application::Run - numberOfEvents: {}", fConfig.fNumberOfEvents);
     G4UImanager::GetUIpointer()->ApplyCommand(TString::Format("/run/beamOn %d", fConfig.fNumberOfEvents));
+
+    spdlog::info("Time elapsed {:0.2f} seconds", timer.RealTime());
+    auto filename = fConfig.GetOutputFileAbsolutePath();
+    spdlog::info("The size of {} is {:0.2f} MB", filename, std::filesystem::file_size(filename) / 1E6);
 }
 
 Application::~Application() {

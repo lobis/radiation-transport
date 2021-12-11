@@ -128,13 +128,13 @@ void OutputManager::AddSensitiveEnergy(Double_t energy, const TString& physicalV
 
 void OutputManager::RemoveUnwantedTracks() {
     const auto& config = GlobalManager::Instance()->GetSimulationConfig();
-    if (!config.fKeepOnlyTracksInTheseVolumes) {
+    if (!config.fDetectorConfig.fKeepOnlyTracksInTheseVolumes) {
         return;
     }
     if (fKeepOnlyTracksInTheseVolumesListAfterProcessing.empty()) {
         // Check volumes are OK
         const auto& geometryInfo = fEvent->fEventHeader->GetGeant4GeometryInfo();
-        for (const auto& volumeString : config.fKeepOnlyTracksInTheseVolumesList) {
+        for (const auto& volumeString : config.fDetectorConfig.fKeepOnlyTracksInTheseVolumesList) {
             if (geometryInfo->IsValidPhysicalVolume(volumeString)) {
                 fKeepOnlyTracksInTheseVolumesListAfterProcessing.insert(geometryInfo->GetAlternativeNameFromGeant4PhysicalName(volumeString));
             } else if (geometryInfo->IsValidLogicalVolume(volumeString)) {
@@ -168,7 +168,7 @@ void OutputManager::RemoveUnwantedTracks() {
             exit(1);
         }
         spdlog::info("OutputManager::RemoveUnwantedTracks - User requested volume strings:");
-        for (const auto& volumeString : config.fKeepOnlyTracksInTheseVolumesList) {
+        for (const auto& volumeString : config.fDetectorConfig.fKeepOnlyTracksInTheseVolumesList) {
             spdlog::info("\t- {}", volumeString);
         }
         spdlog::info("OutputManager::RemoveUnwantedTracks - Resolved physical volumes:");

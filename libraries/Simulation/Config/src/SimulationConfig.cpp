@@ -63,11 +63,6 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
         fSaveAllEvents = node["saveAllEvents"].as<bool>();
     }
 
-    if (node["keepOnlyTracksInTheseVolumes"]) {
-        fKeepOnlyTracksInTheseVolumes = true;
-        fKeepOnlyTracksInTheseVolumesList = node["keepOnlyTracksInTheseVolumes"].as<vector<string>>();
-    }
-
     if (node["detector"]) {
         fDetectorConfig.Deserialize(node["detector"]);
         fDetectorConfig.fConfigAbsolutePath = fConfigAbsolutePath;
@@ -83,27 +78,23 @@ void SimulationConfig::Deserialize(const YAML::Node& node) {
 }
 
 YAML::Node SimulationConfig::Serialize() const {
-    YAML::Node configNode;
+    YAML::Node node;
 
-    configNode["verboseLevel"] = fVerboseLevel;
-    configNode["runManagerType"] = fRunManagerType;
-    configNode["numberOfEvents"] = fNumberOfEvents;
-    configNode["threads"] = fThreads;
-    configNode["seed"] = fSeed;
-    configNode["commands"] = fCommands;
-    configNode["output"] = fOutputFilename;
-    configNode["fullChain"] = fFullChain;
-    configNode["saveAllEvents"] = fSaveAllEvents;
+    node["verboseLevel"] = fVerboseLevel;
+    node["runManagerType"] = fRunManagerType;
+    node["numberOfEvents"] = fNumberOfEvents;
+    node["threads"] = fThreads;
+    node["seed"] = fSeed;
+    node["commands"] = fCommands;
+    node["output"] = fOutputFilename;
+    node["fullChain"] = fFullChain;
+    node["saveAllEvents"] = fSaveAllEvents;
 
-    if (fKeepOnlyTracksInTheseVolumes || !fKeepOnlyTracksInTheseVolumesList.empty()) {
-        configNode["keepOnlyTracksInTheseVolumes"] = fKeepOnlyTracksInTheseVolumesList;
-    }
+    node["detector"] = fDetectorConfig.Serialize();
+    node["physics"] = fPhysicsListConfig.Serialize();
+    node["source"] = fSourceConfig.Serialize();
 
-    configNode["detector"] = fDetectorConfig.Serialize();
-    configNode["physics"] = fPhysicsListConfig.Serialize();
-    configNode["source"] = fSourceConfig.Serialize();
-
-    return configNode;
+    return node;
 }
 
 SimulationConfig::SimulationConfig(const string& filename) {

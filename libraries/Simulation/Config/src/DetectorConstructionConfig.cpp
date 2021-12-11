@@ -55,6 +55,11 @@ void DetectorConstructionConfig::Deserialize(const YAML::Node& node) {
             fVolumes.push_back(volume);
         }
     }
+
+    if (node["keepOnlyTracksInTheseVolumes"]) {
+        fKeepOnlyTracksInTheseVolumes = true;
+        fKeepOnlyTracksInTheseVolumesList = node["keepOnlyTracksInTheseVolumes"].as<vector<string>>();
+    }
 }
 
 YAML::Node DetectorConstructionConfig::Serialize() const {
@@ -63,6 +68,10 @@ YAML::Node DetectorConstructionConfig::Serialize() const {
     node["geometry"] = fGeometryFilename;
     node["checkOverlaps"] = fCheckOverlaps;
     node["volumes"] = fVolumes;
+
+    if (fKeepOnlyTracksInTheseVolumes || !fKeepOnlyTracksInTheseVolumesList.empty()) {
+        node["keepOnlyTracksInTheseVolumes"] = fKeepOnlyTracksInTheseVolumesList;
+    }
 
     return node;
 }

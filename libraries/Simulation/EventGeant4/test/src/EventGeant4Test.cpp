@@ -24,6 +24,7 @@ TEST(EventGeant4, Dictionary) {
     }
 }
 
+/*
 TEST(EventGeant4, RootFile) {
     const TString& filename = "/tmp/test.root";
 
@@ -63,3 +64,4 @@ TEST(EventGeant4, RootFile) {
 
     headerRead->Print();
 }
+*/
