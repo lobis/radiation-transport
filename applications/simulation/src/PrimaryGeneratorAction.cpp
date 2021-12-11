@@ -213,7 +213,7 @@ void PrimaryGeneratorAction::Initialize() {
         fEnergyDistribution->SetEnergyDisType("Pow");
         if (fSourceConfig.fEnergyDistributionType == "cosmicMuonsSeaLevel") {
             fEnergyDistribution->SetAlpha(-2.7);
-            if (fParticle->GetParticleName() != "mu-" || fParticle->GetParticleName() != "mu+") {
+            if (fParticle->GetParticleName() != "mu-" && fParticle->GetParticleName() != "mu+") {
                 spdlog::warn("Using '{}' energy distribution for particle '{}'", fSourceConfig.fEnergyDistributionType, fParticle->GetParticleName());
             }
         } else if (fSourceConfig.fEnergyDistributionType == "cosmicNeutronsSeaLevel") {
