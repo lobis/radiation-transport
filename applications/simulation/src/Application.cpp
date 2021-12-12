@@ -72,6 +72,10 @@ void Application::UserInitialization() {
 void Application::Initialize() {
     fRunManager->Initialize();
 
+    if (G4Threading::IsMasterThread()) {
+        GlobalManager::Instance()->SetupFile();
+    }
+
     auto UImanager = G4UImanager::GetUIpointer();
 
     size_t numberOfCommands = fConfig.fCommands.size();

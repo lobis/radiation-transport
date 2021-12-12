@@ -16,13 +16,7 @@
 #include "SteppingVerbose.h"
 #include "TrackingAction.h"
 
-ActionInitialization::ActionInitialization() : G4VUserActionInitialization() {
-    spdlog::debug("ActionInitialization::ActionInitialization");
-
-    if (G4Threading::IsMasterThread()) {
-        GlobalManager::Instance()->SetupFile();
-    }
-}
+ActionInitialization::ActionInitialization() : G4VUserActionInitialization() { spdlog::debug("ActionInitialization::ActionInitialization"); }
 
 ActionInitialization::~ActionInitialization() = default;
 
