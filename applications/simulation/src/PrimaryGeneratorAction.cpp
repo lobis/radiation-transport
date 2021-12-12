@@ -149,26 +149,8 @@ G4ThreeVector PrimaryGeneratorAction::GetDirection() const {
 
     spdlog::debug("PrimaryGeneratorAction::GetDirection - NOT Generating from Geant4 - {}", fSourceConfig.fAngularDistributionType);
 
-    G4ThreeVector direction;
-    if (fSourceConfig.fAngularDistributionType == "cos2") {
-        // TODO: NOT WORKING YET
-        auto phi = G4UniformRand() * 2 * TMath::Pi();
-        auto theta = fAngularDistributionCustomFunctionCDF->GetX(G4UniformRand());
-
-        auto sampledDirection = TVector3({TMath::Cos(phi) * TMath::Sin(theta),  //
-                                          TMath::Sin(phi) * TMath::Sin(theta),  //
-                                          TMath::Cos(theta)})
-                                    .Unit();
-        TRotation r;
-        r.RotateX(TMath::Pi() / 2);
-        sampledDirection = r * sampledDirection;
-        direction = {sampledDirection.x(), sampledDirection.y(), sampledDirection.z()};
-    } else {
-        spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
-        exit(1);
-    }
-
-    return direction;
+    spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
+    exit(1);
 }
 
 G4ThreeVector PrimaryGeneratorAction::GetPosition() const {
@@ -179,12 +161,8 @@ G4ThreeVector PrimaryGeneratorAction::GetPosition() const {
 
     spdlog::debug("PrimaryGeneratorAction::GetPosition - NOT Generating from Geant4 - {}", fSourceConfig.fPositionDistributionType);
 
-    G4ThreeVector position;
-
     spdlog::error("Position distribution type '{}' sampling not implemented yet", fSourceConfig.fPositionDistributionType);
     exit(1);
-
-    return position;
 }
 
 void PrimaryGeneratorAction::Initialize() {
@@ -209,33 +187,45 @@ void PrimaryGeneratorAction::Initialize() {
     if (fSourceConfig.fEnergyDistributionType == "mono") {
         fEnergyDistribution->SetEnergyDisType("Mono");
         fEnergyDistribution->SetMonoEnergy(fSourceConfig.fEnergyDistributionMonoValue * fEnergyScaleFactor);
-    } else if (fSourceConfig.fEnergyDistributionType == "cosmicMuonsSeaLevel" || fSourceConfig.fEnergyDistributionType == "cosmicNeutronsSeaLevel") {
+    } else if (fSourceConfig.fEnergyDistributionType == "cosmicMuonsSeaLevel") {
+        if (fParticle->GetParticleName() != "mu-" && fParticle->GetParticleName() != "mu+") {
+            spdlog::warn("Using '{}' energy distribution for particle '{}'", fSourceConfig.fEnergyDistributionType, fParticle->GetParticleName());
+        }
+        fEnergyDistribution->SetEnergyDisType("User");
+        fEnergyDistribution->ReSetHist("energy");
+
+        // formula in GeV
+        auto momentum = TF1("muonMomentumSeaLevel", "TMath::Power(x, -0.4854 - 0.3406 * TMath::Log(x))", 0.2, 328);
+        auto energy = TF1("muonEnergySeaLevel", "TMath::Sqrt(muonMomentumSeaLevel(x)^2 + 0.1057^2) - 0.1057", 0.2, 328);
+        // More info on https://geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/GettingStarted/generalParticleSource.html
+        fEnergyDistribution->UserEnergyHisto(
+            {fSourceConfig.fEnergyDistributionLimitMin * fEnergyScaleFactor, 0});  // left edge of bin (value not used)
+        const int n = 1024;
+        const double step = (fSourceConfig.fEnergyDistributionLimitMax - fSourceConfig.fEnergyDistributionLimitMin) / n * fEnergyScaleFactor;
+        for (int i = 0; i < n; i++) {
+            auto binCenter = (i + 0.5) * step;
+            auto binRightBoundary = (i + 1) * step;
+            // we input the upper boundary of the bin!
+            // value in Gev!
+            fEnergyDistribution->UserEnergyHisto({binRightBoundary, energy.Eval(binCenter * fEnergyScaleFactor / 1E6)});
+        }
+
+    } else if (fSourceConfig.fEnergyDistributionType == "cosmicNeutronsSeaLevel") {
         fEnergyDistribution->SetEnergyDisType("Pow");
-        if (fSourceConfig.fEnergyDistributionType == "cosmicMuonsSeaLevel") {
-            fEnergyDistribution->SetAlpha(-2.7);
-            if (fParticle->GetParticleName() != "mu-" && fParticle->GetParticleName() != "mu+") {
-                spdlog::warn("Using '{}' energy distribution for particle '{}'", fSourceConfig.fEnergyDistributionType, fParticle->GetParticleName());
-            }
-        } else if (fSourceConfig.fEnergyDistributionType == "cosmicNeutronsSeaLevel") {
-            fEnergyDistribution->SetAlpha(-1.36287);
-            if (fParticle->GetParticleName() != "neutron") {
-                spdlog::warn("Using '{}' energy distribution for particle '{}'", fSourceConfig.fEnergyDistributionType, fParticle->GetParticleName());
-            }
-        } else {
-            spdlog::error("Energy distribution type '{}' sampling not implemented yet", fSourceConfig.fEnergyDistributionType);
+        fEnergyDistribution->SetAlpha(-1.36287);
+        if (fParticle->GetParticleName() != "neutron") {
+            spdlog::warn("Using '{}' energy distribution for particle '{}'", fSourceConfig.fEnergyDistributionType, fParticle->GetParticleName());
         }
     } else {
-        fEnergyDistribution = nullptr;
         spdlog::error("Energy distribution type '{}' sampling not implemented yet", fSourceConfig.fEnergyDistributionType);
         exit(1);
     }
-    if (fEnergyDistribution) {
-        auto energyDistString = fEnergyDistribution->GetEnergyDisType();
-        if (fEnergyDistribution->GetEnergyDisType() == "Pow") {
-            energyDistString += TString::Format(" (E^%0.2f)", fEnergyDistribution->Getalpha());
-        }
-        spdlog::info("Geant4 energy distribution: {}", energyDistString);
+
+    auto energyDistString = fEnergyDistribution->GetEnergyDisType();
+    if (fEnergyDistribution->GetEnergyDisType() == "Pow") {
+        energyDistString += string(TString::Format(" (E^%0.2f)", fEnergyDistribution->Getalpha()));
     }
+    spdlog::info("Geant4 energy distribution: {}", energyDistString);
 
     // Position
     if (!G4UnitDefinition::IsUnitDefined(fSourceConfig.fPositionDistributionUnit) ||
@@ -275,16 +265,14 @@ void PrimaryGeneratorAction::Initialize() {
         spdlog::error("cannot process '{}' position dist yet", fSourceConfig.fPositionDistributionType);
         exit(1);
     }
-    if (fPositionDistribution) {
-        spdlog::info("Geant4 position distribution: {}", fPositionDistribution->GetPosDisType());
-    }
+    spdlog::info("Geant4 position distribution: {}", fPositionDistribution->GetPosDisType());
 
     // Angular
     fAngularDistribution->SetMinTheta(fSourceConfig.fAngularDistributionLimitThetaMin);
     fAngularDistribution->SetMaxTheta(fSourceConfig.fAngularDistributionLimitThetaMax);
 
-    fAngularDistribution->SetMinTheta(fSourceConfig.fAngularDistributionLimitPhiMin);
-    fAngularDistribution->SetMaxTheta(fSourceConfig.fAngularDistributionLimitPhiMax);
+    fAngularDistribution->SetMinPhi(fSourceConfig.fAngularDistributionLimitPhiMin);
+    fAngularDistribution->SetMaxPhi(fSourceConfig.fAngularDistributionLimitPhiMax);
 
     if (fSourceConfig.fAngularDistributionType == "flux") {
         fAngularDistribution->SetAngDistType("planar");
@@ -293,23 +281,26 @@ void PrimaryGeneratorAction::Initialize() {
     } else if (fSourceConfig.fAngularDistributionType == "isotropic") {
         fAngularDistribution->SetAngDistType("iso");
     } else if (fSourceConfig.fAngularDistributionType == "cos2") {
-        fAngularDistribution = nullptr;
+        fAngularDistribution->SetAngDistType("user");
+        fAngularDistribution->ReSetHist("theta");
+
+        // More info on https://geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/GettingStarted/generalParticleSource.html
+        fAngularDistribution->UserDefAngTheta({0, 0});  // left edge of bin (value not used)
+        const int n = 1024;
+        const double step = (TMath::Pi() / 2) / n;
+        for (int i = 0; i < n; i++) {
+            auto binCenter = (i + 0.5) * step;
+            auto binRightBoundary = (i + 1) * step;
+            // we input the upper boundary of the bin!
+            fAngularDistribution->UserDefAngTheta({binRightBoundary, TMath::Power(TMath::Cos(binCenter), 2)});
+        }
+
     } else {
         fAngularDistribution = nullptr;
         spdlog::error("Angular distribution type '{}' sampling not implemented yet", fSourceConfig.fAngularDistributionType);
         exit(1);
     }
-    if (fAngularDistribution) {
-        spdlog::info("Geant4 angular distribution: {}", fAngularDistribution->GetDistType());
-    } else {
-        spdlog::info("NON Geant4 angular distribution: {}", fSourceConfig.fAngularDistributionType);
-        if (fSourceConfig.fAngularDistributionType == "cos2") {
-            fAngularDistributionCustomFunctionCDF = new TF1("cos2CDF", "2 * x / TMath::Pi() + TMath::Sin(2 * x) / TMath::Pi()", 0, TMath::Pi() / 2);
-        } else {
-            spdlog::error("distribution not implemented");
-            exit(1);
-        }
-    }
+    spdlog::info("Geant4 angular distribution: {}", fAngularDistribution->GetDistType());
 
     fInitialized = true;
 }

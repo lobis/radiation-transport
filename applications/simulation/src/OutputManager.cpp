@@ -101,6 +101,7 @@ bool OutputManager::IsEmptyEvent() const { return !fEvent || fEvent->fTracks.emp
 bool OutputManager::IsValidEvent() const {
     if (IsEmptyEvent()) return false;
     if (GlobalManager::Instance()->GetSimulationConfig().fSaveAllEvents) return true;
+    if (fEvent->fPrimaryParticleName == "geantino") return true;
     if (fEvent->fSensitiveVolumesTotalEnergy <= 0) return false;
     return true;
 }

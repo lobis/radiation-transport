@@ -181,8 +181,10 @@ Long64_t GlobalManager::GetEntries() {
     if (!fEventTree) return 0;
     if (G4Threading::IsMultithreadedApplication()) {
         lock_guard<mutex> guard(fEventContainerMutex);
+        return fEventTree->GetEntries();
+    } else {
+        return fEventTree->GetEntries();
     }
-    return fEventTree->GetEntries();
 }
 
 size_t GlobalManager::InsertEvent(std::unique_ptr<Geant4Event>& event) {
