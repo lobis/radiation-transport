@@ -39,14 +39,15 @@ class GlobalManager {
 
     inline void SetSimulationConfig(const SimulationConfig& simulationConfig) { fSimulationConfig = simulationConfig; }
     inline const SimulationConfig& GetSimulationConfig() const { return fSimulationConfig; }
-    static inline void SetRunTimestamp() { fEventHeader.fTimestamp = std::time(nullptr); }
-    static inline Geant4EventHeader fEventHeader;
+    static inline void SetRunTimestamp() { fEventHeader->fTimestamp = std::time(nullptr); }
+    inline Geant4EventHeader* GetEventHeader() const { return fEventHeader; }
 
    private:
     GlobalManager();
     static GlobalManager* pinstance_;
 
     SimulationConfig fSimulationConfig;
+    static inline Geant4EventHeader* fEventHeader;
 
     bool fInitialized = false;
 

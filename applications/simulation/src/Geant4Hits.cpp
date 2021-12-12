@@ -64,8 +64,8 @@ void Geant4Hits::InsertStep(const G4Step* step) {
     }
     const auto volumeID = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
 
-    volumeNamePre = GlobalManager::fEventHeader.GetGeant4GeometryInfo()->GetAlternativeNameFromGeant4PhysicalName(volumeNamePre);
-    volumeNamePost = GlobalManager::fEventHeader.GetGeant4GeometryInfo()->GetAlternativeNameFromGeant4PhysicalName(volumeNamePost);
+    volumeNamePre = GlobalManager::Instance()->GetEventHeader()->GetGeant4GeometryInfo()->GetAlternativeNameFromGeant4PhysicalName(volumeNamePre);
+    volumeNamePost = GlobalManager::Instance()->GetEventHeader()->GetGeant4GeometryInfo()->GetAlternativeNameFromGeant4PhysicalName(volumeNamePost);
 
     const auto& volumeName = volumeNamePre;
 

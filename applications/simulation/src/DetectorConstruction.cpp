@@ -58,8 +58,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     spdlog::info("DetectorConstruction::Construct - Reading geometry from '{}'", fGeometryFilename.c_str());
 
     auto geometryInfo = new Geant4GeometryInfo();
-    GlobalManager::fEventHeader.fGeant4GeometryInfo = geometryInfo;
-    GlobalManager::fEventHeader.fSimulationConfig = &GlobalManager::Instance()->GetSimulationConfig();
+    GlobalManager::Instance()->GetEventHeader()->fGeant4GeometryInfo = geometryInfo;
+    GlobalManager::Instance()->GetEventHeader()->fSimulationConfig = &GlobalManager::Instance()->GetSimulationConfig();
     // read extension
     if (fGeometryFilename.extension() == ".gdml") {
         spdlog::debug("Reading geometry as GDML");

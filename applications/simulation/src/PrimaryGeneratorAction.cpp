@@ -200,7 +200,7 @@ void PrimaryGeneratorAction::Initialize() {
         // More info on https://geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/GettingStarted/generalParticleSource.html
         fEnergyDistribution->UserEnergyHisto(
             {fSourceConfig.fEnergyDistributionLimitMin * fEnergyScaleFactor, 0});  // left edge of bin (value not used)
-        const int n = 1024;
+        const int n = 1024 - 1;
         const double step = (fSourceConfig.fEnergyDistributionLimitMax - fSourceConfig.fEnergyDistributionLimitMin) / n * fEnergyScaleFactor;
         for (int i = 0; i < n; i++) {
             auto binCenter = (i + 0.5) * step;
@@ -286,7 +286,7 @@ void PrimaryGeneratorAction::Initialize() {
 
         // More info on https://geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/GettingStarted/generalParticleSource.html
         fAngularDistribution->UserDefAngTheta({0, 0});  // left edge of bin (value not used)
-        const int n = 1024;
+        const int n = 1024 - 1;
         const double step = (TMath::Pi() / 2) / n;
         for (int i = 0; i < n; i++) {
             auto binCenter = (i + 0.5) * step;

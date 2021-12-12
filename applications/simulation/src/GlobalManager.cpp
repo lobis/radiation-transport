@@ -35,6 +35,9 @@ GlobalManager::GlobalManager() {
         spdlog::error("GlobalManager: GlobalManager should never be created by worker thread");
         exit(1);
     }
+
+    fEventHeader = new Geant4EventHeader();
+    SetRunTimestamp();
 }
 
 GlobalManager::~GlobalManager() = default;
@@ -73,7 +76,6 @@ void GlobalManager::SetupFile() {
     if (!G4Threading::IsMasterThread()) {
         spdlog::error("GlobalManager::SetupFile - Called outside main thread, exiting");
         exit(1);
-        return;
     }
     if (!fSimulationConfig.fSave) {
         spdlog::info("GlobalManager::SetupFile - Saving events is disabled");
@@ -161,6 +163,7 @@ void GlobalManager::WriteEventsAndCloseFile() {
             mergeTree->Write(nullptr, TObject::kOverwrite);
         } else {
             fEventTree->SetName(fEventTreeName);  // important to name it here, else merge won't work!
+            fEventTree->GetUserInfo()->Add(fEventHeader);
             fEventTree->Write();
             spdlog::info("GlobalManager::WriteEventsAndCloseFile - Total events: {} - Closing and deleting 'fFile' ({})", fEventTree->GetEntries(),
                          fFile->GetName());
@@ -168,7 +171,6 @@ void GlobalManager::WriteEventsAndCloseFile() {
     }
 
     // fConfigTree->Write();
-
     spdlog::info("Output file: '{}'", fFile->GetName());
 
     if (fFile) {

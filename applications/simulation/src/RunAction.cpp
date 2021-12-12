@@ -6,6 +6,7 @@
 
 #include <TGeoManager.h>
 #include <TString.h>
+#include <spdlog/spdlog.h>
 #include <unistd.h>
 
 #include <G4IonTable.hh>
@@ -19,7 +20,6 @@
 #include "GlobalManager.h"
 #include "OutputManager.h"
 #include "SteppingVerbose.h"
-#include <spdlog/spdlog.h>
 
 using namespace std;
 
@@ -35,11 +35,6 @@ RunAction::~RunAction() = default;
 
 void RunAction::BeginOfRunAction(const G4Run* aRun) {
     spdlog::info("RunAction::BeginOfRunAction ---> Begin of run {}", aRun->GetRunID());
-
-    if (G4Threading::IsMasterThread()) {
-        GlobalManager::Instance()->SetupFile();
-        GlobalManager::Instance()->SetRunTimestamp();
-    }
 
     auto steppingVerbose = ((SteppingVerbose*)G4VSteppingVerbose::GetInstance());
     steppingVerbose->SetSteppingVerbose(1);

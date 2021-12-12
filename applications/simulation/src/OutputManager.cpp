@@ -41,7 +41,7 @@ OutputManager* OutputManager::Instance() {
 void OutputManager::UpdateEvent() {
     auto event = G4EventManager::GetEventManager()->GetConstCurrentEvent();
     fEvent = make_unique<Geant4Event>(event);
-    fEvent->fEventHeader = &GlobalManager::fEventHeader;
+    fEvent->fEventHeader = GlobalManager::Instance()->GetEventHeader();
 }
 
 /*!

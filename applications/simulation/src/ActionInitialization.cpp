@@ -8,6 +8,7 @@
 
 #include "DetectorConstruction.h"
 #include "EventAction.h"
+#include "GlobalManager.h"
 #include "PrimaryGeneratorAction.h"
 #include "RunAction.h"
 #include "StackingAction.h"
@@ -15,7 +16,13 @@
 #include "SteppingVerbose.h"
 #include "TrackingAction.h"
 
-ActionInitialization::ActionInitialization() : G4VUserActionInitialization() { spdlog::debug("ActionInitialization::ActionInitialization"); }
+ActionInitialization::ActionInitialization() : G4VUserActionInitialization() {
+    spdlog::debug("ActionInitialization::ActionInitialization");
+
+    if (G4Threading::IsMasterThread()) {
+        GlobalManager::Instance()->SetupFile();
+    }
+}
 
 ActionInitialization::~ActionInitialization() = default;
 

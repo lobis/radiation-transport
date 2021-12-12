@@ -14,7 +14,7 @@
 
 #include "Geant4GeometryInfo.h"
 
-class Geant4EventHeader {
+class Geant4EventHeader : public TObject {
     ClassDef(Geant4EventHeader, 1);
 
    public:
