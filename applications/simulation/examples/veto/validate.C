@@ -26,7 +26,7 @@ int validate(const TString& filename = "exampleSingleVetoMuonsFromDisk.root") {
 
     cout << "Average energy is " << averageEnergy << " keV" << endl;
 
-    if (averageEnergy <= 13000 && averageEnergy > 12000) {
+    if (averageEnergy <= 13500 && averageEnergy > 12500) {
         cout << "Average energy within range" << endl;
         return 0;
     }
