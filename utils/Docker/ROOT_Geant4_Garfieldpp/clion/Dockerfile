@@ -55,7 +55,7 @@ RUN ( \
     echo 'XauthLocation /usr/bin/xauth'; \
     ) >> /etc/ssh/ssh_config
 
-RUN useradd -m $USER && yes $PASSWORD | passwd $USER
+RUN useradd -rm -d /home/${USER} -s /bin/bash -g root -G sudo -u 1001 ${USER} && yes ${PASSWORD} | passwd ${USER}
 
 # Jupyter
 RUN pip3 -q install pip --upgrade && \
@@ -63,17 +63,14 @@ RUN pip3 -q install pip --upgrade && \
     pip3 -q install uproot awkward matplotlib scipy pandas mplhep boost_histogram \
     jupyterlab jupyterlab_code_formatter black isort autopep8
 
-RUN cp /root/.bashrc /home/$USER/.bashrc
+RUN cp /root/.bashrc /home/${USER}/.bashrc
 
-RUN usermod -s /bin/bash $USER
-RUN usermod -aG sudo $USER
+USER ${USER}
 
-WORKDIR /home/$USER
+WORKDIR /home/${USER}
 
-USER $USER
-
-RUN echo 'export DISPLAY=localhost:0' >> /home/$USER/.bashrc
-RUN mkdir -p /home/$USER/Notebooks
-RUN echo "alias start-jupyter='cd /home/$USER/Notebooks && jupyter lab --ip=0.0.0.0 --no-browser'" >> /home/$USER/.bashrc
+RUN echo 'export DISPLAY=localhost:0' >> /home/${USER}/.bashrc
+RUN mkdir -p /home/${USER}/Notebooks
+RUN echo "alias start-jupyter='cd /home/${USER}/Notebooks && jupyter lab --ip=0.0.0.0 --no-browser'" >> /home/${USER}/.bashrc
 
 CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_test_clion"]
