@@ -1,6 +1,8 @@
 ARG CMAKE_CXX_STANDARD
 ARG ROOT_VERSION
 ARG GEANT4_VERSION
+ARG USER=user
+ARG PASSWORD=password
 
 FROM ghcr.io/lobis/root-geant4-garfieldpp:cxx${CMAKE_CXX_STANDARD}_ROOT${ROOT_VERSION}_Geant4${GEANT4_VERSION}
 
@@ -25,7 +27,8 @@ RUN apt-get update \
     nano \
     x11-apps \
     nodejs \
-    && apt-get clean
+    sudo \
+    && apt-get upgrade -y && apt-get clean
 
 # Add Tini
 ENV TINI_VERSION v0.19.0
@@ -52,25 +55,25 @@ RUN ( \
     echo 'XauthLocation /usr/bin/xauth'; \
     ) >> /etc/ssh/ssh_config
 
-RUN useradd -m user && yes password | passwd user
+RUN useradd -m $USER && yes $PASSWORD | passwd $USER
 
 # Jupyter
 RUN pip3 -q install pip --upgrade && \
     pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 -q install && \
-    pip3 -q install uproot awkward matplotlib scipy pandas mplhep boost_histogram jupyterlab
+    pip3 -q install uproot awkward matplotlib scipy pandas mplhep boost_histogram \
+    jupyterlab jupyterlab_code_formatter black isort autopep8
 
-RUN cp /root/.bashrc /home/user/.bashrc
+RUN cp /root/.bashrc /home/$USER/.bashrc
 
-RUN usermod -s /bin/bash user
+RUN usermod -s /bin/bash $USER
+RUN usermod -aG sudo $USER
 
-WORKDIR /home/user
+WORKDIR /home/$USER
 
-RUN echo 'export DISPLAY=localhost:0' >> /home/user/.bashrc
+USER $USER
 
-RUN mkdir -p /home/user/Notebooks
-RUN echo "alias start-jupyter='cd /home/user/Notebooks && jupyter lab --ip=0.0.0.0 --no-browser'" >> /home/user/.bashrc
-
-EXPOSE 2222
-EXPOSE 8888
+RUN echo 'export DISPLAY=localhost:0' >> /home/$USER/.bashrc
+RUN mkdir -p /home/$USER/Notebooks
+RUN echo "alias start-jupyter='cd /home/$USER/Notebooks && jupyter lab --ip=0.0.0.0 --no-browser'" >> /home/$USER/.bashrc
 
 CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_test_clion"]
