@@ -10,7 +10,30 @@ ClassImp(Geant4Event);
 
 using namespace std;
 
-void Geant4Event::Print() const { spdlog::info("Not implemented yet!"); }
+namespace fmt {
+template <>
+struct formatter<TVector3> {
+    constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) { return ctx.end(); }
+
+    template <typename FormatContext>
+    auto format(const TVector3& input, FormatContext& ctx) -> decltype(ctx.out()) {
+        return format_to(ctx.out(), "({:0.2f}, {:0.2f}, {:0.2f})", input.x(), input.y(), input.z());
+    }
+};
+}  // namespace fmt
+
+void Geant4Event::Print() const {
+    spdlog::info("EventID: {} - SubEventID {} - Total Sensitive Energy: {:0.2f} keV", fEventID, fSubEventID, fSensitiveVolumesTotalEnergy);
+    spdlog::info("Primary: {} - Energy {:0.2f} keV - Position {} mm - Direction {}", fPrimaryParticleName, fPrimaryEnergy, fPrimaryPosition,
+                 fPrimaryMomentum);
+    if (fSubEventID != 0) {
+        spdlog::info("SubEvent Primary: {} - Energy {:0.2f} keV - Position {} mm - Direction {}", fSubEventPrimaryParticleName, fSubEventPrimaryEnergy,
+                     fSubEventPrimaryPosition, fSubEventPrimaryMomentum);
+    }
+    for (const auto& track : fTracks) {
+        track.Print();
+    }
+}
 
 void Geant4Event::PrintSensitiveInfo() const {
     spdlog::info("Geant4Event::PrintSensitiveInfo - EventID: {} - SubEventID: {}", fEventID, fSubEventID);
