@@ -24,19 +24,19 @@ Geant4Track::Geant4Track(const G4Track* track) : Geant4Track() {
     fParticleType = particle->GetParticleType();
     fParticleSubType = particle->GetParticleSubType();
 
-    auto creatorProcess = track->GetCreatorProcess();
-    if (creatorProcess) {
-        fCreatorProcess = creatorProcess->GetProcessName();
+    if (track->GetCreatorProcess()) {
+        fCreatorProcess = track->GetCreatorProcess()->GetProcessName();
+    } else {
+        fCreatorProcess = "IsPrimaryParticle";
     }
 
     fInitialKineticEnergy = track->GetKineticEnergy() / CLHEP::keV;
 
     fWeight = track->GetWeight();
 
-    //
     G4String energyWithUnits = G4BestUnit(fInitialKineticEnergy * CLHEP::keV, "Energy");
     spdlog::debug("Geant4Track::Geant4Track - Track ID {} - Parent ID {} - Particle {} ({}) created by {} - Energy {}", fTrackID, fParentID,
-                  fParticleName, fParticleID, (fCreatorProcess.IsNull() ? "IS-PRIMARY-PARTICLE" : fCreatorProcess), energyWithUnits);
+                  fParticleName, fParticleID, fCreatorProcess, energyWithUnits);
 }
 
 void Geant4Track::InsertStep(const G4Step* step) { fSteps.InsertStep(step); }
