@@ -55,8 +55,7 @@ RUN ( \
     echo 'XauthLocation /usr/bin/xauth'; \
     ) >> /etc/ssh/ssh_config
 
-RUN "useradd -rm -d /home/${USER} -s /bin/bash -g root -G sudo ${USER}"
-RUN yes ${PASSWORD} | passwd ${USER}
+RUN useradd -rm -s /bin/bash -g root -G sudo user && yes password | passwd user
 
 # Jupyter
 RUN pip3 -q install pip --upgrade && \
