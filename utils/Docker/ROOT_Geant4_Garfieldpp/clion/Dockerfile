@@ -6,6 +6,9 @@ ARG PASSWORD=password
 
 FROM ghcr.io/lobis/root-geant4-garfieldpp:cxx${CMAKE_CXX_STANDARD}_ROOT${ROOT_VERSION}_Geant4${GEANT4_VERSION}
 
+ARG USER
+ARG PASSWORD
+
 SHELL ["/bin/bash", "-c"]
 
 RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
@@ -55,7 +58,8 @@ RUN ( \
     echo 'XauthLocation /usr/bin/xauth'; \
     ) >> /etc/ssh/ssh_config
 
-RUN useradd -rm -s /bin/bash -g root -G sudo user && yes password | passwd user
+RUN useradd -rm -d /home/${USER} -s /bin/bash -g root -G sudo ${USER}
+RUN yes ${PASSWORD} | passwd ${USER}
 
 # Jupyter
 RUN pip3 -q install pip --upgrade && \
