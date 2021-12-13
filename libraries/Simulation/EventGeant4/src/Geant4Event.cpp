@@ -27,8 +27,8 @@ void Geant4Event::Print() const {
     spdlog::info("Primary: {} - Energy {:0.2f} keV - Position {} mm - Direction {}", fPrimaryParticleName, fPrimaryEnergy, fPrimaryPosition,
                  fPrimaryMomentum);
     if (fSubEventID != 0) {
-        spdlog::info("SubEvent Primary: {} - Energy {:0.2f} keV - Position {} mm - Direction {}", fSubEventPrimaryParticleName, fSubEventPrimaryEnergy,
-                     fSubEventPrimaryPosition, fSubEventPrimaryMomentum);
+        spdlog::info("SubEvent Primary: {} - Energy {:0.2f} keV - Position {} mm - Direction {}", fSubEventPrimaryParticleName,
+                     fSubEventPrimaryEnergy, fSubEventPrimaryPosition, fSubEventPrimaryMomentum);
     }
     for (const auto& track : fTracks) {
         track.Print();
@@ -55,7 +55,7 @@ const Geant4Track& Geant4Event::GetTrackByID(int trackID) {
     }
 
     for (int i = 0; i < fTracks.size(); i++) {
-        const auto& track = fTracks[fTrackIDToTrackIndex.at(trackID)];
+        const auto& track = fTracks[i];
         if (track.fTrackID == trackID) {
             spdlog::debug("Geant4Event::GetTrackByID - TrackID {} not found in store", trackID);
             fTrackIDToTrackIndex[trackID] = i;
