@@ -14,23 +14,8 @@ SHELL ["/bin/bash", "-c"]
 RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
 
 RUN apt-get update \
-    && apt-get install -y  \
-    ssh \
-    xauth \
-    xorg \
-    build-essential \
-    gcc \
-    g++ \
-    gdb \
-    clang \
-    cmake \
-    rsync \
-    tar \
-    python \
-    nano \
-    x11-apps \
-    nodejs \
-    sudo \
+    && apt-get install -y ssh xauth xorg build-essential gcc g++ gdb clang \
+    cmake rsync tar python nano x11-apps nodejs sudo \
     && apt-get upgrade -y && apt-get clean
 
 # Add Tini
@@ -58,8 +43,7 @@ RUN ( \
     echo 'XauthLocation /usr/bin/xauth'; \
     ) >> /etc/ssh/ssh_config
 
-RUN useradd -rm -d /home/${USER} -s /bin/bash -g root -G sudo ${USER}
-RUN yes ${PASSWORD} | passwd ${USER}
+RUN useradd -rm -d /home/${USER} -s /bin/bash -g root -G sudo ${USER} && yes ${PASSWORD} | passwd ${USER}
 
 # Jupyter
 RUN pip3 -q install pip --upgrade && \
@@ -68,8 +52,6 @@ RUN pip3 -q install pip --upgrade && \
     jupyterlab jupyterlab_code_formatter black isort autopep8
 
 RUN cp /root/.bashrc /home/${USER}/.bashrc
-
-USER ${USER}
 
 WORKDIR /home/${USER}
 
