@@ -62,8 +62,35 @@ const Geant4Track& Geant4Event::GetTrackByID(int trackID) {
             return track;
         }
     }
-    spdlog::error("Geant4Event::GetTrackByID - Track ID {} not found in event", trackID);
+
+    spdlog::error(
+        "Geant4Event::GetTrackByID - Track ID {} not found in event. Maybe this is the parent of a track in a subEventID > 0? In this case it is "
+        "stored in another event and cannot be accessed here",
+        trackID);
     exit(1);
+}
+
+bool Geant4Event::IsTrackSubEventPrimary(int trackID) {
+    const auto& track = GetTrackByID(trackID);
+
+    bool isSubEventPrimary = true;
+    // check if track/s is/are the primary of sub-event
+    if (fTrackIDToTrackIndex.count(track.fParentID) > 0) {
+        // already cached
+        isSubEventPrimary = false;
+    } else {
+        for (int i = 0; i < fTracks.size(); i++) {
+            const auto& insertedTrack = fTracks[i];
+            if (insertedTrack.fTrackID == track.fParentID) {
+                // parent is registered
+                isSubEventPrimary = false;
+                fTrackIDToTrackIndex[insertedTrack.fTrackID] = i;
+                break;
+            }
+        }
+    }
+
+    return isSubEventPrimary;
 }
 
 double Geant4Event::GetEnergyInVolume(const TString& volume) {

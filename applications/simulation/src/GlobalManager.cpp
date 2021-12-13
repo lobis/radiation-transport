@@ -57,6 +57,9 @@ void GlobalManager::WriteEvents() {
 
     while (!fEventContainer.empty()) {
         fEvent = *fEventContainer.front();
+        if (fEvent.fSubEventID > 0) {
+            fSubEventsCounter += 1;
+        }
         fEventTree->Fill();
         fEventContainer.pop();
 
@@ -165,8 +168,8 @@ void GlobalManager::WriteEventsAndCloseFile() {
             fEventTree->SetName(fEventTreeName);  // important to name it here, else merge won't work!
             fEventTree->GetUserInfo()->Add(fEventHeader);
             fEventTree->Write();
-            spdlog::info("GlobalManager::WriteEventsAndCloseFile - Total events: {} - Closing and deleting 'fFile' ({})", fEventTree->GetEntries(),
-                         fFile->GetName());
+            spdlog::info("GlobalManager::WriteEventsAndCloseFile - Total events: {} ({} of which are subEvents) - Closing and deleting 'fFile' ({})",
+                         fEventTree->GetEntries(), fSubEventsCounter, fFile->GetName());
         }
     }
 

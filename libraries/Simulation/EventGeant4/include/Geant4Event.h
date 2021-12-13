@@ -50,6 +50,7 @@ class Geant4Event {
     void PrintSensitiveInfo() const;
 
     const Geant4Track& GetTrackByID(int trackID);
+    bool IsTrackSubEventPrimary(int trackID);
     double GetEnergyInVolume(const TString&);
     void InitializeEnergyInVolumeMap();
 
@@ -62,7 +63,7 @@ class Geant4Event {
    public:
     explicit Geant4Event(const G4Event*);  //!
 
-    void InsertTrack(const G4Track*);  //!
+    bool InsertTrack(const G4Track*);  //!
     void UpdateTrack(const G4Track*);  //!
     void InsertStep(const G4Step*);    //!
 

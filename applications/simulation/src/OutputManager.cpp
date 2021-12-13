@@ -78,7 +78,19 @@ void OutputManager::FinishAndSubmitEvent() {
  */
 void OutputManager::RecordTrack(const G4Track* track) {
     // spdlog::debug("OutputManager::RecordTrack - Track ID {}", track->GetTrackID());
-    fEvent->InsertTrack(track);
+    bool inserted = fEvent->InsertTrack(track);
+
+    if (inserted && fEvent->fSubEventID > 0) {
+        const auto& lastTrack = fEvent->fTracks.back();
+        assert(lastTrack.fTrackID == track->GetTrackID());
+        bool isSubEventPrimary = fEvent->IsTrackSubEventPrimary(lastTrack.fTrackID);
+        if (isSubEventPrimary) {
+            spdlog::debug(
+                "OutputManager::RecordTrack - Setting track ID {} as SubEventPrimaryTrack of EventID {} (SubEventID {}). Track info: {} - Created by "
+                "{} - ParentID: {}",
+                lastTrack.fTrackID, fEvent->fEventID, fEvent->fSubEventID, lastTrack.fParticleName, lastTrack.fCreatorProcess, lastTrack.fParentID);
+        }
+    }
 }
 
 /*!
@@ -129,7 +141,7 @@ void OutputManager::AddSensitiveEnergy(Double_t energy, const TString& physicalV
 
 void OutputManager::RemoveUnwantedTracks() {
     const auto& config = GlobalManager::Instance()->GetSimulationConfig();
-    if (!config.fDetectorConfig.fKeepOnlyTracksInTheseVolumes) {
+    if (config.fDetectorConfig.fKeepOnlyTracksInTheseVolumesList.empty()) {
         return;
     }
     if (fKeepOnlyTracksInTheseVolumesListAfterProcessing.empty()) {
@@ -201,7 +213,8 @@ void OutputManager::RemoveUnwantedTracks() {
             Geant4Track trackIter = track;
             while (true) {
                 trackIDsToKeep.insert(trackIter.fTrackID);
-                if (trackIter.IsPrimaryTrack() || trackIDsToKeep.count(trackIter.fParentID) > 0) {
+                if (trackIter.IsPrimaryTrack() || trackIDsToKeep.count(trackIter.fParentID) > 0 ||
+                    (fEvent->fSubEventID > 0 && fEvent->IsTrackSubEventPrimary(trackIter.fTrackID))) {
                     break;
                 }
                 trackIter = fEvent->GetTrackByID(trackIter.fParentID);

@@ -62,6 +62,8 @@ class GlobalManager {
     Geant4Event fEvent;
 
     std::queue<std::unique_ptr<Geant4Event> > fEventContainer;
+
+    size_t fSubEventsCounter = 0;
 };
 
 #endif  // RADIATION_TRANSPORT_GLOBALMANAGER_H

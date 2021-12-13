@@ -33,9 +33,9 @@ Geant4Event::Geant4Event(const G4Event* event) : Geant4Event() {
     fPrimaryMomentum = TVector3(momentum.x() / CLHEP::mm, momentum.y() / CLHEP::mm, momentum.z() / CLHEP::mm);
 }
 
-void Geant4Event::InsertTrack(const G4Track* track) {
+bool Geant4Event::InsertTrack(const G4Track* track) {
     if (!IsValid(track)) {
-        return;
+        return false;
     }
     if (fInitialStep.fN != 1) {
         spdlog::error("fInitialStep does not have exactly one step! Problem with stepping verbose");
@@ -55,6 +55,7 @@ void Geant4Event::InsertTrack(const G4Track* track) {
         const auto& momentum = track->GetMomentumDirection();
         fSubEventPrimaryMomentum = TVector3(momentum.x() / CLHEP::mm, momentum.y() / CLHEP::mm, momentum.z() / CLHEP::mm);
     }
+    return true;
 }
 
 void Geant4Event::UpdateTrack(const G4Track* track) {
