@@ -127,6 +127,10 @@
             "type": "string"
           },
           "default": []
+        },
+        "replaceMaterials": {
+          "type": "object",
+          "description": "Replace materials of logical volume (logicalVolumeName: NewMaterialName)"
         }
       }
     },

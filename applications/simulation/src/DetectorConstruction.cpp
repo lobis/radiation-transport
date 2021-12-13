@@ -92,6 +92,44 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
     geometryInfo->PopulateFromGeant4World(fWorld);
 
+    auto replacementMap = GlobalManager::Instance()->GetSimulationConfig().fDetectorConfig.fReplaceMaterialsMap;
+    if (!replacementMap.empty()) {
+        for (const auto& [logicalVolumeToReplaceMaterialName, newMaterialNameToReplace] : replacementMap) {
+            bool volumeFound = false;
+            for (const auto& logicalName : geometryInfo->GetAllLogicalVolumes()) {
+                if (logicalName == logicalVolumeToReplaceMaterialName) {
+                    auto logical = G4LogicalVolumeStore::GetInstance()->GetVolume(logicalName.Data());
+                    auto materialNameOld = logical->GetMaterial()->GetName();
+                    spdlog::warn("DetectorConstruction::Construct - Replacing logical volume '{}' material '{}' by '{}'.",
+                                 logicalVolumeToReplaceMaterialName, materialNameOld, newMaterialNameToReplace);
+                    auto materialNew = G4NistManager::Instance()->FindOrBuildMaterial(newMaterialNameToReplace, true, true);
+                    if (!materialNew) {
+                        spdlog::error("DetectorConstruction::Construct - New material '{}' to use as replacement for '{}' in '{}' not found.",
+                                      newMaterialNameToReplace, materialNameOld, logicalVolumeToReplaceMaterialName);
+                        exit(1);
+                    }
+                    logical->SetMaterial(materialNew);
+
+                    volumeFound = true;
+                    break;
+                }
+            }
+            if (!volumeFound) {
+                spdlog::error(
+                    "DetectorConstruction::Construct - Could not replaced logical volume '{}' material by '{}'. Logical volume not found by name",
+                    logicalVolumeToReplaceMaterialName, newMaterialNameToReplace);
+                exit(1);
+            }
+        }
+        // reset geometry info
+        delete geometryInfo;
+        geometryInfo = new Geant4GeometryInfo();
+        if (fGeometryFilename.extension() == ".gdml") {
+            geometryInfo->PopulateFromGdml(fGeometryFilename.c_str());
+        }
+        geometryInfo->PopulateFromGeant4World(fWorld);
+    }
+
     return fWorld;
 }
 

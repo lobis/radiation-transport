@@ -57,8 +57,16 @@ void DetectorConstructionConfig::Deserialize(const YAML::Node& node) {
     }
 
     if (node["keepOnlyTracksInTheseVolumes"]) {
-        fKeepOnlyTracksInTheseVolumes = true;
         fKeepOnlyTracksInTheseVolumesList = node["keepOnlyTracksInTheseVolumes"].as<vector<string>>();
+    }
+
+    if (node["replaceMaterials"]) {
+        for (const auto& replacement : node["replaceMaterials"]) {
+            auto logicalVolumeName = replacement.first.as<string>();
+            auto newMaterial = replacement.second.as<string>();
+
+            fReplaceMaterialsMap[logicalVolumeName] = newMaterial;
+        }
     }
 }
 
@@ -69,8 +77,12 @@ YAML::Node DetectorConstructionConfig::Serialize() const {
     node["checkOverlaps"] = fCheckOverlaps;
     node["volumes"] = fVolumes;
 
-    if (fKeepOnlyTracksInTheseVolumes || !fKeepOnlyTracksInTheseVolumesList.empty()) {
+    if (!fKeepOnlyTracksInTheseVolumesList.empty()) {
         node["keepOnlyTracksInTheseVolumes"] = fKeepOnlyTracksInTheseVolumesList;
+    }
+
+    if (!fReplaceMaterialsMap.empty()) {
+        node["replaceMaterials"] = fReplaceMaterialsMap;
     }
 
     return node;

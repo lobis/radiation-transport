@@ -64,7 +64,6 @@ TEST(Application, ExampleIAXO) {
     config.fSourceConfig.fAngularDistributionType = "flux";
     config.fSourceConfig.fAngularDistributionDirection = {0, -1, 0};
 
-    config.fDetectorConfig.fKeepOnlyTracksInTheseVolumes = true;
     config.fDetectorConfig.fKeepOnlyTracksInTheseVolumesList = {"gasVolume", "^scintillatorVolume"};
 
     config.Print();

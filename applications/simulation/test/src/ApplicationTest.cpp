@@ -226,7 +226,6 @@ TEST(Application, RemoveUnwantedTracks) {
     config.fSourceConfig.fAngularDistributionType = "flux";
     config.fSourceConfig.fAngularDistributionDirection = {0, -1, 0};
 
-    config.fDetectorConfig.fKeepOnlyTracksInTheseVolumes = true;
     config.fDetectorConfig.fKeepOnlyTracksInTheseVolumesList = {"gasVolume", "scintillatorVolume-800.0mm"};
 
     Application app;
