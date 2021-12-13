@@ -14,8 +14,8 @@ SHELL ["/bin/bash", "-c"]
 RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
 
 RUN apt-get update \
-    && apt-get install -y ssh xauth xorg build-essential gcc g++ gdb clang \
-    cmake rsync tar python nano x11-apps nodejs sudo \
+    && apt-get install -y sudo ssh xauth xorg build-essential gcc g++ gdb clang \
+    cmake rsync tar python nano x11-apps nodejs screen \
     && apt-get upgrade -y && apt-get clean
 
 # Add Tini
@@ -51,12 +51,13 @@ RUN pip3 -q install pip --upgrade && \
     pip3 -q install uproot awkward matplotlib scipy pandas mplhep boost_histogram \
     jupyterlab jupyterlab_code_formatter black isort autopep8
 
-RUN cp /root/.bashrc /home/${USER}/.bashrc
-
 WORKDIR /home/${USER}
 
 RUN echo 'export DISPLAY=localhost:0' >> /home/${USER}/.bashrc
 RUN mkdir -p /home/${USER}/Notebooks
-RUN echo "alias start-jupyter='cd /home/${USER}/Notebooks && jupyter lab --ip=0.0.0.0 --no-browser'" >> /home/${USER}/.bashrc
+RUN chown -R ${USER} /home/${USER}
+RUN echo "alias start-jupyter='cd /home/${USER}/Notebooks && jupyter lab --allow-root --ip=0.0.0.0 --port=8888 --no-browser'" >> /root/.bashrc
+
+RUN cp /root/.bashrc /home/${USER}/.bashrc
 
 CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_test_clion"]
