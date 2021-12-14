@@ -108,22 +108,29 @@ void Visualization::Start() {
     fViewer = fEveManager->GetDefaultGLViewer();
     fEveManager->AddEvent(new TEveEventManager("Event", "Event"));
 
-    fEveManager->GetViewers()->SwitchColorSet();
-    fEveManager->GetDefaultGLViewer()->SetStyle(TGLRnrCtx::kOutline);
-
+    fViewer->SetStyle(TGLRnrCtx::kOutline);
+    fEveManager->GetDefaultViewer()->SetName("Perspective");
     AddEveGUI();
 
-    auto slot = TEveWindow::CreateWindowInTab(gEve->GetBrowser()->GetTabRight());
-    auto pack = slot->MakePack();
-    pack->SetElementName("Projection");
-    pack->SetHorizontal();
-    pack->SetShowTitleBar(kFALSE);
-    pack->NewSlot()->MakeCurrent();
-    auto f3DView = gEve->SpawnNewViewer("3D View", "");
-    f3DView->AddScene(gEve->GetGlobalScene());
-    f3DView->AddScene(gEve->GetEventScene());
-    f3DView->GetGLViewer()->SetCurrentCamera(TGLViewer::kCameraOrthoXOY);
+    const std::map<TString, TGLViewer::ECameraType> projectionsMap = {
+        {"Projection XY", TGLViewer::kCameraOrthoXnOY},  //
+        {"Projection XZ", TGLViewer::kCameraOrthoXnOZ},  //
+        {"Projection YZ", TGLViewer::kCameraOrthoZOY}    //
+    };
+    for (const auto& [name, cameraType] : projectionsMap) {
+        auto slot = TEveWindow::CreateWindowInTab(gEve->GetBrowser()->GetTabRight());
+        auto pack = slot->MakePack();
+        pack->SetElementName(name);
+        pack->SetHorizontal();
+        pack->SetShowTitleBar(kFALSE);
+        pack->NewSlot()->MakeCurrent();
+        auto f3DView = gEve->SpawnNewViewer("3D View", pack->GetName());
+        f3DView->AddScene(gEve->GetGlobalScene());
+        f3DView->AddScene(gEve->GetEventScene());
+        f3DView->GetGLViewer()->SetCurrentCamera(cameraType);
+    }
 
+    fEveManager->GetViewers()->SwitchColorSet();
 }
 
 void Visualization::OpenFile(const TString& filename) {
@@ -259,7 +266,7 @@ void Visualization::DrawEvent(Long64_t index) {
     }
     spdlog::info("Drawing {} tracks", trackCounter);
 
-    fEveManager->FullRedraw3D(kTRUE);
+    fEveManager->FullRedraw3D(kFALSE);
 }
 
 void Visualization::UpdateEventIDsComboBox() {

@@ -6,9 +6,6 @@ ARG SSH_PUBLIC_KEY=your-public-ssh-key-here
 
 FROM ghcr.io/lobis/root-geant4-garfieldpp:cxx${CMAKE_CXX_STANDARD}_ROOT${ROOT_VERSION}_Geant4${GEANT4_VERSION}
 
-ARG PASSWORD
-ARG SSH_PUBLIC_KEY
-
 SHELL ["/bin/bash", "-c"]
 
 RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get -y install tzdata
@@ -33,7 +30,7 @@ RUN ( \
     echo 'PermitRootLogin yes'; \
     echo 'PasswordAuthentication yes'; \
     echo 'Subsystem sftp /usr/lib/openssh/sftp-server'; \
-    ) > /etc/ssh/sshd_config_test_clion \
+    ) > /etc/ssh/sshd_config_clion \
     && mkdir /run/sshd
 
 RUN ( \
@@ -46,6 +43,9 @@ RUN ( \
     echo 'GSSAPIDelegateCredentials no'; \
     echo 'XauthLocation /usr/bin/xauth'; \
     ) >> /etc/ssh/ssh_config
+
+ARG PASSWORD
+ARG SSH_PUBLIC_KEY
 
 RUN mkdir -p /root/.ssh
 RUN echo ${SSH_PUBLIC_KEY} >> /root/.ssh/authorized_keys
@@ -63,4 +63,4 @@ RUN echo 'export DISPLAY=localhost:0' >> /root/.bashrc
 
 RUN echo "source /root/install/env.sh" >> /root/.bashrc
 
-CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_test_clion"]
+CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_clion"]
