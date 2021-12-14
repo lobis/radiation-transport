@@ -19,13 +19,13 @@ class Geant4Track {
     Int_t fTrackID{};
     Int_t fParentID{};
 
-    TString fParticleName;
-    Int_t fParticleID;
+    TString fParticleName{};
+    Int_t fParticleID{};
 
-    TString fParticleType;
-    TString fParticleSubType;
+    TString fParticleType{};
+    TString fParticleSubType{};
 
-    TString fCreatorProcess;
+    TString fCreatorProcess{};
     Int_t fNumberOfSecondaries{};
     Double_t fInitialKineticEnergy{};
     Double_t fTrackLength{};

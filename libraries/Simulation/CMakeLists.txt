@@ -11,12 +11,12 @@ target_sources(
 
 target_include_directories(
         ${LIBRARY} SYSTEM PUBLIC
-        ${CMAKE_INSTALL_PREFIX}/include # Need to include yaml-cpp headers explicitly here
+        ${ROOT_INCLUDE_DIRS}
         EventGeant4/include
         EventAnalysis/include
         Config/include
         Garfield/include
-        ${ROOT_INCLUDE_DIRS}
+        ${CMAKE_INSTALL_PREFIX}/include # Need to include yaml-cpp headers explicitly here
 )
 
 target_link_libraries(

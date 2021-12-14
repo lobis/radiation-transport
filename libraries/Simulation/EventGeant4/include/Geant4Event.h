@@ -20,7 +20,7 @@ class Geant4Event {
     Int_t fEventID{};
     Int_t fSubEventID{};
 
-    Geant4EventHeader* fEventHeader = nullptr;  //|
+    Geant4EventHeader* fEventHeader = nullptr;  //!
 
     Double_t fSensitiveVolumesTotalEnergy{};
     std::vector<Double_t> fSensitiveVolumeEnergy{};
@@ -50,6 +50,7 @@ class Geant4Event {
     void PrintSensitiveInfo() const;
 
     const Geant4Track& GetTrackByID(int trackID);
+    Int_t GetTrackIndexByID(int trackID);
     bool IsTrackSubEventPrimary(int trackID);
     double GetEnergyInVolume(const TString&);
     void InitializeEnergyInVolumeMap();

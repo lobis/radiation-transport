@@ -43,31 +43,37 @@ void Geant4Event::PrintSensitiveInfo() const {
     }
 }
 
-const Geant4Track& Geant4Event::GetTrackByID(int trackID) {
-    spdlog::debug("Geant4Event::GetTrackByID - TrackID: {}", trackID);
+Int_t Geant4Event::GetTrackIndexByID(int trackID) {
+    spdlog::debug("Geant4Event::GetTrackIndexByID - TrackID: {}", trackID);
 
     if (fTrackIDToTrackIndex.count(trackID) > 0) {
         const auto& track = fTracks[fTrackIDToTrackIndex.at(trackID)];
         if (track.fTrackID == trackID) {
-            spdlog::debug("Geant4Event::GetTrackByID - Found TrackID {} in store", trackID);
-            return track;
+            spdlog::debug("Geant4Event::GetTrackIndexByID - Found TrackID {} in store", trackID);
+            return fTrackIDToTrackIndex.at(trackID);
         }
     }
 
     for (int i = 0; i < fTracks.size(); i++) {
         const auto& track = fTracks[i];
         if (track.fTrackID == trackID) {
-            spdlog::debug("Geant4Event::GetTrackByID - TrackID {} not found in store", trackID);
+            spdlog::debug("Geant4Event::GetTrackIndexByID - TrackID {} not found in store", trackID);
             fTrackIDToTrackIndex[trackID] = i;
-            return track;
+            return i;
         }
     }
 
     spdlog::error(
-        "Geant4Event::GetTrackByID - Track ID {} not found in event. Maybe this is the parent of a track in a subEventID > 0? In this case it is "
-        "stored in another event and cannot be accessed here",
+        "Geant4Event::GetTrackIndexByID - Track ID {} not found in event. Maybe this is the parent of a track in a subEventID > 0? In this case it "
+        "is stored in another event and cannot be accessed here",
         trackID);
     exit(1);
+}
+
+const Geant4Track& Geant4Event::GetTrackByID(int trackID) {
+    // Split the method into 'GetTrackIndexByID' to fix an exception in PyROOT (which I don't understand)
+    const auto& track = fTracks[GetTrackIndexByID(trackID)];
+    return track;
 }
 
 bool Geant4Event::IsTrackSubEventPrimary(int trackID) {
