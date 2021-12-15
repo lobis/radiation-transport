@@ -89,5 +89,6 @@ TEST(Application, ExampleIAXO) {
         event->PrintSensitiveInfo();
     }
 
-    event->fEventHeader->Print();
+    auto header = dynamic_cast<Geant4EventHeader*>(tree->GetUserInfo()->At(0));
+    header->Print();
 }
