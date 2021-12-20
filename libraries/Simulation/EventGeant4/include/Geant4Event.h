@@ -49,8 +49,8 @@ class Geant4Event {
 
     void PrintSensitiveInfo() const;
 
-    const Geant4Track& GetTrackByID(int trackID);
-    Int_t GetTrackIndexByID(int trackID);
+    const Geant4Track& GetTrackByID(int trackID) const;
+    // Int_t GetTrackIndexByID(int trackID);
     bool IsTrackSubEventPrimary(int trackID);
     double GetEnergyInVolume(const TString&);
     void InitializeEnergyInVolumeMap();

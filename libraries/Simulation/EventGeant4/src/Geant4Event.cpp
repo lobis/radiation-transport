@@ -43,21 +43,23 @@ void Geant4Event::PrintSensitiveInfo() const {
     }
 }
 
+/*
 Int_t Geant4Event::GetTrackIndexByID(int trackID) {
-    spdlog::debug("Geant4Event::GetTrackIndexByID - TrackID: {}", trackID);
+    spdlog::info("Geant4Event::GetTrackIndexByID - TrackID: {}", trackID);
 
     if (fTrackIDToTrackIndex.count(trackID) > 0) {
-        const auto& track = fTracks[fTrackIDToTrackIndex.at(trackID)];
+        Int_t index = fTrackIDToTrackIndex.at(trackID);
+        const auto& track = fTracks[index];
         if (track.fTrackID == trackID) {
-            spdlog::debug("Geant4Event::GetTrackIndexByID - Found TrackID {} in store", trackID);
-            return fTrackIDToTrackIndex.at(trackID);
+            spdlog::info("Geant4Event::GetTrackIndexByID - Found TrackID {} in store at index {}", trackID, index);
+            return index;
         }
     }
 
     for (int i = 0; i < fTracks.size(); i++) {
         const auto& track = fTracks[i];
         if (track.fTrackID == trackID) {
-            spdlog::debug("Geant4Event::GetTrackIndexByID - TrackID {} not found in store", trackID);
+            spdlog::info("Geant4Event::GetTrackIndexByID - TrackID {} not found in store", trackID);
             fTrackIDToTrackIndex[trackID] = i;
             return i;
         }
@@ -69,11 +71,15 @@ Int_t Geant4Event::GetTrackIndexByID(int trackID) {
         trackID);
     exit(1);
 }
+*/
 
-const Geant4Track& Geant4Event::GetTrackByID(int trackID) {
-    // Split the method into 'GetTrackIndexByID' to fix an exception in PyROOT (which I don't understand)
-    const auto& track = fTracks[GetTrackIndexByID(trackID)];
-    return track;
+const Geant4Track& Geant4Event::GetTrackByID(int trackID) const {
+    for (int i = 0; i < fTracks.size(); i++) {
+        const auto& track = fTracks[i];
+        if (track.fTrackID == trackID) {
+            return track;
+        }
+    }
 }
 
 bool Geant4Event::IsTrackSubEventPrimary(int trackID) {
