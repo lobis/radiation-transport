@@ -209,12 +209,29 @@ void PrimaryGeneratorAction::Initialize() {
             // value in Gev!
             fEnergyDistribution->UserEnergyHisto({binRightBoundary, energy.Eval(binCenter * fEnergyScaleFactor / 1E6)});
         }
-
     } else if (fSourceConfig.fEnergyDistributionType == "cosmicNeutronsSeaLevel") {
-        fEnergyDistribution->SetEnergyDisType("Pow");
-        fEnergyDistribution->SetAlpha(-1.36287);
         if (fParticle->GetParticleName() != "neutron") {
             spdlog::warn("Using '{}' energy distribution for particle '{}'", fSourceConfig.fEnergyDistributionType, fParticle->GetParticleName());
+        }
+        fEnergyDistribution->SetEnergyDisType("User");
+        fEnergyDistribution->ReSetHist("energy");
+
+        // formula in MeV
+        auto energy = TF1("neutronEnergySeaLevel",
+                          "1.006E-6 * TMath::Exp(-0.3500 * TMath::Power(TMath::Log(x), 2) + 2.1451 * TMath::Log(x))"
+                          "+ 1.011E-3 * TMath::Exp(-0.4106 * TMath::Power(TMath::Log(x), 2) -0.6670 * TMath::Log(x))",
+                          0.1E0, 10E3);
+        // More info on https://geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/GettingStarted/generalParticleSource.html
+        fEnergyDistribution->UserEnergyHisto(
+            {fSourceConfig.fEnergyDistributionLimitMin * fEnergyScaleFactor, 0});  // left edge of bin (value not used)
+        const int n = 1024 - 1;
+        const double step = (fSourceConfig.fEnergyDistributionLimitMax - fSourceConfig.fEnergyDistributionLimitMin) / n * fEnergyScaleFactor;
+        for (int i = 0; i < n; i++) {
+            auto binCenter = (i + 0.5) * step;
+            auto binRightBoundary = (i + 1) * step;
+            // we input the upper boundary of the bin!
+            // value in Gev!
+            fEnergyDistribution->UserEnergyHisto({binRightBoundary, energy.Eval(binCenter * fEnergyScaleFactor / 1E3)});
         }
     } else {
         spdlog::error("Energy distribution type '{}' sampling not implemented yet", fSourceConfig.fEnergyDistributionType);
