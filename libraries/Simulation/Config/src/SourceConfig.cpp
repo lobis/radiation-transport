@@ -155,7 +155,9 @@ YAML::Node SourceConfig::SerializeEnergy() const {
 
     node[fEnergyDistributionType] = YAML::Node();
 
-    if (fEnergyDistributionType == "mono") {
+    if (fEnergyDistributionType == "userDefined") {
+        node[fEnergyDistributionType] = fUserDefinedEnergyDistributionFormula;
+    } else if (fEnergyDistributionType == "mono") {
         node[fEnergyDistributionType]["value"] = fEnergyDistributionMonoValue;
     }
 
@@ -193,13 +195,19 @@ void SourceConfig::DeserializeEnergy(const YAML::Node& node) {
         fEnergyDistributionLimitMax = energy["max"].as<double>();
     }
 
-    if (fEnergyDistributionType == "mono") {
+    if (fEnergyDistributionType == "userDefined") {
+        fUserDefinedEnergyDistributionFormula = energy[fEnergyDistributionType].as<string>();
+        if (fUserDefinedEnergyDistributionFormula.empty()) {
+            spdlog::error("SourceConfig::DeserializeEnergy - Energy distribution is 'userDefined' but formula is empty");
+            exit(1);
+        }
+    } else if (fEnergyDistributionType == "mono") {
         if (energy[fEnergyDistributionType]["value"]) {
             fEnergyDistributionMonoValue = energy[fEnergyDistributionType]["value"].as<double>();
         }
     } else if (fEnergyDistributionType == "cosmicMuonsSeaLevel" || fEnergyDistributionType == "cosmicNeutronsSeaLevel") {
     } else {
-        spdlog::error("Not implemented yet");
+        spdlog::error("SourceConfig::DeserializeEnergy - Energy distribution '{}' Not implemented yet", fEnergyDistributionType);
         exit(1);
     }
 }

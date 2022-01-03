@@ -233,6 +233,26 @@ void PrimaryGeneratorAction::Initialize() {
             // value in Gev!
             fEnergyDistribution->UserEnergyHisto({binRightBoundary, energy.Eval(binCenter * fEnergyScaleFactor / 1E3)});
         }
+    } else if (fSourceConfig.fEnergyDistributionType == "userDefined") {
+        const auto& formula = fSourceConfig.fUserDefinedEnergyDistributionFormula;
+        spdlog::warn("Using user defined energy distribution for particle '{}' with formula: {}", fSourceConfig.fEnergyDistributionType,
+                     fParticle->GetParticleName(), formula);
+
+        fEnergyDistribution->SetEnergyDisType("User");
+        fEnergyDistribution->ReSetHist("energy");
+
+        // user defined energy formula in user defined units
+        auto energy = TF1("userDefinedEnergy", formula.c_str(), fSourceConfig.fEnergyDistributionLimitMin, fSourceConfig.fEnergyDistributionLimitMax);
+        //
+        fEnergyDistribution->UserEnergyHisto(
+            {fSourceConfig.fEnergyDistributionLimitMin * fEnergyScaleFactor, 0});  // left edge of bin (value not used)
+        const int n = 1024 - 1;
+        const double step = (fSourceConfig.fEnergyDistributionLimitMax - fSourceConfig.fEnergyDistributionLimitMin) / n * fEnergyScaleFactor;
+        for (int i = 0; i < n; i++) {
+            auto binCenter = (i + 0.5) * step;
+            auto binRightBoundary = (i + 1) * step;
+            fEnergyDistribution->UserEnergyHisto({binRightBoundary, energy.Eval(binCenter * fEnergyScaleFactor)});
+        }
     } else {
         spdlog::error("Energy distribution type '{}' sampling not implemented yet", fSourceConfig.fEnergyDistributionType);
         exit(1);

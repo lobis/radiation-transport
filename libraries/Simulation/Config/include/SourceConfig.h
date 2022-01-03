@@ -25,7 +25,7 @@ class SourceConfig : public SerializableConfig {
     std::set<std::string> fEnergyDistributionTypesAvailable = {"mono", "linear", "exponential",
                                                                "power",  //
                                                                          // Custom
-                                                               "cosmicMuonsSeaLevel", "cosmicNeutronsSeaLevel"};
+                                                               "userDefined", "cosmicMuonsSeaLevel", "cosmicNeutronsSeaLevel"};
     std::set<std::string> fAngularDistributionTypesAvailable = {"isotropic", "focused", "flux",  //
                                                                                                  // Custom
                                                                 "cos2"};
@@ -65,8 +65,9 @@ class SourceConfig : public SerializableConfig {
 
     double fEnergyDistributionMonoValue = 100;
 
-    // Angular
+    std::string fUserDefinedEnergyDistributionFormula;
 
+    // Angular
     std::string fAngularDistributionType = "isotropic";
 
     double fAngularDistributionLimitThetaMin = 0;
