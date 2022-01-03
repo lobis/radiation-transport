@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=http://raw.githubusercontent.com/lobis/radiation-transport/main/libraries/Simulation/Config/schemas/simulationConfig.schema.json
+
+verboseLevel: info
+
+runManagerType: multithreading
+
+threads: 6
+
+seed: 1000
+
+detector:
+  geometry: geometry/iaxo-supernova.gdml
+  volumes:
+    - name: detector
+      sensitive: true
+
+  replaceMaterials:
+
+numberOfEvents: 10000
+
+fullChain: true
+
+saveAllEvents: true
+
+output: /root/Notebooks/Supernova/files/iaxo-supernova.axion-photons.root
+
+source:
+  generator:
+    point:
+      position: [ 0, 0, -500 ]
+
+  particle:
+    name: geantino
+
+  energy:
+    unit: MeV
+    min: 0
+    max: 400
+    userDefined: x * exp( -3.2 * x / 100 ) # Supernova Axions
+
+  angular:
+    flux:
+      direction: [ 0, 0, 1 ]
+
+physics:
+  productionCutsEnergyMin: 1 # keV
+  physicsLists:
+    - G4EmLivermorePhysics
+    - G4DecayPhysics
+    - G4RadioactiveDecayPhysics
+    - G4HadronElasticPhysicsHP
+    - G4IonBinaryCascadePhysics
+    - G4HadronPhysicsQGSP_BIC_HP
+    - G4NeutronTrackingCut
+    - G4EmExtraPhysics

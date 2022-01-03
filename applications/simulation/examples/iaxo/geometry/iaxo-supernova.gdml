@@ -1,0 +1,310 @@
+<?xml version='1.0'?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+    <define>
+        <constant name="detectorSizeXY" value="200"/>
+        <constant name="detectorSizeZ" value="2000"/>
+        <constant name="worldSize" value="2.5 * detectorSizeZ"/>
+    </define>
+    <materials>
+        <isotope Z="29.0" N="63" name="Cu63">
+            <atom value="62.9296" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="29.0" N="65" name="Cu65">
+            <atom value="64.9278" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="6.0" N="12" name="C12">
+            <atom value="12.0" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="6.0" N="13" name="C13">
+            <atom value="13.0034" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="9.0" N="19" name="F19">
+            <atom value="18.9984" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="1.0" N="1" name="H1">
+            <atom value="1.007825" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="1.0" N="2" name="H2">
+            <atom value="2.014102" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="7.0" N="14" name="N14">
+            <atom value="14.0031" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="7.0" N="15" name="N15">
+            <atom value="15.0001" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="8.0" N="16" name="O16">
+            <atom value="15.9949" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="8.0" N="17" name="O17">
+            <atom value="16.9991" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="8.0" N="18" name="O18">
+            <atom value="17.9992" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="18.0" N="36" name="Ar36">
+            <atom value="35.9675" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="18.0" N="38" name="Ar38">
+            <atom value="37.9627" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="18.0" N="40" name="Ar40">
+            <atom value="39.9624" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="82.0" N="204" name="Pb204">
+            <atom value="203.973" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="82.0" N="206" name="Pb206">
+            <atom value="205.974" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="82.0" N="207" name="Pb207">
+            <atom value="206.976" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="82.0" N="208" name="Pb208">
+            <atom value="207.977" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="48.0" N="106" name="Cd106">
+            <atom value="105.906" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="48.0" N="108" name="Cd108">
+            <atom value="107.904" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="48.0" N="110" name="Cd110">
+            <atom value="109.903" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="48.0" N="111" name="Cd111">
+            <atom value="110.904" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="48.0" N="112" name="Cd112">
+            <atom value="111.903" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="48.0" N="113" name="Cd113">
+            <atom value="112.904" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="48.0" N="114" name="Cd114">
+            <atom value="113.903" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="48.0" N="116" name="Cd116">
+            <atom value="115.905" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="17.0" N="35" name="Cl35">
+            <atom value="34.9689" unit="g/mole" type="A"/>
+        </isotope>
+        <isotope Z="17.0" N="37" name="Cl37">
+            <atom value="36.9659" unit="g/mole" type="A"/>
+        </isotope>
+        <element name="Cu">
+            <fraction n="0.6917" ref="Cu63"/>
+            <fraction n="0.3083" ref="Cu65"/>
+        </element>
+        <element name="C">
+            <fraction n="0.9893" ref="C12"/>
+            <fraction n="0.0107" ref="C13"/>
+        </element>
+        <element name="F">
+            <fraction n="1.0" ref="F19"/>
+        </element>
+        <element name="H">
+            <fraction n="0.999885" ref="H1"/>
+            <fraction n="1.15E-4" ref="H2"/>
+        </element>
+        <element name="N">
+            <fraction n="0.99632" ref="N14"/>
+            <fraction n="0.00368" ref="N15"/>
+        </element>
+        <element name="O">
+            <fraction n="0.99757" ref="O16"/>
+            <fraction n="3.8E-4" ref="O17"/>
+            <fraction n="0.00205" ref="O18"/>
+        </element>
+        <element name="Ar">
+            <fraction n="0.003365" ref="Ar36"/>
+            <fraction n="6.32E-4" ref="Ar38"/>
+            <fraction n="0.996003" ref="Ar40"/>
+        </element>
+        <element name="Pb">
+            <fraction n="0.014" ref="Pb204"/>
+            <fraction n="0.241" ref="Pb206"/>
+            <fraction n="0.221" ref="Pb207"/>
+            <fraction n="0.524" ref="Pb208"/>
+        </element>
+        <element name="Cd">
+            <fraction n="0.0125" ref="Cd106"/>
+            <fraction n="0.0089" ref="Cd108"/>
+            <fraction n="0.1249" ref="Cd110"/>
+            <fraction n="0.128" ref="Cd111"/>
+            <fraction n="0.2413" ref="Cd112"/>
+            <fraction n="0.1222" ref="Cd113"/>
+            <fraction n="0.2873" ref="Cd114"/>
+            <fraction n="0.0749" ref="Cd116"/>
+        </element>
+        <element name="Cl">
+            <fraction n="0.7578" ref="Cl35"/>
+            <fraction n="0.2422" ref="Cl37"/>
+        </element>
+        <material state="solid" name="G4_Cu">
+            <D value="8.96" unit="g/cm3"/>
+            <fraction n="1.0" ref="Cu"/>
+        </material>
+        <material state="solid" name="G4_TEFLON">
+            <D value="2.2" unit="g/cm3"/>
+            <fraction n="0.240179" ref="C"/>
+            <fraction n="0.759821" ref="F"/>
+        </material>
+        <material state="solid" name="G4_KAPTON">
+            <D value="1.42" unit="g/cm3"/>
+            <fraction n="0.691128" ref="C"/>
+            <fraction n="0.026363" ref="H"/>
+            <fraction n="0.073271" ref="N"/>
+            <fraction n="0.209237" ref="O"/>
+        </material>
+        <material state="solid" name="G4_MYLAR">
+            <D value="1.4" unit="g/cm3"/>
+            <fraction n="0.625011" ref="C"/>
+            <fraction n="0.041961" ref="H"/>
+            <fraction n="0.333028" ref="O"/>
+        </material>
+        <material state="gas" name="G4_Galactic">
+            <D value="1.0E-22" unit="kg/m3"/>
+            <fraction n="1.0" ref="H"/>
+        </material>
+        <material state="gas" name="GasMixture-Argon2%Isobutane1.4Bar">
+            <D value="2.319820104" unit="kg/m3"/>
+            <fraction n="0.98" ref="Ar"/>
+            <fraction n="0.016532" ref="C"/>
+            <fraction n="0.003468" ref="H"/>
+        </material>
+        <material state="solid" name="G4_Pb">
+            <D value="11.35" unit="g/cm3"/>
+            <fraction n="1.0" ref="Pb"/>
+        </material>
+        <material state="solid" name="BC408">
+            <D value="1.03" unit="g/cm3"/>
+            <fraction n="0.085" ref="H"/>
+            <fraction n="0.915" ref="C"/>
+        </material>
+        <material state="solid" name="G4_Cd">
+            <D value="8.65" unit="g/cm3"/>
+            <fraction n="1.0" ref="Cd"/>
+        </material>
+        <material state="solid" name="G4_RUBBER_NEOPRENE">
+            <D value="1.23" unit="g/cm3"/>
+            <fraction n="0.05692" ref="H"/>
+            <fraction n="0.542646" ref="C"/>
+            <fraction n="0.400434" ref="Cl"/>
+        </material>
+        <material state="solid" name="G4_LUCITE">
+            <D value="1.19" unit="g/cm3"/>
+            <fraction n="0.080538" ref="H"/>
+            <fraction n="0.599848" ref="C"/>
+            <fraction n="0.319614" ref="O"/>
+        </material>
+        <material state="gas" name="G4_AIR">
+            <D value="1.20479" unit="kg/m3"/>
+            <fraction n="1.24E-4" ref="C"/>
+            <fraction n="0.755268" ref="N"/>
+            <fraction n="0.231781" ref="O"/>
+            <fraction n="0.012827" ref="Ar"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+0%Pb">
+            <D value="1.0" unit="g/cm3"/>
+            <fraction n="0.077423" ref="H"/>
+            <fraction n="0.922577" ref="C"/>
+            <fraction n="0.0" ref="Pb"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+0%Pb+0.1%Cd">
+            <D value="1.00765" unit="g/cm3"/>
+            <fraction n="0.077345" ref="H"/>
+            <fraction n="0.921655" ref="C"/>
+            <fraction n="0.0" ref="Pb"/>
+            <fraction n="0.001" ref="Cd"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+1%Pb">
+            <D value="1.1035" unit="g/cm3"/>
+            <fraction n="0.076648" ref="H"/>
+            <fraction n="0.913352" ref="C"/>
+            <fraction n="0.01" ref="Pb"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+1%Pb+0.1%Cd">
+            <D value="1.11115" unit="g/cm3"/>
+            <fraction n="0.076571" ref="H"/>
+            <fraction n="0.912429" ref="C"/>
+            <fraction n="0.01" ref="Pb"/>
+            <fraction n="0.001" ref="Cd"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+5%Pb">
+            <D value="1.5175" unit="g/cm3"/>
+            <fraction n="0.073552" ref="H"/>
+            <fraction n="0.876448" ref="C"/>
+            <fraction n="0.05" ref="Pb"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+5%Pb+0.1%Cd">
+            <D value="1.52515" unit="g/cm3"/>
+            <fraction n="0.073474" ref="H"/>
+            <fraction n="0.875526" ref="C"/>
+            <fraction n="0.05" ref="Pb"/>
+            <fraction n="0.001" ref="Cd"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+10%Pb">
+            <D value="2.035" unit="g/cm3"/>
+            <fraction n="0.06968" ref="H"/>
+            <fraction n="0.83032" ref="C"/>
+            <fraction n="0.1" ref="Pb"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+10%Pb+0.1%Cd">
+            <D value="2.04265" unit="g/cm3"/>
+            <fraction n="0.069603" ref="H"/>
+            <fraction n="0.829397" ref="C"/>
+            <fraction n="0.1" ref="Pb"/>
+            <fraction n="0.001" ref="Cd"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+20%Pb">
+            <D value="3.07" unit="g/cm3"/>
+            <fraction n="0.061938" ref="H"/>
+            <fraction n="0.738062" ref="C"/>
+            <fraction n="0.2" ref="Pb"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+20%Pb+0.1%Cd">
+            <D value="3.07765" unit="g/cm3"/>
+            <fraction n="0.061861" ref="H"/>
+            <fraction n="0.737139" ref="C"/>
+            <fraction n="0.2" ref="Pb"/>
+            <fraction n="0.001" ref="Cd"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+50%Pb">
+            <D value="6.175" unit="g/cm3"/>
+            <fraction n="0.038711" ref="H"/>
+            <fraction n="0.461289" ref="C"/>
+            <fraction n="0.5" ref="Pb"/>
+        </material>
+        <material state="liquid" name="LiquidScintillator-HC+50%Pb+0.1%Cd">
+            <D value="6.18265" unit="g/cm3"/>
+            <fraction n="0.038634" ref="H"/>
+            <fraction n="0.460366" ref="C"/>
+            <fraction n="0.5" ref="Pb"/>
+            <fraction n="0.001" ref="Cd"/>
+        </material>
+    </materials>
+    <solids>
+        <box name="detectorBoxSolid" x="detectorSizeXY" y="detectorSizeXY" z="detectorSizeZ"/>
+        <box name="worldBox" x="worldSize" y="worldSize" z="worldSize"/>
+    </solids>
+    <structure>
+        <volume name="detectorVolume">
+            <materialref ref="BC408"/>
+            <solidref ref="detectorBoxSolid"/>
+        </volume>
+        <volume name="world">
+            <materialref ref="G4_AIR"/>
+            <solidref ref="worldBox"/>
+            <physvol name="detector">
+                <volumeref ref="detectorVolume"/>
+                <position name="detectorPosition" unit="mm" x="0" y="0" z="detectorSizeZ / 2.0"/>
+            </physvol>
+        </volume>
+    </structure>
+    <setup name="Default" version="1.0">
+        <world ref="world"/>
+    </setup>
+</gdml>
