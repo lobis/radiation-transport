@@ -19,7 +19,7 @@ RUN apt-get update \
 RUN pip3 -q install pip --upgrade && \
     pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 -q install && \
     pip3 -q install uproot awkward matplotlib scipy pandas mplhep boost_histogram \
-    numba jupyterlab jupyterlab_code_formatter black isort autopep8
+    numba==0.53 jupyterlab jupyterlab_code_formatter black isort autopep8
 
 RUN mkdir -p /root/Notebooks
 RUN echo "alias start-jupyter='cd /root/Notebooks && jupyter lab --allow-root --ip=0.0.0.0 --port=8888 --no-browser'" >> /root/.bashrc
