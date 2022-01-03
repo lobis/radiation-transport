@@ -50,12 +50,8 @@ class Geant4Track {
 
     /* Aux */
    public:
-    double GetEnergyInVolume(const TString&);
+    double GetEnergyInVolume(const TString& volume, const TString& processName = "") const;
     inline bool IsPrimaryTrack() const { return fParentID == 0; }
-
-   private:
-    std::map<std::string, double> fEnergyInVolumeMap;  //!
-    void InitializeEnergyInVolumeMap();
 };
 
 #endif  // RADIATION_TRANSPORT_Geant4Track_H

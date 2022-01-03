@@ -52,7 +52,7 @@ class Geant4Event {
     const Geant4Track& GetTrackByID(int trackID) const;
     // Int_t GetTrackIndexByID(int trackID);
     bool IsTrackSubEventPrimary(int trackID);
-    double GetEnergyInVolume(const TString&);
+    double GetEnergyInVolume(const TString& volume, const TString& processName = "") const;
     void InitializeEnergyInVolumeMap();
 
    private:

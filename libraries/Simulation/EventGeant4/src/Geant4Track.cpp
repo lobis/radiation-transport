@@ -30,21 +30,15 @@ void Geant4Track::Print() const {
     fSteps.Print();
 }
 
-double Geant4Track::GetEnergyInVolume(const TString& volume) {
-    if (fEnergyInVolumeMap.empty()) {
-        InitializeEnergyInVolumeMap();
-    }
-    if (fEnergyInVolumeMap.count(volume.Data()) > 0) {
-        return fEnergyInVolumeMap.at(volume.Data());
-    }
-    return 0;
-}
-
-void Geant4Track::InitializeEnergyInVolumeMap() {
-    fEnergyInVolumeMap.clear();
+double Geant4Track::GetEnergyInVolume(const TString& volume, const TString& processName) const {
+    double energy = 0;
     for (int i = 0; i < fSteps.fN; i++) {
-        string volume = fSteps.fVolumeName[i].Data();
-        double energy = fSteps.fEnergy[i];
-        fEnergyInVolumeMap[volume] = fEnergyInVolumeMap[volume] + energy;
+        const auto& thisVolume = fSteps.fVolumeName[i];
+        if (processName.IsNull() || fSteps.fProcessName[i].EqualTo(processName)) {
+            if (thisVolume.EqualTo(volume)) {
+                energy += fSteps.fEnergy[i];
+            }
+        }
     }
+    return energy;
 }

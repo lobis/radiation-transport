@@ -105,22 +105,10 @@ bool Geant4Event::IsTrackSubEventPrimary(int trackID) {
     return isSubEventPrimary;
 }
 
-double Geant4Event::GetEnergyInVolume(const TString& volume) {
-    if (fEnergyInVolumeMap.empty()) {
-        InitializeEnergyInVolumeMap();
+double Geant4Event::GetEnergyInVolume(const TString& volume, const TString& processName) const {
+    double energy = 0;
+    for (const auto& track : fTracks) {
+        energy += track.GetEnergyInVolume(volume, processName);
     }
-    if (fEnergyInVolumeMap.count(volume.Data()) > 0) {
-        return fEnergyInVolumeMap.at(volume.Data());
-    }
-    return 0;
-}
-
-void Geant4Event::InitializeEnergyInVolumeMap() {
-    fEnergyInVolumeMap.clear();
-    auto volumes = fEventHeader->fGeant4GeometryInfo->GetAllPhysicalVolumes();
-    for (auto& track : fTracks) {
-        for (const auto& volume : volumes) {
-            fEnergyInVolumeMap[volume.Data()] = fEnergyInVolumeMap[volume.Data()] + track.GetEnergyInVolume(volume);
-        }
-    }
+    return energy;
 }
