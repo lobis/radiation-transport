@@ -41,7 +41,7 @@ RUN ( \
     echo 'Port 22'; \
     echo 'Protocol 2'; \
     echo 'GSSAPIDelegateCredentials no'; \
-    echo 'XauthLocation /usr/bin/xauth'; \
+    echo 'XAuthLocation /usr/bin/xauth'; \
     ) >> /etc/ssh/ssh_config
 
 ARG PASSWORD
