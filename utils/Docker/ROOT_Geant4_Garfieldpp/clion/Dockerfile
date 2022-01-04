@@ -55,6 +55,16 @@ ENTRYPOINT ["/tini", "--"]
 
 RUN echo "source /root/install/env.sh" >> /root/.bashrc
 
+# Install repository
+ADD . /source
+WORKDIR /source
+
+RUN mkdir build && \
+    cd build && \
+    source entry-point.sh && \
+    cmake .. -DCMAKE_INSTALL_PREFIX=/root/install && \
+    make install
+
 WORKDIR /Notebooks
 
 CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_clion"]
