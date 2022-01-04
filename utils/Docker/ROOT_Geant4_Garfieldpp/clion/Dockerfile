@@ -37,7 +37,7 @@ RUN ( \
     echo 'XAuthLocation /usr/bin/xauth'; \
     echo 'Subsystem sftp /usr/lib/openssh/sftp-server'; \
     echo 'PermitRootLogin yes'; \
-    ) >> /etc/ssh/ssh_config
+    ) > /etc/ssh/sshd_config_clion
 
 ARG PASSWORD
 ARG SSH_PUBLIC_KEY
@@ -60,4 +60,4 @@ RUN echo "source /root/install/env.sh" >> /root/.bashrc
 
 WORKDIR /Notebooks
 
-CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/ssh_config"]
+CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_clion"]
