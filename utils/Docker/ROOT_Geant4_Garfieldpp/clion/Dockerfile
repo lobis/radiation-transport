@@ -34,7 +34,8 @@ RUN ( \
     echo 'XAuthLocation /usr/bin/xauth'; \
     echo 'Subsystem sftp /usr/lib/openssh/sftp-server'; \
     echo 'PermitRootLogin yes'; \
-    ) > /etc/ssh/sshd_config_clion
+    ) > /etc/ssh/sshd_config_clion \
+    && mkdir /run/sshd
 
 ARG PASSWORD
 ARG SSH_PUBLIC_KEY
