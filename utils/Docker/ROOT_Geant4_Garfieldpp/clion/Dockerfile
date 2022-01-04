@@ -54,20 +54,9 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
 
-RUN echo 'export DISPLAY=localhost:0' >> /root/.bashrc
+RUN echo "export DISPLAY=localhost:0" >> /root/.bashrc
 
 RUN echo "source /root/install/env.sh" >> /root/.bashrc
-
-# Install repository
-
-ADD . /radiation-transport
-WORKDIR /radiation-transport
-
-RUN mkdir build && \
-    cd build && \
-    source /root/.bashrc && \
-    cmake .. -DCMAKE_INSTALL_PREFIX=/root/install && \
-    make install
 
 WORKDIR /Notebooks
 
