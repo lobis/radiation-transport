@@ -33,7 +33,6 @@ RUN ( \
     echo "PasswordAuthentication yes"; \
     echo "Port 22"; \
     echo "Protocol 2"; \
-    echo "XAuthLocation /usr/bin/xauth"; \
     echo "AddressFamily inet"; \
     echo "Subsystem sftp /usr/lib/openssh/sftp-server"; \
     ) > /etc/ssh/sshd_config_clion \
@@ -53,8 +52,6 @@ ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 ENTRYPOINT ["/tini", "--"]
-
-RUN echo "export DISPLAY=localhost:0" >> /root/.bashrc
 
 RUN echo "source /root/install/env.sh" >> /root/.bashrc
 
