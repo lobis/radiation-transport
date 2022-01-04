@@ -27,13 +27,6 @@ RUN echo "alias start-jupyter='cd /root/Notebooks && jupyter lab --allow-root --
 # SSH settings
 RUN ( \
     echo 'LogLevel DEBUG2'; \
-    echo 'PermitRootLogin yes'; \
-    echo 'PasswordAuthentication yes'; \
-    echo 'Subsystem sftp /usr/lib/openssh/sftp-server'; \
-    ) > /etc/ssh/sshd_config_clion \
-    && mkdir /run/sshd
-
-RUN ( \
     echo 'ForwardAgent yes'; \
     echo 'ForwardX11 yes'; \
     echo 'ForwardX11Trusted yes'; \
@@ -42,6 +35,8 @@ RUN ( \
     echo 'Protocol 2'; \
     echo 'GSSAPIDelegateCredentials no'; \
     echo 'XAuthLocation /usr/bin/xauth'; \
+    echo 'Subsystem sftp /usr/lib/openssh/sftp-server'; \
+    echo 'PermitRootLogin yes'; \
     ) >> /etc/ssh/ssh_config
 
 ARG PASSWORD
@@ -63,4 +58,4 @@ RUN echo 'export DISPLAY=localhost:0' >> /root/.bashrc
 
 RUN echo "source /root/install/env.sh" >> /root/.bashrc
 
-CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config_clion"]
+CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/ssh_config"]
