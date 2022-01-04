@@ -17,7 +17,7 @@ RUN apt-get update \
 
 # Jupyter
 RUN pip3 -q install pip --upgrade && \
-    pip3 list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip3 -q install && \
+    pip3 list --outdated --format=freeze | grep -v "^\-e" | cut -d = -f 1 | xargs -n1 pip3 -q install && \
     pip3 -q install uproot awkward matplotlib scipy pandas mplhep boost_histogram \
     numba==0.53 jupyterlab jupyterlab_code_formatter black isort autopep8
 
@@ -26,14 +26,16 @@ RUN echo "alias start-jupyter='cd /root/Notebooks && jupyter lab --allow-root --
 
 # SSH settings
 RUN ( \
-    echo 'LogLevel DEBUG2'; \
-    echo 'X11Forwarding yes'; \
-    echo 'PasswordAuthentication yes'; \
-    echo 'Port 22'; \
-    echo 'Protocol 2'; \
-    echo 'XAuthLocation /usr/bin/xauth'; \
-    echo 'Subsystem sftp /usr/lib/openssh/sftp-server'; \
-    echo 'PermitRootLogin yes'; \
+    echo "LogLevel DEBUG2"; \
+    echo "PermitRootLogin yes"; \
+    echo "X11Forwarding yes"; \
+    echo "X11UseLocalhost no"; \
+    echo "PasswordAuthentication yes"; \
+    echo "Port 22"; \
+    echo "Protocol 2"; \
+    echo "XAuthLocation /usr/bin/xauth"; \
+    echo "AddressFamily inet"; \
+    echo "Subsystem sftp /usr/lib/openssh/sftp-server"; \
     ) > /etc/ssh/sshd_config_clion \
     && mkdir /run/sshd
 
