@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=http://raw.githubusercontent.com/lobis/radiation-transport/main/libraries/Simulation/Config/schemas/simulationConfig.schema.json
+
+verboseLevel: info
+
+runManagerType: multithreading
+
+threads: 6
+
+seed: 2000
+
+detector:
+  geometry: geometry/babyIAXO-noVeto.gdml
+  volumes:
+    - name: gasVolume
+      sensitive: true
+  keepOnlyTracksInTheseVolumes:
+    - gasVolume
+    - ShieldingVolume
+  replaceMaterials:
+    ShieldingVolume: LiquidScintillator-HC+50%Pb
+
+numberOfEvents: 100000
+
+fullChain: true
+
+output: liquidO.babyIAXO.root
+
+source:
+  generator:
+    disk:
+      position: [ 0, 1250, 0 ]
+      diameter: 2500
+
+  particle:
+    name: neutron
+
+  energy:
+    unit: MeV
+    min: 10
+    max: 10000
+    cosmicNeutronsSeaLevel:
+
+  angular:
+    cos2:
+
+physics:
+  productionCutsEnergyMin: 1 # keV
+  physicsLists:
+    - G4EmLivermorePhysics
+    - G4DecayPhysics
+    - G4RadioactiveDecayPhysics
+    - G4HadronElasticPhysicsHP
+    - G4IonBinaryCascadePhysics
+    - G4HadronPhysicsQGSP_BIC_HP
+    - G4NeutronTrackingCut
+    - G4EmExtraPhysics
