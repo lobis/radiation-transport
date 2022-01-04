@@ -27,13 +27,10 @@ RUN echo "alias start-jupyter='cd /root/Notebooks && jupyter lab --allow-root --
 # SSH settings
 RUN ( \
     echo 'LogLevel DEBUG2'; \
-    echo 'ForwardAgent yes'; \
-    echo 'ForwardX11 yes'; \
-    echo 'ForwardX11Trusted yes'; \
+    echo 'X11Forwarding yes'; \
     echo 'PasswordAuthentication yes'; \
     echo 'Port 22'; \
     echo 'Protocol 2'; \
-    echo 'GSSAPIDelegateCredentials no'; \
     echo 'XAuthLocation /usr/bin/xauth'; \
     echo 'Subsystem sftp /usr/lib/openssh/sftp-server'; \
     echo 'PermitRootLogin yes'; \
