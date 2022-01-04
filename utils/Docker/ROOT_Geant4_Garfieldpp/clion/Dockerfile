@@ -58,4 +58,17 @@ RUN echo 'export DISPLAY=localhost:0' >> /root/.bashrc
 
 RUN echo "source /root/install/env.sh" >> /root/.bashrc
 
+# Install repository
+
+ADD . /radiation-transport
+WORKDIR /radiation-transport
+
+RUN mkdir build && \
+    cd build && \
+    source /root/.bashrc && \
+    cmake .. -DCMAKE_INSTALL_PREFIX=/root/install && \
+    make install
+
+WORKDIR /Notebooks
+
 CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/ssh_config"]
