@@ -62,9 +62,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     GlobalManager::Instance()->GetEventHeader()->fSimulationConfig = &GlobalManager::Instance()->GetSimulationConfig();
     // read extension
     if (fGeometryFilename.extension() == ".gdml") {
-        spdlog::debug("Reading geometry as GDML");
+        spdlog::info("Reading geometry as GDML");
         G4GDMLParser parser;
+        auto geometryPath = fGeometryFilename.parent_path();
+        auto originalPath = fs::current_path();
+        if (originalPath != geometryPath) {
+            spdlog::warn("Changing path to '{}' in order to read gdml", geometryPath.c_str());
+            std::filesystem::current_path(geometryPath);
+        }
         parser.Read(fGeometryFilename.c_str(), true);
+        std::filesystem::current_path(originalPath);
+
         geometryInfo->PopulateFromGdml(fGeometryFilename.c_str());
         fWorld = parser.GetWorldVolume();
     } else {
