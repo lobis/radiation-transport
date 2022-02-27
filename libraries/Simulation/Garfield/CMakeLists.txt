@@ -5,7 +5,7 @@ message(STATUS "Found Garfield++ version: ${Garfield_VERSION}")
 
 target_link_libraries(
         ${LIBRARY} PUBLIC
-        Garfield::Garfield
+        Garfield
 )
 
 THIS_INSTALL_HEADERS()
