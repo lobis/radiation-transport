@@ -25,7 +25,6 @@ jobs:
 
       - name: Debug Environment
         run: |
-          source entry-point.sh
           root-config --prefix
           root-config --version
           geant4-config --prefix
@@ -34,24 +33,20 @@ jobs:
 
       - name: Configure CMake without testing
         run: |
-          source entry-point.sh
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Configure CMake with testing
         run: |
-          source entry-point.sh
           rm -rf ${{github.workspace}}/build
           cmake -B ${{github.workspace}}/build -DTEST=ON -DCMAKE_INSTALL_PREFIX=${{env.CMAKE_INSTALL_PREFIX}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build and Install
         run: |
-          source entry-point.sh
           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
           cmake --install ${{github.workspace}}/build
 
       - name: Test
         run: |
-          source entry-point.sh
           cd ${{github.workspace}}/build
           ctest -C ${{env.BUILD_TYPE}} --output-on-failure
 
