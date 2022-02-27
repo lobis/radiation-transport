@@ -39,7 +39,7 @@ Geant4Track::Geant4Track(const G4Track* track) : Geant4Track() {
                   fParticleName, fParticleID, fCreatorProcess, energyWithUnits);
 }
 
-void Geant4Track::InsertStep(const G4Step* step) { fSteps.InsertStep(step); }
+void Geant4Track::InsertStep(const G4Step* step) { fHits.InsertStep(step); }
 
 void Geant4Track::UpdateTrack(const G4Track* track) {
     if (track->GetTrackID() != fTrackID) {

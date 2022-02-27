@@ -27,16 +27,16 @@ void Geant4Track::Print() const {
         "\tTrackID: {} - ParentID: {} - Particle Name: {} - Kinetic Energy: {:0.2f} keV - Created by: {} - Number of Secondaries: {} - Track Length: "
         "{:0.2f} mm",
         fTrackID, fParentID, fParticleName, fInitialKineticEnergy, fCreatorProcess, fNumberOfSecondaries, fTrackLength);
-    fSteps.Print();
+    fHits.Print();
 }
 
 double Geant4Track::GetEnergyInVolume(const TString& volume, const TString& processName) const {
     double energy = 0;
-    for (int i = 0; i < fSteps.fN; i++) {
-        const auto& thisVolume = fSteps.fVolumeName[i];
-        if (processName.IsNull() || fSteps.fProcessName[i].EqualTo(processName)) {
+    for (int i = 0; i < fHits.fN; i++) {
+        const auto& thisVolume = fHits.fVolumeName[i];
+        if (processName.IsNull() || fHits.fProcessName[i].EqualTo(processName)) {
             if (thisVolume.EqualTo(volume)) {
-                energy += fSteps.fEnergy[i];
+                energy += fHits.fEnergy[i];
             }
         }
     }

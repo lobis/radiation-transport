@@ -42,7 +42,7 @@ bool Geant4Event::InsertTrack(const G4Track* track) {
         exit(1);
     }
     fTracks.emplace_back(track);
-    fTracks.back().fSteps = fInitialStep;
+    fTracks.back().fHits = fInitialStep;
 
     fTrackIDToTrackIndex[track->GetTrackID()] = fTracks.size() - 1;
 

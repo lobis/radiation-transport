@@ -80,6 +80,8 @@ const Geant4Track& Geant4Event::GetTrackByID(int trackID) const {
             return track;
         }
     }
+    spdlog::error("Geant4Event::GetTrackByID - Error");
+    exit(1);
 }
 
 bool Geant4Event::IsTrackSubEventPrimary(int trackID) {

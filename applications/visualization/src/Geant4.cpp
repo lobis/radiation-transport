@@ -44,11 +44,11 @@ Width_t GetLineWidth(Double_t energy) {
 TEveStraightLineSet* Geant4Track::GetEveDrawable() const {
     auto lineSet = new TEveStraightLineSet(TString::Format("ID%d | %s | Init KE: %0.2f keV", fTrackID, fParticleName.Data(), fInitialKineticEnergy));
 
-    for (int i = 0; i < fSteps.fN - 1; i++) {
-        lineSet->AddLine({static_cast<float>(fSteps.fPosition[i].x()), static_cast<float>(fSteps.fPosition[i].y()),
-                          static_cast<float>(fSteps.fPosition[i].z())},  //
-                         {static_cast<float>(fSteps.fPosition[i + 1].x()), static_cast<float>(fSteps.fPosition[i + 1].y()),
-                          static_cast<float>(fSteps.fPosition[i + 1].z())});
+    for (int i = 0; i < fHits.fN - 1; i++) {
+        lineSet->AddLine({static_cast<float>(fHits.fPosition[i].x()), static_cast<float>(fHits.fPosition[i].y()),
+                          static_cast<float>(fHits.fPosition[i].z())},  //
+                         {static_cast<float>(fHits.fPosition[i + 1].x()), static_cast<float>(fHits.fPosition[i + 1].y()),
+                          static_cast<float>(fHits.fPosition[i + 1].z())});
         lineSet->SetLineColor(GetParticleColor(fParticleName));
         lineSet->SetLineWidth(GetLineWidth(fInitialKineticEnergy));
     }

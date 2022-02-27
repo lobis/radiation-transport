@@ -31,7 +31,7 @@ class Geant4Track {
     Double_t fTrackLength{};
 
     Double_t fWeight{};
-    Geant4Hits fSteps;
+    Geant4Hits fHits;
 
    public:
     inline Geant4Track() = default;

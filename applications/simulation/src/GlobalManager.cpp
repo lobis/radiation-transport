@@ -53,7 +53,10 @@ void GlobalManager::WriteEvents() {
         return;
     }
 
-    const auto beforeNumberOfEvents = fEventTree->GetEntries();
+    if (!fEventTree) {
+        spdlog::error("No Event Tree!");
+        exit(1);
+    }
 
     while (!fEventContainer.empty()) {
         fEvent = *fEventContainer.front();
@@ -65,6 +68,8 @@ void GlobalManager::WriteEvents() {
 
         // fConfigTree->Fill();
     }
+
+    const auto beforeNumberOfEvents = fEventTree->GetEntries();
 
     // fEventTree->Write();
     spdlog::debug("GlobalManager::WriteEvents - Saved {} events into {} (total {} events)", fEventTree->GetEntries() - beforeNumberOfEvents,

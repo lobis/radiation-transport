@@ -1,4 +1,0 @@
-venv
-*build*
-
-!.github/workflows/*.yml

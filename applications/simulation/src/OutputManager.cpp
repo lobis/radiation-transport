@@ -58,7 +58,7 @@ void OutputManager::FinishAndSubmitEvent() {
         G4String energyWithUnits = G4BestUnit(fEvent->fSensitiveVolumesTotalEnergy * CLHEP::keV, "Energy");
         size_t numberOfSteps = 0;
         for (const auto& track : fEvent->fTracks) {
-            numberOfSteps += track.fSteps.fN;
+            numberOfSteps += track.fHits.fN;
         }
         spdlog::info(
             "OutputManager::FinishAndSubmitEvent - EventID {} - SubEventID {} - Sensitive volume energy: {} - Number of tracks: {} - Number of "
@@ -199,10 +199,10 @@ void OutputManager::RemoveUnwantedTracks() {
         }
         // energy deposited in important volumes
         bool keep = false;
-        for (int i = 0; i < track.fSteps.fN; i++) {
-            double energy = track.fSteps.fEnergy[i];
+        for (int i = 0; i < track.fHits.fN; i++) {
+            double energy = track.fHits.fEnergy[i];
             if (energy > 0) {
-                TString volume = track.fSteps.fVolumeName[i];
+                TString volume = track.fHits.fVolumeName[i];
                 if (fKeepOnlyTracksInTheseVolumesListAfterProcessing.count(volume) > 0) {
                     keep = true;
                     break;
@@ -237,7 +237,7 @@ void OutputManager::RemoveUnwantedTracks() {
 
     size_t numberOfSteps = 0;
     for (const auto& track : fEvent->fTracks) {
-        numberOfSteps += track.fSteps.fN;
+        numberOfSteps += track.fHits.fN;
     }
     spdlog::info("OutputManager::RemoveUnwantedTracks - Tracks before removal: {} -> Tracks after removal: {} ({} steps)", numberOfTracksBefore,
                  fEvent->fTracks.size(), numberOfSteps);
