@@ -78,4 +78,4 @@ jobs:
           push: true
           pull: true
           tags: |
-            ghcr.io/radiation-transport:latest
+            ghcr.io/lobis/radiation-transport:latest
