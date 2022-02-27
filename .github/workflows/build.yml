@@ -20,10 +20,6 @@ jobs:
     container:
       image: ghcr.io/lobis/root-geant4-garfield:cpp17_ROOT-v6-25-01_Geant4-v11.0.0_Garfield-4.0
 
-      credentials:
-        username: ${{github.actor}}
-        password: ${{secrets.CONTAINER_REGISTRY_GITHUB_TOKEN}}
-
     steps:
       - uses: actions/checkout@v2
 
