@@ -1,3 +1,5 @@
+LABEL org.opencontainers.image.source="https://github.com/lobis/radiation-transport"
+
 ARG BASE_IMAGE_VERSION=cpp17_ROOT-v6-25-01_Geant4-v11.0.0_Garfield-4.0
 
 FROM ghcr.io/lobis/root-geant4-garfield:${BASE_IMAGE_VERSION}
