@@ -27,8 +27,10 @@
 #include <G4tgrFileReader.hh>
 #include <G4tgrLineProcessor.hh>
 #include <G4tgrVolumeMgr.hh>
-#include <cstdio>
-#include <fstream>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
 
 #include "Exceptions.h"
 
@@ -147,9 +149,11 @@ void DetectorConstruction::ConstructSDandField() {
     DetectorConstructionConfig config = GlobalManager::Instance()->GetSimulationConfig().fDetectorConfig;
 
     vector<string> sensitiveVolumes;  // user submitted sensitive volumes, may not exist or not be physical (be logical)
+    map<string, bool> sensitiveVolumeIsKill = {};
     for (const auto& volume : config.fVolumes) {
         if (volume.fIsSensitive) {
             sensitiveVolumes.emplace_back(volume.fName);
+            sensitiveVolumeIsKill[volume.fName] = volume.fKill;
         }
     }
 
@@ -178,17 +182,29 @@ void DetectorConstruction::ConstructSDandField() {
             exit(1);
         }
         logicalVolumesSelected.insert(logicalVolume);
+        sensitiveVolumeIsKill[logicalVolume->GetName()] = sensitiveVolumeIsKill[userSensitiveVolume];
+        if (userSensitiveVolume != logicalVolume->GetName()) {
+            sensitiveVolumeIsKill.erase(userSensitiveVolume);
+        }
     }
 
+    /*
+    spdlog::warn("DetectorConstruction::ConstructSDandField - debug kill");
+    for (const auto& [volumeName, killFlag] : sensitiveVolumeIsKill) {
+        spdlog::warn("{} - {}", volumeName, killFlag ? "True" : "False");
+    }
+    */
     G4SDManager* SDManager = G4SDManager::GetSDMpointer();
 
     for (G4LogicalVolume* logicalVolume : logicalVolumesSelected) {
-        spdlog::info("DetectorConstruction::ConstructSDandField: Attaching sensitive detector to logical volume '{}'", logicalVolume->GetName());
-        G4VSensitiveDetector* sensitiveDetector = new SensitiveDetector(logicalVolume->GetName());
+        auto name = logicalVolume->GetName();
+        spdlog::info("DetectorConstruction::ConstructSDandField: Attaching sensitive detector to logical volume '{}'", name);
+        bool kill = sensitiveVolumeIsKill.at(name);
+        G4VSensitiveDetector* sensitiveDetector = new SensitiveDetector(name, kill);
         SDManager->AddNewDetector(sensitiveDetector);
         logicalVolume->SetSensitiveDetector(sensitiveDetector);
 
-        auto region = new G4Region(logicalVolume->GetName());
+        auto region = new G4Region(name);
         logicalVolume->SetRegion(region);
     }
 }

@@ -13,12 +13,24 @@
 
 using namespace std;
 
-SensitiveDetector::SensitiveDetector(const G4String& name) : G4VSensitiveDetector(name), fOutput(OutputManager::Instance()) {
-    spdlog::info("SensitiveDetector::SensitiveDetector '{}'", name);
+SensitiveDetector::SensitiveDetector(const G4String& name, bool kill) : G4VSensitiveDetector(name), fOutput(OutputManager::Instance()), fKill(kill) {
+    spdlog::info("SensitiveDetector::SensitiveDetector '{}'{}", name, fKill ? " (kill)" : "");
 }
 
 G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*) {
     spdlog::debug("SensitiveDetector::ProcessHits");
+
+    if (fKill) {
+        /*
+        spdlog::warn("KILLING TRACK IN {} {} {} {}", step->GetPreStepPoint()->GetPhysicalVolume()->GetName(),
+                     step->GetPostStepPoint()->GetPhysicalVolume()->GetName(), step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName(),
+                     step->GetTrack()->GetTrackID());
+        */
+        fOutput->SetForceSave(true);
+        step->GetTrack()->SetTrackStatus(fStopAndKill);
+
+        return true;
+    }
 
     auto energy = step->GetTotalEnergyDeposit() / keV;
 
@@ -26,7 +38,7 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*) {
         return true;
     }
 
-    const G4String volumeName = step->GetPreStepPoint()->GetPhysicalVolume()->GetName();
+    const auto volumeName = (TString)step->GetPreStepPoint()->GetPhysicalVolume()->GetName();
     // TODO: Check this, may not work as expected in MT mode
     fOutput->AddSensitiveEnergy(energy, volumeName);
 

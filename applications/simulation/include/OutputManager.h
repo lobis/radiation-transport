@@ -42,6 +42,11 @@ class OutputManager {
 
     void AddSensitiveEnergy(Double_t energy, const TString& physicalVolumeName);
 
+    void SetForceSave(bool value);
+
+    bool IsValidTrack(const G4Track*) const;
+    bool IsValidStep(const G4Step*) const;
+
    private:
     inline OutputManager() = default;
     static thread_local OutputManager* pinstance_;
@@ -50,6 +55,8 @@ class OutputManager {
 
     bool IsEmptyEvent() const;
     bool IsValidEvent() const;
+
+    bool fForceSave = false;
 
     void RemoveUnwantedTracks();
 

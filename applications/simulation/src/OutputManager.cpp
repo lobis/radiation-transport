@@ -4,13 +4,16 @@
 #include <Geant4Event.h>
 #include <spdlog/spdlog.h>
 
+#include <G4EventManager.hh>
 #include <G4RunManager.hh>
+#include <G4SDManager.hh>
 #include <G4Threading.hh>
 #include <G4Track.hh>
 #include <G4UnitsTable.hh>
 #include <G4UserEventAction.hh>
 
 #include "GlobalManager.h"
+#include "SensitiveDetector.h"
 
 using namespace std;
 
@@ -39,6 +42,7 @@ OutputManager* OutputManager::Instance() {
  * action.
  */
 void OutputManager::UpdateEvent() {
+    fForceSave = false;
     auto event = G4EventManager::GetEventManager()->GetConstCurrentEvent();
     fEvent = make_unique<Geant4Event>(event);
     fEvent->fEventHeader = GlobalManager::Instance()->GetEventHeader();
@@ -49,6 +53,13 @@ void OutputManager::UpdateEvent() {
  * This should be called at the end of event action.
  */
 void OutputManager::FinishAndSubmitEvent() {
+    /*
+    spdlog::error("OutputManager::FinishAndSubmitEvent - {} - {} - event ID: {}", fForceSave ? "True" : "False", IsValidEvent() ? "True" : "False",
+                  fEvent->fEventID);
+    */
+
+    // fEvent->Print();
+
     if (IsEmptyEvent()) return;
 
     spdlog::debug("OutputManager::FinishAndSubmitEvent");
@@ -110,7 +121,42 @@ void OutputManager::RecordStep(const G4Step* step) {
 
 bool OutputManager::IsEmptyEvent() const { return !fEvent || fEvent->fTracks.empty(); }
 
+bool OutputManager::IsValidTrack(const G4Track* track) const {
+    // return true;
+    // optical photons take too much space to store them
+    for (const auto& particleName : {"opticalphoton"}) {
+        if (track->GetParticleDefinition()->GetParticleName() == particleName) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool OutputManager::IsValidStep(const G4Step* step) const {
+    if (!IsValidTrack(step->GetTrack())) {
+        return false;
+    }
+
+    return true;
+    /*
+     * If the "kill" option is enabled in the sensitive volume, do not store hits in this volume (always one hit is saved otherwise)
+     */
+    auto geometryInfo = GlobalManager::Instance()->GetEventHeader()->GetGeant4GeometryInfo();
+    auto volumeName = geometryInfo->GetAlternativeNameFromGeant4PhysicalName((TString)step->GetPreStepPoint()->GetPhysicalVolume()->GetName());
+    auto logicalName = geometryInfo->fPhysicalToLogicalVolumeMap.at(volumeName);
+    G4SDManager* SDManager = G4SDManager::GetSDMpointer();
+    auto detector = (SensitiveDetector*)SDManager->FindSensitiveDetector(logicalName.Data(), false);
+    if (detector) {
+        if (detector->IsKill()) {
+            // auto processName = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+            return false;
+        }
+    }
+    return true;
+}
+
 bool OutputManager::IsValidEvent() const {
+    if (fForceSave) return true;
     if (IsEmptyEvent()) return false;
     if (GlobalManager::Instance()->GetSimulationConfig().fSaveAllEvents) return true;
     if (fEvent->fPrimaryParticleName == "geantino") return true;
@@ -241,4 +287,9 @@ void OutputManager::RemoveUnwantedTracks() {
     }
     spdlog::info("OutputManager::RemoveUnwantedTracks - Tracks before removal: {} -> Tracks after removal: {} ({} steps)", numberOfTracksBefore,
                  fEvent->fTracks.size(), numberOfSteps);
+}
+
+void OutputManager::SetForceSave(bool value) {
+    spdlog::debug("OutputManager::SetForceSave to '{}' for event ID: {}", value ? "True" : "False", fEvent->fEventID);
+    fForceSave = value;
 }

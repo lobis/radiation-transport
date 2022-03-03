@@ -21,7 +21,7 @@ class DetectorConstructionConfig : public SerializableConfig {
     struct DetectorVolume {
         std::string fName;
         bool fIsSensitive = false;
-
+        bool fKill = false;
         inline bool operator==(const DetectorVolume& rhs) const { return (rhs.fName == fName); }
     };
 

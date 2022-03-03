@@ -12,6 +12,8 @@
 #include <G4Track.hh>
 #include <G4VUserPrimaryVertexInformation.hh>
 
+#include "OutputManager.h"
+
 using namespace std;
 
 Geant4Event::Geant4Event(const G4Event* event) : Geant4Event() {
@@ -34,7 +36,7 @@ Geant4Event::Geant4Event(const G4Event* event) : Geant4Event() {
 }
 
 bool Geant4Event::InsertTrack(const G4Track* track) {
-    if (!IsValid(track)) {
+    if (!OutputManager::Instance()->IsValidTrack(track)) {
         return false;
     }
     if (fInitialStep.fN != 1) {
@@ -47,7 +49,7 @@ bool Geant4Event::InsertTrack(const G4Track* track) {
     fTrackIDToTrackIndex[track->GetTrackID()] = fTracks.size() - 1;
 
     if (fTracks.empty()) {
-        // primary for the subevent
+        // primary for the sub-event
         fSubEventPrimaryParticleName = track->GetParticleDefinition()->GetParticleName();
         fSubEventPrimaryEnergy = track->GetKineticEnergy() / CLHEP::keV;
         const auto& position = track->GetPosition();
@@ -59,14 +61,14 @@ bool Geant4Event::InsertTrack(const G4Track* track) {
 }
 
 void Geant4Event::UpdateTrack(const G4Track* track) {
-    if (!IsValid(track)) {
+    if (!OutputManager::Instance()->IsValidTrack(track)) {
         return;
     }
     fTracks.back().UpdateTrack(track);
 }
 
 void Geant4Event::InsertStep(const G4Step* step) {
-    if (!IsValid(step)) {
+    if (!OutputManager::Instance()->IsValidStep(step)) {
         return;
     }
     if (step->GetTrack()->GetCurrentStepNumber() == 0) {
@@ -77,16 +79,3 @@ void Geant4Event::InsertStep(const G4Step* step) {
         fTracks.back().InsertStep(step);
     }
 }
-
-bool Geant4Event::IsValid(const G4Track* track) {
-    // return true;
-    // optical photons take too much space to store them
-    for (const auto& particleName : {"opticalphoton"}) {
-        if (track->GetParticleDefinition()->GetParticleName() == particleName) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool Geant4Event::IsValid(const G4Step* step) { return IsValid(step->GetTrack()); }

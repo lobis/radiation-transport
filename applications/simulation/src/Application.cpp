@@ -72,10 +72,6 @@ void Application::UserInitialization() {
 void Application::Initialize() {
     fRunManager->Initialize();
 
-    if (G4Threading::IsMasterThread()) {
-        GlobalManager::Instance()->SetupFile();
-    }
-
     auto UImanager = G4UImanager::GetUIpointer();
 
     size_t numberOfCommands = fConfig.fCommands.size();
@@ -161,6 +157,8 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
         }
     }
 
+    fGlobalManager->SetSimulationConfig(fConfig);
+
     if (fConfig.fInteractive) {
         spdlog::info("Initializing G4VisExecutive");
         fG4VisManager = new G4VisExecutive();
@@ -195,6 +193,10 @@ void Application::RunMacro(const vector<string>& macroLines) {
 void Application::Run() {
     TStopwatch timer;
     timer.Start();
+
+    if (G4Threading::IsMasterThread()) {
+        GlobalManager::Instance()->SetupFile();
+    }
 
     UserInitialization();
     Initialize();

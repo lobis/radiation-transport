@@ -68,10 +68,6 @@ class Geant4Event {
     void UpdateTrack(const G4Track*);  //!
     void InsertStep(const G4Step*);    //!
 
-   private:
-    static bool IsValid(const G4Track*);  //!
-    static bool IsValid(const G4Step*);   //!
-
     /* Visualization */
     void Draw();
 };

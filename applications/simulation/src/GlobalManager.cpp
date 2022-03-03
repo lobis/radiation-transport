@@ -45,6 +45,14 @@ GlobalManager::~GlobalManager() = default;
 void GlobalManager::WriteEvents() {
     spdlog::debug("GlobalManager::WriteEvents");
 
+    if (!fFile) {
+        return;
+    }
+
+    if (!fSimulationConfig.fSave) {
+        return;
+    }
+
     if (G4Threading::IsMultithreadedApplication()) {
         lock_guard<mutex> guard(fEventContainerMutex);
     }
@@ -84,6 +92,10 @@ void GlobalManager::SetupFile() {
     if (!G4Threading::IsMasterThread()) {
         spdlog::error("GlobalManager::SetupFile - Called outside main thread, exiting");
         exit(1);
+    }
+    if (fSimulationConfig.fInteractive) {
+        spdlog::info("GlobalManager::SetupFile - Saving events is disabled in interactive mode");
+        return;
     }
     if (!fSimulationConfig.fSave) {
         spdlog::info("GlobalManager::SetupFile - Saving events is disabled");

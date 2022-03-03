@@ -90,6 +90,11 @@
           "type": "boolean",
           "description": "Select as sensitive volume",
           "default": false
+        },
+        "kill": {
+          "type": "boolean",
+          "description": "If set to true, tracks will die when entering this volume, but it will count as sensitive hit. Only works when paired with 'sensitive'",
+          "default": false
         }
       }
     },

@@ -9,3 +9,7 @@ detector:
       sensitive: true
 
     - name: notSensitiveVolume
+
+    - name: sensitiveVolumeWithKill
+      sensitive: true
+      kill: true

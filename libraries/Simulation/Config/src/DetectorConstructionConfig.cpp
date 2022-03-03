@@ -19,6 +19,9 @@ struct convert<DetectorConstructionConfig::DetectorVolume> {
         if (rhs.fIsSensitive) {
             node["sensitive"] = rhs.fIsSensitive;
         }
+        if (rhs.fKill) {
+            node["kill"] = rhs.fKill;
+        }
         return node;
     }
 
@@ -29,6 +32,9 @@ struct convert<DetectorConstructionConfig::DetectorVolume> {
         rhs.fName = node["name"].as<string>();
         if (node["sensitive"]) {
             rhs.fIsSensitive = node["sensitive"].as<bool>();
+        }
+        if (node["kill"]) {
+            rhs.fKill = node["kill"].as<bool>();
         }
         return true;
     }

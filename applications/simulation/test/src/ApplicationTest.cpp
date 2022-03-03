@@ -257,7 +257,7 @@ TEST(Application, ReplaceMaterials) {
     config.fSeed = 100;
     config.fRunManagerType = "serial";
     config.fFullChain = false;
-    config.fNumberOfEvents = 100;
+    config.fNumberOfEvents = 3;
 
     config.fSourceConfig.fPositionDistributionType = "point";
     config.fSourceConfig.fPositionDistributionCenter = {0, 1500, 0};
@@ -282,5 +282,48 @@ TEST(Application, ReplaceMaterials) {
     for (int i = 0; i < tree->GetEntries(); i++) {
         tree->GetEntry(i);
         event->PrintSensitiveInfo();
+    }
+}
+
+TEST(Application, SensitiveKill) {
+    const string configFile = EXAMPLES_PATH + "iaxo/neutrons.simulation.yaml";
+
+    auto config = SimulationConfig(configFile);
+
+    config.fSeed = 100;
+    config.fRunManagerType = "serial";
+    config.fFullChain = false;
+    config.fNumberOfEvents = 10;
+
+    config.fSourceConfig.fPositionDistributionType = "point";
+    config.fSourceConfig.fPositionDistributionCenter = {0, 1500, 0};
+    config.fSourceConfig.fAngularDistributionType = "flux";
+    config.fSourceConfig.fAngularDistributionDirection = {0, -1, 0};
+
+    auto& detector = config.fDetectorConfig;
+    // Set 'kill' to true
+    for (auto& volume : detector.fVolumes) {
+        if (volume.fIsSensitive) {
+            volume.fKill = true;
+        }
+    }
+
+    Application app;
+    app.LoadConfigFromFile(config);
+    app.PrintConfig();
+    app.Run();
+
+    TFile file(config.GetOutputFileAbsolutePath().c_str());
+    auto filenameNoReduction = config.GetOutputFileAbsolutePath();
+
+    spdlog::info("The size of {} is {:0.2f} MB", filenameNoReduction, std::filesystem::file_size(filenameNoReduction) / 1E6);
+
+    TTree* tree = file.Get<TTree>("EventTree");
+    Geant4Event* event = nullptr;
+    tree->SetBranchAddress("fEvent", &event);
+    for (int i = 0; i < tree->GetEntries(); i++) {
+        tree->GetEntry(i);
+        event->PrintSensitiveInfo();
+        EXPECT_TRUE(event->fSensitiveVolumesTotalEnergy == 0);
     }
 }
