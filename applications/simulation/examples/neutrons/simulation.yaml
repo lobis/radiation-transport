@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=http://raw.githubusercontent.com/lobis/radiation-transport/main/libraries/Simulation/Config/schemas/simulationConfig.schema.json
+
+verboseLevel: info
+
+runManagerType: serial
+
+seed: 137
+
+detector:
+  geometry: geometry/detector.gdml
+  volumes:
+    - name: detector
+      sensitive: true
+      kill: true
+
+numberOfEvents: 100
+
+output: output.root
+
+source:
+  generator:
+    point:
+      position: [ 0, 2000, 0 ]
+
+  particle:
+    name: geantino
+
+  energy:
+    unit: MeV
+    mono:
+      value: 100
+
+  angular:
+    flux:
+      direction: [ 0, -1, 0 ]
+
+
+physics:
+  physicsLists:
+    - G4EmLivermorePhysics
+    - G4DecayPhysics
+    - G4RadioactiveDecayPhysics
+    - G4HadronElasticPhysicsHP
+    - G4IonBinaryCascadePhysics
+    - G4HadronPhysicsQGSP_BIC_HP
+    - G4NeutronTrackingCut
+    - G4EmExtraPhysics

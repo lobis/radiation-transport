@@ -1,0 +1,92 @@
+<?xml version='1.0'?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+    <define>
+        <constant name="detectorSize" value="100"/>
+        <constant name="layer1Thickness" value="100"/>
+        <constant name="layer2Thickness" value="100"/>
+        <constant name="layer3Thickness" value="100"/>
+    </define>
+    <materials/>
+    <solids>
+        <box name="sensitiveSolid" x="detectorSize" y="detectorSize" z="detectorSize" lunit="mm"/>
+
+        <box name="layer1SolidBox" lunit="mm"
+             x="detectorSize + layer1Thickness"
+             y="detectorSize + layer1Thickness"
+             z="detectorSize + layer1Thickness"/>
+
+        <subtraction name="layer1Solid">
+            <first ref="layer1SolidBox"/>
+            <second ref="sensitiveSolid"/>
+        </subtraction>
+
+        <box name="layer2SolidBox" lunit="mm"
+             x="detectorSize + layer1Thickness + layer2Thickness"
+             y="detectorSize + layer1Thickness + layer2Thickness"
+             z="detectorSize + layer1Thickness + layer2Thickness"/>
+
+        <subtraction name="layer2Solid">
+            <first ref="layer2SolidBox"/>
+            <second ref="layer1SolidBox"/>
+        </subtraction>
+
+        <box name="layer3SolidBox" lunit="mm"
+             x="detectorSize + layer1Thickness + layer2Thickness + layer3Thickness"
+             y="detectorSize + layer1Thickness + layer2Thickness + layer3Thickness"
+             z="detectorSize + layer1Thickness + layer2Thickness + layer3Thickness"/>
+
+        <subtraction name="layer3Solid">
+            <first ref="layer3SolidBox"/>
+            <second ref="layer2SolidBox"/>
+        </subtraction>
+
+        <box name="worldBox" x="2000.0" y="2000.0" z="2000.0"/>
+    </solids>
+    <structure>
+        <volume name="detectorVolume">
+            <materialref ref="G4_WATER"/>
+            <solidref ref="sensitiveSolid"/>
+        </volume>
+
+        <volume name="layer1Volume">
+            <materialref ref="G4_Pb"/>
+            <solidref ref="layer1Solid"/>
+        </volume>
+
+        <volume name="layer2Volume">
+            <materialref ref="G4_POLYETHYLENE"/>
+            <solidref ref="layer2Solid"/>
+        </volume>
+
+        <volume name="layer3Volume">
+            <materialref ref="G4_Pb"/>
+            <solidref ref="layer3Solid"/>
+        </volume>
+
+        <volume name="world">
+            <physvol name="detector">
+                <volumeref ref="detectorVolume"/>
+            </physvol>
+
+            <physvol name="layer1">
+                <volumeref ref="layer1Volume"/>
+            </physvol>
+
+            <physvol name="layer2">
+                <volumeref ref="layer2Volume"/>
+            </physvol>
+
+            <physvol name="layer3">
+                <volumeref ref="layer3Volume"/>
+            </physvol>
+
+            <materialref ref="G4_Galactic"/>
+
+            <solidref ref="worldBox"/>
+        </volume>
+    </structure>
+    <setup name="Default" version="1.0">
+        <world ref="world"/>
+    </setup>
+</gdml>
