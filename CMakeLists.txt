@@ -20,12 +20,12 @@ if (TEST)
     enable_testing()
 endif ()
 
+find_package(ROOT REQUIRED COMPONENTS RIO Geom XMLIO)
+
 include(ThisGenerateRootDictionaries)
 include(ThisAddTest)
 include(ThisInstallHeaders)
 include(ThisEnv)
-
-find_package(ROOT REQUIRED COMPONENTS RIO Geom XMLIO)
 
 message(STATUS "Found ROOT version: ${ROOT_VERSION}")
 
