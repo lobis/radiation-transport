@@ -255,16 +255,7 @@ void Visualization::DrawEvent(Long64_t index) {
     fEveManager->GetViewers()->DeleteAnnotations();
     fEveManager->GetCurrentEvent()->DestroyElements();
 
-    size_t trackCounter = 0;
-    for (const auto& track : fEvent->fTracks) {
-        if (track.fInitialKineticEnergy < 1.0 || track.fTrackLength < 0.1) {
-            continue;
-        }
-        auto line = track.GetEveDrawable();
-        fEveManager->AddElement(line);
-        trackCounter += 1;
-    }
-    spdlog::info("Drawing {} tracks", trackCounter);
+    fEvent->Draw();
 
     fEveManager->FullRedraw3D(kFALSE);
 }
