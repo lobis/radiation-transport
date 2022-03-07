@@ -33,6 +33,7 @@ TString GetNodeAttribute(TXMLEngine xml, XMLNodePointer_t node, const TString& a
     }
     return {};
 }
+
 void AddVolumesRecursively(vector<TString>* container, const vector<TString>& children, map<TString, TString>& nameTable,
                            map<TString, vector<TString>>& childrenTable, const TString& name = "") {
     // G4cout << "called AddVolumesRecursively with name: " << name << endl;
@@ -113,6 +114,15 @@ TString Geant4GeometryInfo::GetAlternativeNameFromGeant4PhysicalName(const TStri
     return geant4PhysicalName;
 }
 
+TString Geant4GeometryInfo::GetGeant4PhysicalNameFromAlternativeName(const TString& name) const {
+    for (const auto& [geant4Name, alternativeName] : fGeant4PhysicalNameToNewPhysicalNameMap) {
+        if (alternativeName == name) {
+            return geant4Name;
+        }
+    }
+    return "";
+}
+
 Int_t Geant4GeometryInfo::GetIDFromVolumeName(const TString& volumeName) const {
     for (int i = 0; i < fGdmlNewPhysicalNames.size(); i++) {
         if (volumeName.EqualTo(fGdmlNewPhysicalNames[i])) {
@@ -137,13 +147,30 @@ void Geant4GeometryInfo::Print() const {
 
     spdlog::info("Physical volumes:");
     for (const auto& physical : GetAllPhysicalVolumes()) {
-        spdlog::info("\t- {}", physical.Data());
+        const auto newName = GetAlternativeNameFromGeant4PhysicalName(physical);
+        const auto logical = fPhysicalToLogicalVolumeMap.at(physical);
+        const auto material = fLogicalToMaterialMap.at(logical);
+        const auto position = GetPositionInWorld(physical);
+
+        spdlog::info("\t- {} - Logical: {} - Material: {} - Position: ({:0.1f} {:0.1f} {:0.1f}) mm",
+                     (newName == physical ? physical : newName + " (" + physical + ")"), logical, material, position.X(), position.Y(), position.Z());
     }
 
     spdlog::info("Logical volumes:");
     for (const auto& logical : GetAllLogicalVolumes()) {
-        spdlog::info("\t- {}", logical.Data());
+        const auto material = fLogicalToMaterialMap.at(logical);
+        spdlog::info("\t- {} - Material: {}", logical, material);
     }
+}
+
+std::vector<TString> Geant4GeometryInfo::GetAllLogicalVolumes() const {
+    auto volumes = std::vector<TString>();
+
+    for (const auto& [logical, _] : fLogicalToPhysicalMap) {
+        volumes.emplace_back(logical);
+    }
+
+    return volumes;
 }
 
 std::vector<TString> Geant4GeometryInfo::GetAllPhysicalVolumes() const {
@@ -156,11 +183,11 @@ std::vector<TString> Geant4GeometryInfo::GetAllPhysicalVolumes() const {
     return volumes;
 }
 
-std::vector<TString> Geant4GeometryInfo::GetAllLogicalVolumes() const {
+std::vector<TString> Geant4GeometryInfo::GetAllAlternativePhysicalVolumes() const {
     auto volumes = std::vector<TString>();
 
-    for (const auto& [logical, _] : fLogicalToPhysicalMap) {
-        volumes.emplace_back(logical);
+    for (const auto& [physical, logical] : fPhysicalToLogicalVolumeMap) {
+        volumes.emplace_back(GetAlternativeNameFromGeant4PhysicalName(physical));
     }
 
     return volumes;
@@ -192,4 +219,13 @@ std::vector<TString> Geant4GeometryInfo::GetAllLogicalVolumesMatchingExpression(
     }
 
     return volumes;
+}
+
+TVector3 Geant4GeometryInfo::GetPositionInWorld(const TString& volume) const {
+    if (fPhysicalToPositionInWorldMap.count(volume) > 0) {
+        return fPhysicalToPositionInWorldMap.at(volume);
+    }
+    // asked for alternative name
+    return fPhysicalToPositionInWorldMap.at(GetGeant4PhysicalNameFromAlternativeName(volume));
+    // may throw if asked for invalid name
 }
