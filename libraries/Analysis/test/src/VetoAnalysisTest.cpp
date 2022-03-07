@@ -12,7 +12,8 @@
 #include "Application.h"
 #include "Geant4EventHeader.h"
 #include "SimulationConfig.h"
-#include "VetoAnalysis.h"
+#include "VetoAnalysisProcess.h"
+#include "VetoEvent.h"
 #include "spdlog/spdlog.h"
 
 using namespace std;
@@ -53,20 +54,49 @@ TEST(VetoAnalysis, GenerateData) {
 }
 
 TEST(VetoAnalysis, AnalyseData) {
-    const string simulationFileName = "/tmp/tmp.wPkPjmf9YO/cmake-build-sultan2/libraries/Analysis/test/muons.root";  // TEST_PATH + "muons.root";
-    spdlog::info("Simulation file: {}", simulationFileName);
+    const fs::path simulationFile = "/tmp/tmp.wPkPjmf9YO/cmake-build-sultan2/libraries/Analysis/test/muons.root";  // TEST_PATH + "muons.root";
 
-    TFile file(simulationFileName.c_str());
+    const fs::path analysisFile = simulationFile.parent_path() / ("analysis." + (string)simulationFile.filename());
 
-    TTree* tree = file.Get<TTree>("EventTree");
+    spdlog::info("Simulation file: {}", string(simulationFile));
+
+    TFile inputFile(simulationFile.c_str(), "READ");
+
+    TTree* eventTree = inputFile.Get<TTree>("EventTree");
+
+    auto header = dynamic_cast<Geant4EventHeader*>(eventTree->GetUserInfo()->At(0));
+    auto geometryInfo = header->GetGeant4GeometryInfo();
+
+    geometryInfo->Print();
 
     Geant4Event* event = nullptr;
-    tree->SetBranchAddress("fEvent", &event);
-    for (int i = 0; i < tree->GetEntries(); i++) {
-        tree->GetEntry(i);
+    eventTree->SetBranchAddress("fEvent", &event);
+
+    TFile outputFile(analysisFile.c_str(), "RECREATE");
+    spdlog::info("Output file: {}", outputFile.GetName());
+
+    auto analysisTree = new TTree("AnalysisTree", "AnalysisTree");
+
+    VetoEvent* vetoEvent = nullptr;
+    analysisTree->Branch("fVetoEvent", &vetoEvent);
+
+    auto analysisProcess = VetoAnalysisProcess();
+    analysisProcess.SetGeometryInfo(*geometryInfo);
+
+    analysisProcess.SetVetoInformation("scintillatorVolume", "scintillatorLightGuideVolume");
+
+    const auto n = eventTree->GetEntries();
+    for (int i = 0; i < n; i++) {
+        eventTree->GetEntry(i);
         spdlog::info("\t- {} - EventID {}", i, event->fEventID);
 
-        // auto VetoEvent = new VetoAnalysis::VetoEvent();
-        auto vetoEvent = VetoAnalysis::SimulationEventToVetoEvent(*event);
+        *vetoEvent = analysisProcess.SimulationEventToVetoEvent(*event);
+
+        spdlog::info("n: {}", vetoEvent->fN);
+
+        analysisTree->Fill();
     }
+
+    analysisTree->Write();
+    outputFile.Close();
 }
