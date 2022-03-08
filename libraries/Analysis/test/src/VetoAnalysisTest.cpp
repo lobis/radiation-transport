@@ -16,6 +16,10 @@
 #include "VetoEvent.h"
 #include "spdlog/spdlog.h"
 
+#ifdef REST_INSTALLED
+#include "RestSignalProcess.h";
+#endif
+
 using namespace std;
 
 namespace fs = std::filesystem;
@@ -33,7 +37,7 @@ TEST(VetoAnalysis, GenerateData) {
     auto config = SimulationConfig(configFile);
     config.fOutputFilename = "muons.root";
     config.fSeed = 1000;
-    config.fNumberOfEvents = 5000;
+    config.fNumberOfEvents = 10000;
 
     Application app;
 
@@ -83,7 +87,7 @@ TEST(VetoAnalysis, AnalyseData) {
     auto analysisProcess = VetoAnalysisProcess();
     analysisProcess.SetGeometryInfo(*geometryInfo);
 
-    analysisProcess.SetVetoInformation("scintillatorVolume", "scintillatorLightGuideVolume");
+    analysisProcess.SetVetoInformation("scintillatorVolume", "scintillatorLightGuideVolume", 65.0);
 
     const auto n = eventTree->GetEntries();
     for (int i = 0; i < n; i++) {
@@ -100,3 +104,7 @@ TEST(VetoAnalysis, AnalyseData) {
     analysisTree->Write();
     outputFile.Close();
 }
+
+#ifdef REST_INSTALLED
+TEST(VetoAnalysis, RestSignal) { auto signalEvent = new TRestDetectorSignalEvent(); }
+#endif

@@ -29,7 +29,7 @@ class VetoAnalysisProcess {
     inline void SetGeometryInfo(const Geant4GeometryInfo& geometryInfo) { fGeant4GeometryInfo = geometryInfo; }
 
     void SetVetoInformation(const TString& scintillatorNameExpression = "scintillatorVolume",
-                            const TString& scintillatorDetectorsNameExpression = "scintillatorLightGuideVolume");
+                            const TString& scintillatorDetectorsNameExpression = "scintillatorLightGuideVolume", Double_t offset = 0.0);
     void SetDetectorInformation(const TString& scintillatorNameExpression, const TString& scintillatorDetectorsNameExpression);
 
     inline bool IsVetoVolume(const TString& volume) const {

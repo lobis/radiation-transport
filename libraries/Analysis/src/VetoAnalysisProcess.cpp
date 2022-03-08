@@ -41,6 +41,7 @@ VetoEvent VetoAnalysisProcess::SimulationEventToVetoEvent(const Geant4Event& inp
                 const auto position = hits.fPosition[i];
                 distanceToDetector = fScintillatorBoundaryPosition[volumeName] * fScintillatorBoundaryDirection[volumeName] -
                                      position * fScintillatorBoundaryDirection[volumeName];
+                assert(distanceToDetector > 0.0);
             }
 
             output.fN += 1;
@@ -59,7 +60,8 @@ VetoEvent VetoAnalysisProcess::SimulationEventToVetoEvent(const Geant4Event& inp
     return output;
 }
 
-void VetoAnalysisProcess::SetVetoInformation(const TString& scintillatorNameExpression, const TString& scintillatorDetectorsNameExpression) {
+void VetoAnalysisProcess::SetVetoInformation(const TString& scintillatorNameExpression, const TString& scintillatorDetectorsNameExpression,
+                                             Double_t offset) {
     // this assumes scintillators and "detectors" (light guides etc.) are stored in the correct order, they match 1 to 1
 
     fScintillatorNames.clear();
@@ -83,7 +85,7 @@ void VetoAnalysisProcess::SetVetoInformation(const TString& scintillatorNameExpr
         const auto direction = distance.Unit();
 
         fScintillatorBoundaryDirection[scintillatorName] = direction;
-        fScintillatorBoundaryPosition[scintillatorName] = positionScintillatorDetector - direction * 0;
+        fScintillatorBoundaryPosition[scintillatorName] = positionScintillatorDetector - direction * offset;
 
         // spdlog::info("distance {}: {} {} {}", scintillatorName, distance.X(), distance.Y(), distance.Z());
     }
