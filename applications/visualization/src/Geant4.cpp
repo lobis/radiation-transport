@@ -28,6 +28,13 @@ struct TrackVisualConfiguration {
 
 TrackVisualConfiguration GetTrackVisualConfiguration(const Geant4Track& track) {
     auto config = TrackVisualConfiguration();
+    // special particles
+    if (track.fParticleName == "geantino") {
+        config.fColor = kRed;
+        config.fLineStyle = 9;
+        config.fLineWidth = 2;
+        return config;
+    }
     // color based on charge
     if (track.fParticleName.Contains('-')) {
         config.fColor = kMagenta;  // red
