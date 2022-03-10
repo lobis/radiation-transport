@@ -6,6 +6,7 @@
 
 #include <spdlog/spdlog.h>
 
+#include <G4Geantino.hh>
 #include <G4Step.hh>
 #include <G4SystemOfUnits.hh>
 #include <G4Track.hh>
@@ -32,15 +33,25 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*) {
         return true;
     }
 
-    auto energy = step->GetTotalEnergyDeposit() / keV;
+    const bool isGeantino = step->GetTrack()->GetParticleDefinition() == G4Geantino::Definition();
 
-    if (energy <= 0) {
+    if (isGeantino) {
+        const auto volumeName = (TString)step->GetPreStepPoint()->GetPhysicalVolume()->GetName();
+        const auto length = step->GetStepLength() / CLHEP::mm;
+        fOutput->AddSensitiveEnergy(length, volumeName);
         return true;
+    } else {
+        auto energy = step->GetTotalEnergyDeposit() / keV;
+
+        if (energy <= 0) {
+            return true;
+        }
+
+        const auto volumeName = (TString)step->GetPreStepPoint()->GetPhysicalVolume()->GetName();
+
+        // TODO: Check this, may not work as expected in MT mode
+        fOutput->AddSensitiveEnergy(energy, volumeName);
+
+        return true;  // return value will always be ignored
     }
-
-    const auto volumeName = (TString)step->GetPreStepPoint()->GetPhysicalVolume()->GetName();
-    // TODO: Check this, may not work as expected in MT mode
-    fOutput->AddSensitiveEnergy(energy, volumeName);
-
-    return true;  // return value will always be ignored
 }
