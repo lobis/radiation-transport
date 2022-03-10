@@ -73,7 +73,7 @@ YAML::Node SourceConfig::SerializeGenerator() const {
     node[fPositionDistributionType] = YAML::Node();
 
     if (fPositionDistributionType == "point" || fPositionDistributionType == "rectangle" || fPositionDistributionType == "square" ||
-        fPositionDistributionType == "disk") {
+        fPositionDistributionType == "disk" || fPositionDistributionType == "sphere") {
         node[fPositionDistributionType]["position"] = fPositionDistributionCenter;
     }
     if (fPositionDistributionType == "rectangle" || fPositionDistributionType == "square" || fPositionDistributionType == "disk") {
@@ -85,8 +85,12 @@ YAML::Node SourceConfig::SerializeGenerator() const {
     if (fPositionDistributionType == "square") {
         node[fPositionDistributionType]["side"] = fPositionDistributionSquareSide;
     }
-    if (fPositionDistributionType == "disk") {
+    if (fPositionDistributionType == "disk" || fPositionDistributionType == "sphere") {
         node[fPositionDistributionType]["diameter"] = fPositionDistributionDiameter;
+    }
+
+    if (fPositionDistributionIsVolume) {
+        node[fPositionDistributionType]["isVolume"] = fPositionDistributionIsVolume;
     }
 
     return node;
@@ -119,7 +123,7 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
     }
 
     if (fPositionDistributionType == "point" || fPositionDistributionType == "rectangle" || fPositionDistributionType == "square" ||
-        fPositionDistributionType == "disk") {
+        fPositionDistributionType == "disk" || fPositionDistributionType == "sphere") {
         if (generator[fPositionDistributionType]["position"]) {
             fPositionDistributionCenter = generator[fPositionDistributionType]["position"].as<TVector3>();
         }
@@ -140,8 +144,12 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
     if (fPositionDistributionType == "rectangle") {
         fPositionDistributionRectangleDimensions = generator[fPositionDistributionType]["dimensions"].as<TVector3>();
     }
-    if (fPositionDistributionType == "disk") {
+    if (fPositionDistributionType == "disk" || fPositionDistributionType == "sphere") {
         fPositionDistributionDiameter = generator[fPositionDistributionType]["diameter"].as<double>();
+    }
+
+    if (fPositionDistributionType == "sphere") {
+        fPositionDistributionIsVolume = generator[fPositionDistributionType]["isVolume"].as<bool>();
     }
 }
 

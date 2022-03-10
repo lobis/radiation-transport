@@ -100,3 +100,26 @@ TEST(SourceConfigGenerator, DeserializeDisk) {
     EXPECT_EQ(fSourceConfig.fPositionDistributionOrientation, TVector3({1, 0, 0}));
     EXPECT_EQ(fSourceConfig.fPositionDistributionDiameter, 15);
 }
+
+TEST(SourceConfigGenerator, DeserializeSphereVolume) {
+    const auto file = fs::path(GENERATORS_PATH + "sphereVolume.yaml");
+
+    YAML::Node config = YAML::LoadFile(file);
+
+    cout << "FILE " << file << " CONTENTS: " << endl;
+    cout << config << endl;
+
+    EXPECT_TRUE(config["source"]);
+
+    SourceConfig fSourceConfig;
+
+    fSourceConfig.Deserialize(config["source"]);
+
+    fSourceConfig.Print();
+
+    EXPECT_EQ(fSourceConfig.fPositionDistributionType, "sphere");
+    EXPECT_EQ(fSourceConfig.fPositionDistributionIsVolume, true);
+    EXPECT_EQ(fSourceConfig.fPositionDistributionCenter, TVector3({10, 0, 0}));
+    EXPECT_EQ(fSourceConfig.fPositionDistributionOrientation, TVector3({1, 0, 0}));
+    EXPECT_EQ(fSourceConfig.fPositionDistributionDiameter, 15);
+}
