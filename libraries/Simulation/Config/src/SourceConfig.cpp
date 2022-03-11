@@ -149,7 +149,9 @@ void SourceConfig::DeserializeGenerator(const YAML::Node& node) {
     }
 
     if (fPositionDistributionType == "sphere") {
-        fPositionDistributionIsVolume = generator[fPositionDistributionType]["isVolume"].as<bool>();
+        if (generator[fPositionDistributionType]["isVolume"]) {
+            fPositionDistributionIsVolume = generator[fPositionDistributionType]["isVolume"].as<bool>();
+        }
     }
 }
 

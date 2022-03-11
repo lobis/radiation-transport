@@ -297,6 +297,18 @@ void PrimaryGeneratorAction::Initialize() {
             fPositionDistribution->SetPosDisShape("Circle");
             fPositionDistribution->SetRadius(fSourceConfig.fPositionDistributionDiameter / 2.0 / fPositionScaleFactor);
         }
+    } else if (fSourceConfig.fPositionDistributionType == "sphere") {
+        // TODO: Needs revision
+        fPositionDistribution->SetPosDisShape("Sphere");
+        const auto radius = fSourceConfig.fPositionDistributionDiameter / 2.0 / fPositionScaleFactor;
+        spdlog::info("Geant4 sphere radius: {}", radius);
+        fPositionDistribution->SetRadius(radius);
+
+        if (fSourceConfig.fPositionDistributionIsVolume) {
+            fPositionDistribution->SetPosDisType("Volume");
+        } else {
+            fPositionDistribution->SetPosDisType("Surface");
+        }
     } else {
         fPositionDistribution = nullptr;
         spdlog::error("cannot process '{}' position dist yet", fSourceConfig.fPositionDistributionType);
