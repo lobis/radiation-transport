@@ -58,6 +58,11 @@ jobs:
           source ${{env.CMAKE_INSTALL_PREFIX}}/env.sh
           root -e 'new Geant4Event(); return 0;' -q
 
+      - name: Check PyROOT
+        run: |
+          source ${{env.CMAKE_INSTALL_PREFIX}}/env.sh
+          python3 -c """import ROOT;ROOT.Geant4Event()"""
+
   image:
     needs: build
     runs-on: ubuntu-latest
