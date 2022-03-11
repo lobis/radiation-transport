@@ -120,8 +120,6 @@ TEveStraightLineSet* Geant4Track::GetEveDrawable() const {
     return lineSet;
 }
 
-TEvePointSet* Geant4Hits::GetEveDrawable() const { return nullptr; }
-
 void Geant4Event::Draw() {
     size_t trackCounter = 0;
     size_t hitsCounter = 0;
