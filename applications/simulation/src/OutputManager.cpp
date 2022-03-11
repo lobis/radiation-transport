@@ -71,7 +71,7 @@ void OutputManager::FinishAndSubmitEvent() {
         for (const auto& track : fEvent->fTracks) {
             numberOfSteps += track.fHits.fN;
         }
-        spdlog::info(
+        spdlog::debug(
             "OutputManager::FinishAndSubmitEvent - EventID {} - SubEventID {} - Sensitive volume energy: {} - Number of tracks: {} - Number of "
             "steps: {}",
             fEvent->fEventID, fEvent->fSubEventID, energyWithUnits, fEvent->fTracks.size(), numberOfSteps);

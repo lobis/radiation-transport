@@ -119,7 +119,7 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
     LoadConfigFromFile(configFilename);
 
     while (true) {
-        const int option = getopt(argc - 1, argv, "st:v:in:");
+        const int option = getopt(argc - 1, argv, "ist:v:n:o:");
         if (option == -1) break;
         switch (option) {
             case 's':
@@ -146,8 +146,13 @@ void Application::InitializeFromCommandLine(int argc, char** argv) {
                 break;
 
             case 'n':
-                spdlog::info("Command line option (-n): 'numberOfEvents'");
+                spdlog::info("Command line option (-n): 'numberOfEvents' with value: {}", optarg);
                 fConfig.fNumberOfEvents = std::stoi(optarg);
+                break;
+
+            case 'o':
+                spdlog::info("Command line option (-o): 'outputFilename' with value: {}", optarg);
+                fConfig.fOutputFilename = optarg;
                 break;
 
             default:
