@@ -114,3 +114,12 @@ double Geant4Event::GetEnergyInVolume(const TString& volume, const TString& proc
     }
     return energy;
 }
+
+map<TString, double> Geant4Event::GetSensitiveEnergyInVolumes() const {
+    map<TString, double> energyMap;
+    for (int i = 0; i < fSensitiveVolumeEnergy.size(); i++) {
+        energyMap[fSensitiveVolumeName[i]] = fSensitiveVolumeEnergy[i];
+    }
+
+    return energyMap;
+}
