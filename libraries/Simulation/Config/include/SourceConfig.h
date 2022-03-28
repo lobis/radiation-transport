@@ -21,7 +21,7 @@ class SourceConfig : public SerializableConfig {
     YAML::Node Serialize() const override;
 
    private:
-    std::set<std::string> fPositionDistributionTypesAvailable = {"point", "rectangle", "square", "disk"};
+    std::set<std::string> fPositionDistributionTypesAvailable = {"point", "rectangle", "square", "disk", "sphere"};
     std::set<std::string> fEnergyDistributionTypesAvailable = {"mono", "linear", "exponential",
                                                                "power",  //
                                                                          // Custom
@@ -46,6 +46,8 @@ class SourceConfig : public SerializableConfig {
     std::string fPositionDistributionUnit = "mm";
 
     std::string fPositionDistributionType = "point";
+
+    bool fPositionDistributionIsVolume = false;
 
     TVector3 fPositionDistributionCenter = {0, 0, 0};
     TVector3 fPositionDistributionOrientation = {0, -1, 0};

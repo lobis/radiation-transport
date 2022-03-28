@@ -1,0 +1,7 @@
+source:
+  generator:
+    sphere:
+      isVolume: true
+      position: [ 10,0,0 ]
+      direction: [ 1,0,0 ]
+      diameter: 15

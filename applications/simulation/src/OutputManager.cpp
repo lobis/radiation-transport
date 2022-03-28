@@ -71,7 +71,7 @@ void OutputManager::FinishAndSubmitEvent() {
         for (const auto& track : fEvent->fTracks) {
             numberOfSteps += track.fHits.fN;
         }
-        spdlog::info(
+        spdlog::debug(
             "OutputManager::FinishAndSubmitEvent - EventID {} - SubEventID {} - Sensitive volume energy: {} - Number of tracks: {} - Number of "
             "steps: {}",
             fEvent->fEventID, fEvent->fSubEventID, energyWithUnits, fEvent->fTracks.size(), numberOfSteps);
@@ -159,7 +159,7 @@ bool OutputManager::IsValidEvent() const {
     if (fForceSave) return true;
     if (IsEmptyEvent()) return false;
     if (GlobalManager::Instance()->GetSimulationConfig().fSaveAllEvents) return true;
-    if (fEvent->fPrimaryParticleName == "geantino") return true;
+    // if (fEvent->fPrimaryParticleName == "geantino") return true; // geantino store track length (in mm) as energy (in keV)
     if (fEvent->fSensitiveVolumesTotalEnergy <= 0) return false;
     return true;
 }
@@ -245,7 +245,7 @@ void OutputManager::RemoveUnwantedTracks() {
         }
         // energy deposited in important volumes
         bool keep = false;
-        for (int i = 0; i < track.fHits.fN; i++) {
+        for (size_t i = 0; i < track.fHits.fN; i++) {
             double energy = track.fHits.fEnergy[i];
             if (energy > 0) {
                 TString volume = track.fHits.fVolumeName[i];

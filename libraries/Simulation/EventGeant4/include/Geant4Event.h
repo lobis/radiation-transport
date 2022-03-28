@@ -54,6 +54,7 @@ class Geant4Event {
     bool IsTrackSubEventPrimary(int trackID);
     double GetEnergyInVolume(const TString& volume, const TString& processName = "") const;
     void InitializeEnergyInVolumeMap();
+    std::map<TString, double> GetSensitiveEnergyInVolumes() const;
 
    private:
     std::map<int, int> fTrackIDToTrackIndex = {};      //!

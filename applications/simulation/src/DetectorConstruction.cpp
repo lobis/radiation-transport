@@ -173,13 +173,25 @@ void DetectorConstruction::ConstructSDandField() {
             logicalVolume = physicalVolume->GetLogicalVolume();
         }
         if (!logicalVolume) {
-            PrintGeometryInfo();
-            spdlog::error(
-                "Trying to attach a sensitive detector to user selected volume '{}'"
-                ", but this physical volume is not found in physical or logical store. Please read the geometry info printed above to find the "
-                "correct name",
-                userSensitiveVolume);
-            exit(1);
+            auto logicalVolumes =
+                GlobalManager::Instance()->GetEventHeader()->GetGeant4GeometryInfo()->GetAllLogicalVolumesMatchingExpression(userSensitiveVolume);
+            if (logicalVolumes.empty()) {
+                PrintGeometryInfo();
+                spdlog::error(
+                    "Trying to attach a sensitive detector to user selected volume '{}'"
+                    ", but this physical volume is not found in physical or logical store. Please read the geometry info printed above to find the "
+                    "correct name",
+                    userSensitiveVolume);
+                exit(1);
+            } else {
+                for (const auto& logicalVolumeName : logicalVolumes) {
+                    spdlog::info("DetectorConstruction::ConstructSDandField: Logical volume from regex '{}'", logicalVolumeName);
+                    auto logicalVolume = G4LogicalVolumeStore::GetInstance()->GetVolume(logicalVolumeName.Data(), false);
+                    logicalVolumesSelected.insert(logicalVolume);
+                    sensitiveVolumeIsKill[logicalVolume->GetName()] = sensitiveVolumeIsKill[userSensitiveVolume];
+                }
+                continue;
+            }
         }
         logicalVolumesSelected.insert(logicalVolume);
         sensitiveVolumeIsKill[logicalVolume->GetName()] = sensitiveVolumeIsKill[userSensitiveVolume];

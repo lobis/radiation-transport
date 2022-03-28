@@ -1,7 +1,7 @@
 
 set(LIBRARY Analysis)
 
-find_package(REST)
+find_package(REST QUIET)
 
 set(LIBRARIES yaml-cpp spdlog)
 set(INCLUDE_DIRECTORIES include)
@@ -9,16 +9,16 @@ set(INCLUDE_DIRECTORIES include)
 FILE(GLOB SOURCES src/*.cpp)
 FILE(GLOB HEADERS include/*.h)
 
-IF (DEFINED REST_FOUND)
+if (DEFINED ${REST_FOUND})
     set(LIBRARIES ${LIBRARIES} ${REST_LIBRARIES})
     set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} ${REST_INCLUDE_DIRS})
     add_definitions(-DREST_INSTALLED)
-ELSE ()
+else ()
     message(STATUS "REST not found!")
 
     list(REMOVE_ITEM SOURCES "${CMAKE_SOURCE_DIR}/libraries/Analysis/src/RestSignalProcess.cpp")
     list(REMOVE_ITEM HEADERS "${CMAKE_SOURCE_DIR}/libraries/Analysis/include/RestSignalProcess.h")
-ENDIF ()
+endif ()
 
 add_library(${LIBRARY} SHARED)
 install(TARGETS ${LIBRARY} DESTINATION lib)
