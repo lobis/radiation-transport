@@ -76,7 +76,12 @@ void Geant4Hits::InsertStep(const G4Step* step) {
     fMomentumDirection.emplace_back(track->GetMomentum().x() / CLHEP::keV, track->GetMomentum().y() / CLHEP::keV,
                                     track->GetMomentum().z() / CLHEP::keV);
     fTimeGlobal.emplace_back(track->GetGlobalTime() / CLHEP::ns);
-    fEnergy.emplace_back(step->GetTotalEnergyDeposit() / CLHEP::keV);
+    // store track length (in mm) in place of energy for "geantino" (which will always deposit 0 energy) this makes other calculations easier
+    if (track->GetParticleDefinition() != G4Geantino::Definition()) {
+        fEnergy.emplace_back(step->GetTotalEnergyDeposit() / CLHEP::keV);
+    } else {
+        fEnergy.emplace_back(step->GetStepLength() / CLHEP::mm);
+    }
     fKineticEnergy.emplace_back(step->GetPreStepPoint()->GetKineticEnergy() / CLHEP::keV);
     fKineticEnergyPost.emplace_back(step->GetPostStepPoint()->GetKineticEnergy() / CLHEP::keV);
     fLength.emplace_back(step->GetStepLength() / CLHEP::mm);
