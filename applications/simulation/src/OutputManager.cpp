@@ -236,8 +236,9 @@ void OutputManager::RemoveUnwantedTracks() {
         }
     }
 
+    // track removal
     set<int> trackIDsToKeep;
-    for (int i = 0; i < fEvent->fTracks.size(); i++) {
+    for (size_t i = 0; i < fEvent->fTracks.size(); i++) {
         // We iterate in reverse order to reduce time
         const auto& track = fEvent->fTracks[fEvent->fTracks.size() - 1 - i];
         if (trackIDsToKeep.count(track.fTrackID) > 0) {
@@ -245,10 +246,10 @@ void OutputManager::RemoveUnwantedTracks() {
         }
         // energy deposited in important volumes
         bool keep = false;
-        for (size_t i = 0; i < track.fHits.fN; i++) {
-            double energy = track.fHits.fEnergy[i];
+        for (size_t j = 0; j < track.fHits.fN; j++) {
+            double energy = track.fHits.fEnergy[j];
             if (energy > 0) {
-                TString volume = track.fHits.fVolumeName[i];
+                TString volume = track.fHits.fVolumeName[j];
                 if (fKeepOnlyTracksInTheseVolumesListAfterProcessing.count(volume) > 0) {
                     keep = true;
                     break;
@@ -271,7 +272,7 @@ void OutputManager::RemoveUnwantedTracks() {
     const size_t numberOfTracksBefore = fEvent->fTracks.size();
 
     // TODO: there should be a faster way to do this without having to deep copy the tracks
-    std::vector<Geant4Track> tracksAfterRemoval;
+    vector<Geant4Track> tracksAfterRemoval;
     for (const auto& track : fEvent->fTracks) {
         // we do this to preserver original order
         if (trackIDsToKeep.count(track.fTrackID) > 0) {
@@ -285,8 +286,10 @@ void OutputManager::RemoveUnwantedTracks() {
     for (const auto& track : fEvent->fTracks) {
         numberOfSteps += track.fHits.fN;
     }
-    spdlog::info("OutputManager::RemoveUnwantedTracks - Tracks before removal: {} -> Tracks after removal: {} ({} steps)", numberOfTracksBefore,
-                 fEvent->fTracks.size(), numberOfSteps);
+    if (!config.fSaveAllEvents) {
+        spdlog::info("OutputManager::RemoveUnwantedTracks - Tracks before removal: {} -> Tracks after removal: {} ({} steps)", numberOfTracksBefore,
+                     fEvent->fTracks.size(), numberOfSteps);
+    }
 }
 
 void OutputManager::SetForceSave(bool value) {
