@@ -26,7 +26,11 @@ macro(THIS_GENERATE_ROOT_DICTIONARIES HEADERS)
 
     file(READ ${CMAKE_CURRENT_BINARY_DIR}/module.modulemap MODULEMAP_CONTENTS)
 
-    string(REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_INSTALL_PREFIX}/include" MODULEMAP_CONTENTS ${MODULEMAP_CONTENTS})
+    string(REGEX REPLACE
+            "${CMAKE_CURRENT_SOURCE_DIR}(/Config|/EventGeant4)?/include"
+            # TODO: fix with general regex, not sure why "${CMAKE_CURRENT_SOURCE_DIR}(/[\\w+])?/include" doesn't work...
+            "${CMAKE_INSTALL_PREFIX}/include"
+            MODULEMAP_CONTENTS ${MODULEMAP_CONTENTS})
 
     file(APPEND ${MODULEMAP_FILENAME} "${MODULEMAP_CONTENTS}\n")
 
