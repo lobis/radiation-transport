@@ -6,6 +6,8 @@
 
 #include <spdlog/spdlog.h>
 
+#include <nlohmann/json.hpp>
+
 ClassImp(Geant4Event);
 
 using namespace std;
@@ -123,3 +125,31 @@ map<TString, double> Geant4Event::GetSensitiveEnergyInVolumes() const {
 
     return energyMap;
 }
+
+using json = nlohmann::json;
+
+void to_json(json& j, const TVector3& v) { j = json{{"x", v.X()}, {"y", v.Y()}, {"z", v.Z()}}; }
+
+void to_json(json& j, const Geant4Hits& hits) {
+    j = json{
+        {"stepID", hits.fStepID},     {"time", hits.fTimeGlobal},         {"energy", hits.fEnergy}, {"kineticEnergy", hits.fKineticEnergy},
+        {"volumeName", hits.fStepID}, {"processName", hits.fProcessName},
+    };
+    // split position
+    const size_t n = hits.fPosition.size();
+    vector<Double_t> x(n), y(n), z(n);
+    for (int i = 0; i < n; i++) {
+        x[i] = hits.fPosition[i].X();
+        y[i] = hits.fPosition[i].Y();
+        z[i] = hits.fPosition[i].Z();
+    }
+    j["x"] = x;
+    j["y"] = y;
+    j["z"] = z;
+}
+
+void to_json(json& j, const Geant4Track& track) { j = json{{"trackID", track.fTrackID}, {"parentID", track.fParentID}, {"hits", track.fHits}}; }
+
+void to_json(json& j, const Geant4Event& event) { j = json{{"eventID", event.fEventID}, {"tracks", event.fTracks}}; }
+
+string Geant4Event::ToJson() const { return json{*this}.dump(); }

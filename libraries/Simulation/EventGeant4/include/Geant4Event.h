@@ -46,6 +46,7 @@ class Geant4Event {
     inline void SetSubEventID(Int_t subEventID) { fSubEventID = subEventID; }
 
     void Print() const;
+    std::string ToJson() const;
 
     void PrintSensitiveInfo() const;
 

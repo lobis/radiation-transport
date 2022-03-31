@@ -136,6 +136,10 @@ TEST(Application, FullRunSerial) {
     }
 
     spdlog::warn("Serial run average energy: {} keV", averageEnergy);
+
+    // check json serialization
+    const auto eventJson = event->ToJson();
+    spdlog::info("Event JSON: {}", eventJson);
 }
 
 TEST(Application, FullRunMT) {
