@@ -120,6 +120,5 @@ TEST(SourceConfigGenerator, DeserializeSphereVolume) {
     EXPECT_EQ(fSourceConfig.fPositionDistributionType, "sphere");
     EXPECT_EQ(fSourceConfig.fPositionDistributionIsVolume, true);
     EXPECT_EQ(fSourceConfig.fPositionDistributionCenter, TVector3({10, 0, 0}));
-    EXPECT_EQ(fSourceConfig.fPositionDistributionOrientation, TVector3({1, 0, 0}));
     EXPECT_EQ(fSourceConfig.fPositionDistributionDiameter, 15);
 }
