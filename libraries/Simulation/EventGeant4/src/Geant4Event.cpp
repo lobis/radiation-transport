@@ -131,25 +131,29 @@ using json = nlohmann::json;
 void to_json(json& j, const TVector3& v) { j = json{{"x", v.X()}, {"y", v.Y()}, {"z", v.Z()}}; }
 
 void to_json(json& j, const Geant4Hits& hits) {
-    j = json{
-        {"stepID", hits.fStepID},     {"time", hits.fTimeGlobal},         {"energy", hits.fEnergy}, {"kineticEnergy", hits.fKineticEnergy},
-        {"volumeName", hits.fStepID}, {"processName", hits.fProcessName},
-    };
-    // split position
-    const size_t n = hits.fPosition.size();
-    vector<Double_t> x(n), y(n), z(n);
-    for (int i = 0; i < n; i++) {
-        x[i] = hits.fPosition[i].X();
-        y[i] = hits.fPosition[i].Y();
-        z[i] = hits.fPosition[i].Z();
+    json hitsJson;
+
+    for (int i = 0; i < hits.fPosition.size(); i++) {
+        hitsJson.push_back({
+            {"id", hits.fStepID[i]},
+            {"x", hits.fPosition[i].X()},
+            {"y", hits.fPosition[i].Y()},
+            {"z", hits.fPosition[i].Z()},
+            {"time", hits.fTimeGlobal[i]},
+            {"energy", hits.fEnergy[i]},
+            {"kineticEnergy", hits.fKineticEnergy[i]},
+            {"volumeName", hits.fVolumeName[i]},
+            {"processName", hits.fProcessName[i]},
+        });
     }
-    j["x"] = x;
-    j["y"] = y;
-    j["z"] = z;
+
+    j = hitsJson;
 }
 
-void to_json(json& j, const Geant4Track& track) { j = json{{"trackID", track.fTrackID}, {"parentID", track.fParentID}, {"hits", track.fHits}}; }
+void to_json(json& j, const Geant4Track& track) {
+    j = json{{"id", track.fTrackID}, {"parentId", track.fParentID}, {"particleName", track.fParticleName}, {"hits", track.fHits}};
+}
 
-void to_json(json& j, const Geant4Event& event) { j = json{{"eventID", event.fEventID}, {"tracks", event.fTracks}}; }
+void to_json(json& j, const Geant4Event& event) { j = json{{"id", event.fEventID}, {"tracks", event.fTracks}}; }
 
 string Geant4Event::ToJson() const { return json{*this}.dump(); }
